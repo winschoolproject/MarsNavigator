@@ -557,7 +557,7 @@ function showInfo(ll) {
     <button class="btn ghost" id="asDest">Use as route destination</button>`;
   document.getElementById('asDest').onclick = () => { addCustom(ll); showTab('route'); };
 }
-map.on('click', e => { if (PICK) { pickAt([e.latlng.lat, e.latlng.lng]); return; } showInfo([e.latlng.lat, e.latlng.lng]); showTab('info'); });
+map.on('click', e => { if (PICK && (!PICK.a || !PICK.b)) { pickAt([e.latlng.lat, e.latlng.lng]); return; } showInfo([e.latlng.lat, e.latlng.lng]); showTab('info'); });
 
 /* Tabs */
 function showTab(p) { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p)); document.querySelectorAll('.pane').forEach(x => x.classList.toggle('on', x.id === 'p-' + p)); }
@@ -608,60 +608,78 @@ function runObj(o, startView) {
   objCard.innerHTML = `<div class="card"><b>Why it matters</b><br>${o.why}<h3>Checklist</h3><ul class="check">${o.list.map(x => '<li>' + x + '</li>').join('')}</ul>
     ${o.id === 'life' ? '<button class="btn ghost" id="jz">Jump to Jezero</button>' : ''}${o.route ? '<button class="btn" id="go">Show this route</button> <button class="btn" id="goNav">Start navigation</button>' : ''}</div>`;
   if (o.id === 'life') document.getElementById('jz').onclick = () => map.flyTo([18.44, 77.42], 11);
-  if (o.id === 'new') startPick(); else stopPick();
-  if (o.route) document.getElementById('go').onclick = () => { rStart.value = o.route[0]; rEnd.value = o.route[1]; planRoute(); showTab('route'); };
-  if (o.route) document.getElementById('goNav').onclick = () => { rStart.value = o.route[0]; rEnd.value = o.route[1]; planRoute(); startNav(); };
+  startPick(o.id === 'new');
+  const presetPins = () => { resetPick(); pickAt(P[o.route[0]].ll); pickAt(P[o.route[1]].ll); lockPick(); };
+  if (o.route) document.getElementById('go').onclick = presetPins;
+  if (o.route) document.getElementById('goNav').onclick = () => { presetPins(); document.getElementById('brief').hidden = true; startNav(); };
 }
 
 
-/* ---------- Mission 7: New area (pick your own start and end) ---------- */
+/* ---------- Start and end pins: in every mission (mission 7 also zooms out to the whole planet) ---------- */
 var PICK = null;
 map.createPane('pickPane'); map.getPane('pickPane').style.zIndex = 690;
 const pinIcon = (c, t) => L.divIcon({ className: '', html: `<div class="npin" style="background:${c}"><span>${t}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 30] });
-function startPick() {
+function setPicking(on) { document.getElementById('map').classList.toggle('picking', on); document.getElementById('wrap').classList.toggle('picking', on); }
+function startPick(whole) {
   stopPick(true); stopNav(); routeLayer.clearLayers(); LASTROUTE = null; rOut.innerHTML = '';
-  PICK = { a: null, b: null, ma: null, mb: null, locked: false };
-  map.flyToBounds([[-88, -180], [88, 180]], { padding: [6, 6], duration: STILL ? 0.01 : 1.2, animate: !STILL });
+  PICK = { a: null, b: null, ma: null, mb: null, locked: false, whole: !!whole };
   document.getElementById('pickCard')?.remove();
-  objCard.insertAdjacentHTML('afterbegin', `<div class="card pickcard" id="pickCard"><b>Choose your route</b>
-    <ol class="picksteps"><li id="ps1" class="now">Tap the map to set the <span class="sdot" style="background:#34a853">S</span> start point</li><li id="ps2">Tap again to set the <span class="sdot" style="background:#ea4335">E</span> end point</li><li id="ps3">Press <b>Lock in route</b></li></ol>
-    <div id="pickTxt" class="muted">No points yet.</div>
-    <div style="margin-top:8px"><button class="btn" id="pickLock" disabled>Lock in route</button> <button class="btn ghost" id="pickReset">Reset</button></div></div>`);
-  document.getElementById('pickLock').onclick = lockPick;
-  document.getElementById('pickReset').onclick = startPick;
-  document.getElementById('map').classList.add('picking'); document.getElementById('wrap').classList.add('picking');
+  if (whole) {
+    map.flyToBounds([[-88, -180], [88, 180]], { padding: [6, 6], duration: STILL ? 0.01 : 1.2, animate: !STILL });
+    objCard.insertAdjacentHTML('afterbegin', `<div class="card pickcard" id="pickCard"><b>Choose your route</b>
+      <ol class="picksteps"><li id="ps1" class="now">Tap the map to set the <span class="sdot" style="background:#34a853">S</span> start point</li><li id="ps2">Tap again to set the <span class="sdot" style="background:#ea4335">E</span> end point</li><li id="ps3">Press <b>Lock in route</b></li></ol>
+      <div id="pickTxt" class="muted">No points yet.</div>
+      <div style="margin-top:8px"><button class="btn" id="pickLock" disabled>Lock in route</button> <button class="btn ghost" id="pickReset">Reset</button></div></div>`);
+    document.getElementById('pickLock').onclick = () => lockPick();
+    document.getElementById('pickReset').onclick = resetPick;
+    if (matchMedia('(max-width:900px)').matches) { document.getElementById('side').classList.remove('open'); document.getElementById('menuBtn').textContent = 'Show panel'; setTimeout(() => map.invalidateSize(), 60); }
+  }
+  setPicking(true);
   let h = document.getElementById('pickHint');
   if (!h) { h = document.createElement('div'); h.id = 'pickHint'; document.getElementById('map').appendChild(h); L.DomEvent.disableClickPropagation(h); }
-  h.hidden = false;
-  if (matchMedia('(max-width:900px)').matches) { document.getElementById('side').classList.remove('open'); document.getElementById('menuBtn').textContent = 'Show panel'; setTimeout(() => map.invalidateSize(), 60); }
+  h.hidden = false; h.style.display = '';
   pickTxt();
+}
+function resetPick() {   // clear the pins, stay on the same mission and view
+  if (!PICK) return; [PICK.ma, PICK.mb].forEach(m => m && map.removeLayer(m));
+  Object.assign(PICK, { a: null, b: null, ma: null, mb: null, locked: false });
+  stopNav(); routeLayer.clearLayers(); LASTROUTE = null; rOut.innerHTML = '';
+  { const b = document.getElementById('brief'); if (b) b.hidden = true; }
+  const h = document.getElementById('pickHint'); if (h) h.style.display = '';
+  setPicking(true); pickTxt();
 }
 function stopPick(keepCursor) {
   { const b = document.getElementById('brief'); if (b) b.hidden = true; }
-  if (!PICK) return; [PICK.ma, PICK.mb].forEach(m => m && map.removeLayer(m)); PICK = null;
-  if (!keepCursor) { document.getElementById('map').classList.remove('picking'); document.getElementById('wrap').classList.remove('picking'); const h = document.getElementById('pickHint'); if (h) h.hidden = true; }
+  if (PICK) { [PICK.ma, PICK.mb].forEach(m => m && map.removeLayer(m)); PICK = null; }
+  if (!keepCursor) { setPicking(false); const h = document.getElementById('pickHint'); if (h) h.hidden = true; }
 }
 function pickTxt() {
-  const t = document.getElementById('pickTxt'); if (!t) return;
-  const f = ll => `${fmtLat(ll[0])}, ${fmtLon(ll[1])}`;
-  t.innerHTML = (PICK.a ? `<b>Start:</b> ${placeName(PICK.a)} <span class="muted">(${f(PICK.a)})</span>` : 'No start yet.') + '<br>' + (PICK.b ? `<b>End:</b> ${placeName(PICK.b)} <span class="muted">(${f(PICK.b)})</span><br><b>Straight-line distance:</b> ${fmtKm(dist(PICK.a, PICK.b))}` : 'No end yet.');
-  document.getElementById('ps1').className = PICK.a ? 'done' : 'now';
-  document.getElementById('ps2').className = PICK.b ? 'done' : PICK.a ? 'now' : '';
-  document.getElementById('ps3').className = PICK.a && PICK.b ? (PICK.locked ? 'done' : 'now') : '';
-  document.getElementById('pickLock').disabled = !(PICK.a && PICK.b);
+  if (!PICK) return;
+  const f = ll => `${fmtLat(ll[0])}, ${fmtLon(ll[1])}`, t = document.getElementById('pickTxt');
+  if (t) {
+    t.innerHTML = (PICK.a ? `<b>Start:</b> ${placeName(PICK.a)} <span class="muted">(${f(PICK.a)})</span>` : 'No start yet.') + '<br>' + (PICK.b ? `<b>End:</b> ${placeName(PICK.b)} <span class="muted">(${f(PICK.b)})</span><br><b>Straight-line distance:</b> ${fmtKm(dist(PICK.a, PICK.b))}` : 'No end yet.');
+    document.getElementById('ps1').className = PICK.a ? 'done' : 'now';
+    document.getElementById('ps2').className = PICK.b ? 'done' : PICK.a ? 'now' : '';
+    document.getElementById('ps3').className = PICK.a && PICK.b ? (PICK.locked ? 'done' : 'now') : '';
+    document.getElementById('pickLock').disabled = !(PICK.a && PICK.b);
+  }
   const h = document.getElementById('pickHint');
   if (h) { const step = !PICK.a ? '<span class="sdot" style="background:#34a853">S</span> Tap the map to set the <b>start</b>' : !PICK.b ? '<span class="sdot" style="background:#ea4335">E</span> Tap the map to set the <b>end</b>' : PICK.locked ? 'Route locked. Drag a pin to change it.' : 'Both points set. Drag a pin to adjust, then lock in.';
-    h.innerHTML = `<span>${step}</span>${PICK.a && PICK.b && !PICK.locked ? '<button class="btn" id="hintLock">Lock in route</button>' : ''}${PICK.a ? '<button class="btn ghost" id="hintReset">Reset</button>' : ''}`;
-    const hl = document.getElementById('hintLock'); if (hl) hl.onclick = () => lockPick();
-    const hr = document.getElementById('hintReset'); if (hr) hr.onclick = () => startPick(); }
+    h.innerHTML = `<span>${step}</span>${!PICK.a ? '<button class="btn ghost" id="hintMe">Start from my location</button>' : ''}${PICK.a && PICK.b && !PICK.locked ? '<button class="btn" id="hintLock">Lock in route</button>' : ''}${PICK.locked ? '<button class="btn ghost" id="hintBrief">Trip briefing</button>' : ''}${PICK.a ? '<button class="btn ghost" id="hintReset">Reset</button>' : ''}`;
+    const on = (id, fn) => { const b = document.getElementById(id); if (b) b.onclick = fn; };
+    on('hintLock', () => lockPick()); on('hintReset', resetPick); on('hintMe', () => pickAt(meAt())); on('hintBrief', showBrief); }
 }
-function placeName(ll) { const n = nearest(ll, 1)[0]; return n && n.d < 150 ? 'near ' + n.g[0] : 'open terrain'; }
+function placeName(ll) {
+  const stop = Object.entries(P).filter(([k]) => !/^(pickA|pickB|custom)$/.test(k)).map(([, p]) => ({ n: p.n, d: dist(ll, p.ll) })).sort((a, b) => a.d - b.d)[0];
+  if (stop && stop.d < 0.3) return stop.n.replace(/ \(.*\)$/, '');
+  const n = nearest(ll, 1)[0]; return n && n.d < 150 ? 'near ' + n.g[0] : 'open terrain'; }
 function pickAt(ll) {
   const mk = (c, t, which) => { const m = L.marker(ll, { icon: pinIcon(c, t), draggable: true, pane: 'pickPane' }).addTo(map);
     m.on('dragend', () => { const p = m.getLatLng(); PICK[which] = [p.lat, p.lng]; pickTxt(); if (PICK.locked) lockPick(true); }); return m; };
   if (!PICK.a) { PICK.a = ll; PICK.ma = mk('#34a853', 'S', 'a'); }
   else if (!PICK.b) { PICK.b = ll; PICK.mb = mk('#ea4335', 'E', 'b'); }
   else return;   // both set: drag the pins to move them
+  if (PICK.a && PICK.b) setPicking(false);
   pickTxt();
 }
 function lockPick(keepView) {
@@ -696,7 +714,7 @@ function showBrief() {
   if (!el) { el = document.createElement('div'); el.id = 'brief'; document.getElementById('map').appendChild(el); L.DomEvent.disableClickPropagation(el); L.DomEvent.disableScrollPropagation(el); }
   const here = meAt(), dS = dist(here, R.A.ll), g = legPlan(dS), total = g.h + R.oneWayH;
   el.innerHTML = `<div class="bh"><b>Trip briefing</b><button class="bx" id="briefX" aria-label="Close">×</button></div>
-    <div class="bsec"><h5>1. Getting to your start</h5>You are at <b>${dist(here, P.bradbury.ll) < 0.05 ? 'base (Bradbury Landing)' : fmtLat(here[0]) + ', ' + fmtLon(here[1])}</b>. The start pin is <b>${fmtKm(dS)}</b> away, to the ${compass(bearing(here, R.A.ll))}.<br>${g.txt}</div>
+    <div class="bsec"><h5>1. Getting to your start</h5>You are at <b>${dist(here, P.bradbury.ll) < 0.05 ? 'base (Bradbury Landing)' : fmtLat(here[0]) + ', ' + fmtLon(here[1])}</b>. ${dS < 0.5 ? 'The trip starts right here, so there is nothing extra to travel.' : `The start pin is <b>${fmtKm(dS)}</b> away, to the ${compass(bearing(here, R.A.ll))}.<br>${g.txt}`}</div>
     <div class="bsec"><h5>2. The trip</h5><b>${fmtKm(R.useKm)}</b> ${MODE_TXT[R.mode]}, about <b>${hrsTxt(R.oneWayH)}</b>. Leave ${hhmm(R.leave)}, arrive ${arriveTxt(R.arrive)}.<br><span class="pill ${R.cls}">${R.cls === 'NOGO' ? 'NO-GO' : R.cls}</span> ${R.verdict}</div>
     <div class="bsec"><h5>3. Total from base</h5>About <b>${hrsTxt(total)}</b> of travel${g.m === 'nav' || R.mode === 'nav' ? ', mostly flying' : ''}.</div>
     ${tripPanels(R.A.ll, R.leave, R.oneWayH)}

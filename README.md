@@ -78,7 +78,8 @@ Full credits, with links, are on the [Field Guide page](https://winschoolproject
 - Mission cards have small icons so each mission is easy to spot.
 - The planned route is coloured by zone (GO, CAUTION, NO-GO) at the time you reach each part, and follows the time slider.
 - Google-Maps-style tools: a place search box and a "Where am I?" button; the Field Guide explains how a crew knows where it is.
-- Mission 7 opens a Trip briefing on the map: how to get from where you are to the start pin (the nuclear-powered Navigator when it is far, with flying time and daylight legs), the trip itself with a travel mode chosen for the distance, the total time from base, and the Suit and Sun panels, before Start navigation.
+- In every mission you can tap a start (S) and an end (E) pin, or start from your own location, then press Lock in route. Mission 7 also zooms out to the whole planet.
+- Lock in route opens a Trip briefing on the map: how to get from where you are to the start pin (the nuclear-powered Navigator when it is far, with flying time and daylight legs), the trip itself with a travel mode chosen for the distance, the total time from base, and the Suit and Sun panels, before Start navigation.
 - Every planned route also shows the Suit and Sun panels in the Route tab.
 - A blue "You are here" pin is always on the map: at base, or following the walker during navigation.
 - Next step: draw routes only through GO zones, and suggest a stop-over at a shelter when there is no continuous GO path.
