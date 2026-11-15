@@ -49,6 +49,7 @@ Every page also has a **crew chat** and a **field camera**.
 4. Get power from sunlight
 5. Stay safe from radiation and dust
 6. Plan today's walk
+7. New area: tap a start and an end point anywhere on Mars, lock in the route, and the planner shows the stats
 
 ## Data sources
 

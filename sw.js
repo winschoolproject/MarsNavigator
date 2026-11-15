@@ -2,7 +2,7 @@
    Keeps a copy of the website and every map tile you have already looked at, so the app keeps working
    with no internet connection: at a base on Mars it would run from the habitat's own server.
    Code drafted with help from an SI assistant (Claude) and reviewed by the team. */
-const CORE = 'marsnav-core-v15', TILES = 'marsnav-tiles-v1';
+const CORE = 'marsnav-core-v16', TILES = 'marsnav-tiles-v1';
 const FILES = ['./', 'index.html', 'globe.html', 'guide.html', 'present.html', 'data.js', 'crew.js',
   'lib/leaflet/leaflet.js', 'lib/leaflet/leaflet.css', 'lib/three/three.module.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CORE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
