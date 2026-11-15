@@ -12,14 +12,15 @@
 html,body{margin:0;height:100%;background:#0b0706;color:var(--sand);font:13px/1.35 "Segoe UI",Calibri,Arial,sans-serif;overflow:hidden}
 #frame{position:absolute;left:50%;top:50%;width:min(100vw,177.78vh);height:min(56.25vw,100vh);transform:translate(-50%,-50%);background:radial-gradient(ellipse at 50% 50%,#1d1210 0%,#080505 70%);overflow:hidden;font-size:clamp(10px,calc(min(56.25vw,100vh) * 0.0128),20px)}
 /* ---------- phones, portrait tablets and narrow windows: stacked layout ---------- */
-@media (max-width:899px), (max-aspect-ratio:13/10){
+@media (max-width:899px), (max-aspect-ratio:3/2){
   html,body{overflow:auto;height:auto}
   #frame{position:static;transform:none;width:100%;height:auto;min-height:100vh;display:flex;flex-direction:column;gap:10px;padding:10px 10px 96px;font-size:14px;overflow:visible}
   #frame .box{position:static!important;width:auto!important;transform:none!important;max-width:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important}
   #title{order:1}#gl{order:2}#presets{order:3}#pos{order:4}#dirs{order:5}#suit{order:6}#sunbox{order:7}#earth{order:8}#legend{order:9}
   #gl{position:relative!important;inset:auto!important;height:min(96vw,64vh)!important;min-height:300px;border-radius:12px;background:radial-gradient(ellipse at 50% 50%,#1d1210 0%,#080505 75%)}
-  #presets{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;-webkit-overflow-scrolling:touch}
+  #presets{display:flex!important;flex-wrap:wrap!important;justify-content:center!important}
   #presets button{flex:0 0 auto}
+  nav{flex-wrap:wrap}
   #gcompass{top:8px!important;width:70px!important}#gcompass svg{width:44px!important;height:44px!important}
   nav a{padding:6px 10px}
 }
@@ -53,7 +54,7 @@ nav a:hover{background:#3b8a8e}nav a.on{background:#e3a857;border-color:#e3a857;
 .meter .bar{height:6px;background:#3a241d;border-radius:4px;overflow:hidden;margin-top:2px}
 .meter .bar i{display:block;height:100%;border-radius:4px}
 .pill{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:700;font-size:.85em;color:#1c1110}
-.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+.GO{background:#34a853;color:#fff}.CAUTION{background:#ea4335;color:#fff}.NOGO{background:#3b2a20;color:#f2e3cc;box-shadow:inset 0 0 0 1px #9a7a62}
 #sunbox{right:1.2%;top:47%;width:23.5%}
 #sunbox dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:.9em}
 #sunbox dt{color:var(--clay)}#sunbox dd{margin:0;text-align:right}
@@ -226,7 +227,7 @@ gl.prepend(renderer.domElement); gl.appendChild(document.getElementById('pin'));
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, 16 / 9, 0.1, 100);
 let camZ = 5.0, zoomK = 1; camera.position.set(0, 0, camZ);
-const MOBILE = () => matchMedia('(max-width:899px), (max-aspect-ratio:13/10)').matches;
+const MOBILE = () => matchMedia('(max-width:899px), (max-aspect-ratio:3/2)').matches;
 function setCam() { const a = camera.aspect || 1.78, fit = 1.3 / (Math.tan(Math.PI * 16 / 180) * Math.min(1, a)); const base = MOBILE() ? fit : Math.max(5.0, fit); camZ = Math.max(1.35, Math.min(12, base * zoomK)); camera.position.z = camZ; }
 scene.add(new THREE.AmbientLight(0xffffff, 0.11));
 const sunLight = new THREE.DirectionalLight(0xfff1e0, 2.4); scene.add(sunLight);

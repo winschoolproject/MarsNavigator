@@ -13,13 +13,13 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--basalt);color:var(--sand);font:15px/1.45 "Segoe UI",Calibri,Arial,sans-serif}
 a{color:var(--dust)}
-header{height:56px;display:flex;align-items:center;gap:18px;padding:0 16px;background:#140c0b;border-bottom:1px solid var(--line)}
+header{min-height:56px;display:flex;align-items:center;flex-wrap:wrap;gap:6px 18px;padding:6px 16px;background:#140c0b;border-bottom:1px solid var(--line)}
 header h1{font:700 21px Georgia,"Bookman Old Style",serif;margin:0;letter-spacing:.3px}
 header h1 span{color:var(--dust);font-weight:400;font-size:15px;margin-left:8px}
 header nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
 header nav a,header nav button{background:transparent;border:1px solid var(--line);color:var(--sand);padding:6px 12px;border-radius:6px;text-decoration:none;font:inherit;cursor:pointer}
 header nav a:hover,header nav button:hover{border-color:var(--dust)}
-#wrap{position:absolute;top:56px;bottom:0;left:0;right:0;display:flex}
+#wrap{position:absolute;top:var(--hdr,56px);bottom:0;left:0;right:0;display:flex}
 aside.hide{display:none!important}
 aside{width:390px;min-width:390px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
 .tabs{display:flex;border-bottom:1px solid var(--line)}
@@ -46,7 +46,7 @@ input[type=range]{width:100%;accent-color:var(--ember)}
 .kv dt{color:var(--clay)}
 .kv dd{margin:0}
 .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px;color:#1c1110}
-.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+.GO{background:#34a853;color:#fff}.CAUTION{background:#ea4335;color:#fff}.NOGO{background:#3b2a20;color:#f2e3cc;box-shadow:inset 0 0 0 1px #9a7a62}
 #map{flex:1;background:#0b0706}
 #clock{position:absolute;right:12px;top:12px;z-index:800;background:rgba(28,17,16,.92);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:290px}
 #clock .t{font:700 20px Georgia,serif}
@@ -86,11 +86,14 @@ input[type=range]{width:100%;accent-color:var(--ember)}
 #profile svg{width:100%;height:120px;background:#1f1412;border-radius:6px}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-2px}
 .credit{font-size:13px;color:var(--clay);border-top:1px solid var(--line);margin-top:16px;padding-top:10px}
+@media (min-width:901px) and (max-width:1366px){header nav a,header nav button{font-size:14px!important;padding:5px 10px!important}header h1 span{font-size:13px}}
+@media (min-width:901px) and (max-width:1200px){header h1 span{display:none}}
 @media (max-width:900px){aside{position:absolute;z-index:900;height:100%;width:100%;min-width:0;display:none}aside.open{display:flex}
   header{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 10px;gap:6px}
   header h1{font-size:18px}
-  header nav{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
-  header nav a,header nav button{flex:0 0 auto;font-size:13px;padding:6px 10px}
+  header nav{margin-left:0;width:100%;flex-wrap:wrap;gap:5px}
+  header nav a,header nav button{flex:0 0 auto;font-size:12.5px!important;padding:5px 9px!important}
+  header h1 span{display:none}
   #wrap{top:var(--hdr,96px)}
   #readout{display:none}
   #clock{top:auto;bottom:34px;left:8px;right:auto;width:200px;padding:8px 10px}
@@ -111,6 +114,16 @@ nav a[href="guide.html#team"]{background:#6f4b8f!important;border-color:#a888c8!
 nav a:hover,#menuBtn:hover{filter:brightness(1.15)}
 nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 .cu-tag span{display:inline-block;white-space:nowrap;transform:translate(calc(-100% - 4px),calc(-100% - 4px));background:rgba(20,12,11,.82);color:#f2e3cc;border:1px solid #e3a857;border-radius:4px;padding:2px 7px;font:600 11px 'Segoe UI',Arial;pointer-events:none}
+.obj{position:relative;padding-left:52px!important}.obj .oi{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;fill:none;stroke:#e3a857;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gmap-ctl{background:#1c1110;border:1px solid #4a2f26;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.45);color:#f2e3cc}
+.gmap-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:0;color:#f2e3cc;padding:0}
+.gmap-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.gmap-btn:hover{color:#e3a857}
+#srch{display:flex;align-items:center}#srch input{display:none;width:230px;max-width:58vw;background:transparent;border:0;outline:0;color:#f2e3cc;font:14px 'Segoe UI',Arial;padding:0 8px 0 0}
+#srch.open input{display:block}
+#srchList{position:absolute;top:38px;left:0;width:270px;max-width:72vw;max-height:260px;overflow:auto;background:#1c1110;border:1px solid #4a2f26;border-radius:8px;display:none;z-index:1000}
+#srchList div{padding:7px 10px;font-size:13px;cursor:pointer;border-bottom:1px solid #2b1a16}#srchList div:hover,#srchList div.on{background:#3a241d}#srchList small{color:#d9c2a3;margin-left:6px}
+.leaflet-popup-content a{color:#e3a857}
 </style>
 </head>
 <body>
@@ -135,8 +148,8 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
   </div>
 
   <div class="pane on" id="p-plan">
-    <h2>What is your mission today?</h2>
-    <p class="muted">Pick an objective. The map moves there, turns on the right NASA data layers and shows a checklist.</p>
+    <h2>Choose a mission</h2>
+    <p class="muted">Tap one mission below. The map flies to the right place, turns on the right NASA data and shows a short checklist.</p>
     <div id="objList"></div>
     <div id="objCard"></div>
   </div>
@@ -150,11 +163,10 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
       <label>Travel mode<select id="rMode"><option value="walk">On foot (suited)</option><option value="rover">Pressurised rover</option><option value="nav">Nuclear-Powered Navigator (aircraft)</option></select></label>
       <label>Speed, km/h<input id="rSpeed" type="number" min="0.5" max="600" step="0.5" value="2"></label>
     </div>
-    <label style="display:block;margin-top:8px">Time at each science stop, minutes<input id="rStop" type="number" min="0" max="240" step="5" value="30"></label>
     <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="rGo">Plan route</button><button class="btn ghost" id="rClear">Clear</button></div>
     <div id="rOut"></div>
     <div id="profile"></div>
-    <p class="muted">Speeds are planning assumptions you can change. The turn-back rule (leave 10:30, back by 15:30 local solar time) comes from our temperature layer.</p>
+    <p class="muted">Speeds are planning assumptions you can change. The plan is one way: leave at 10:30 and arrive by 15:30 local solar time, the GO window from our temperature layer.</p>
     <h3>Three ways to travel</h3>
     <div class="card" style="font-size:14px">
       <b>1. On foot</b> (default 2 km/h): short walks near base, in pairs, inside the GO window.<br>
@@ -170,9 +182,9 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
     <div id="ovList"></div>
     <h3>Legend</h3>
     <div class="legend">
-      <div><i style="background:var(--sage)"></i>GO: warm enough to walk (daytime, our model)</div>
-      <div><i style="background:var(--dust)"></i>CAUTION: cold, short walks only</div>
-      <div><i style="background:var(--frost)"></i>NO-GO: night, or below −60 °C</div>
+      <div><i style="background:#34a853"></i>GO (green): warm enough to walk (daytime, our model)</div>
+      <div><i style="background:#ea4335"></i>CAUTION (red): cold, short walks only</div>
+      <div><i style="background:#3b2a20;box-shadow:inset 0 0 0 1px #9a7a62"></i>NO-GO (dark brown): night, or below −60 °C</div>
       <div><i style="background:#ffffff;opacity:.7"></i>Buried ice most likely (SWIM, Arcadia band)</div>
       <div><i style="background:#ff7a3d"></i>Curiosity's real drive path</div>
       <div><i style="background:#6fd1ff"></i>Perseverance's real drive path</div>
@@ -184,7 +196,7 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 
   <div class="pane" id="p-info">
     <h2>Here</h2>
-    <p class="muted">Click anywhere on Mars to see what is there.</p>
+    <p class="muted">Click anywhere on Mars to see what is there. <a href="guide.html#whereami" target="_blank" rel="noopener">How does a crew know where it is?</a></p>
     <div id="infoOut"></div>
   </div>
   <div class="credit" style="padding:0 16px 12px">Made by a team of Year 5 students from Winchester School, Jebel Ali, Dubai. Imagery: NASA/JPL Mars Trek. <a href="guide.html#team">All credits</a></div>
@@ -316,8 +328,8 @@ function drawZones() {
   const h = +clockR.value;
   for (let lat = -90; lat < 90; lat += 5) {
     const z = zone(lat + 2.5, h).z;
-    const col = z === 'GO' ? '#7fa37a' : z === 'CAUTION' ? '#e3a857' : '#8db9cc';
-    L.rectangle([[lat, -180], [lat + 5, 180]], { stroke: false, fillColor: col, fillOpacity: 0.22, interactive: false }).addTo(zoneLayer);
+    const col = z === 'GO' ? '#34a853' : z === 'CAUTION' ? '#ea4335' : '#2a1a12';
+    L.rectangle([[lat, -180], [lat + 5, 180]], { stroke: false, fillColor: col, fillOpacity: z === 'NOGO' ? 0.4 : 0.25, interactive: false }).addTo(zoneLayer);
   }
 }
 /* Buried ice (SWIM) */
@@ -456,6 +468,35 @@ function fitChrome() {
 }
 addEventListener('resize', fitChrome); fitChrome();
 
+
+/* Google-Maps-style tools: search for a place, and "where am I?" */
+const SRCH = Object.values(P).map(p => ({ n: p.n, ll: p.ll, k: 'Route stop', z: 12 }))
+  .concat(GAZ.map(g => ({ n: g[0], ll: [g[1], g[2]], k: FEATURE_TYPES[g[4]] || 'Place', z: g[3] > 400 ? 4 : g[3] > 120 ? 6 : g[3] > 30 ? 8 : 10 })));
+const MapTools = L.Control.extend({ options: { position: 'topleft' }, onAdd() {
+  const box = L.DomUtil.create('div', 'leaflet-bar gmap-wrap');
+  box.style.cssText = 'border:0;background:none;box-shadow:none;display:flex;flex-direction:column;gap:6px;position:relative';
+  box.innerHTML = `<div id="srch" class="gmap-ctl"><button class="gmap-btn" id="srchBtn" title="Search for a place on Mars" aria-label="Search for a place on Mars"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></button><input id="srchIn" placeholder="Search Mars: Gale, Olympus Mons…" autocomplete="off" aria-label="Place name"><div id="srchList" role="listbox"></div></div>
+    <div class="gmap-ctl" style="width:34px"><button class="gmap-btn" id="meBtn" title="Where am I? Centre the map on the crew" aria-label="Where am I"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button></div>`;
+  L.DomEvent.disableClickPropagation(box); L.DomEvent.disableScrollPropagation(box);
+  return box; } });
+new MapTools().addTo(map);
+(() => {
+  const wrap = document.getElementById('srch'), inp = document.getElementById('srchIn'), list = document.getElementById('srchList');
+  let hits = [], on = 0;
+  const go = h => { list.style.display = 'none'; inp.value = h.n; wrap.classList.remove('open'); STILL ? map.setView(h.ll, h.z, { animate: false }) : map.flyTo(h.ll, h.z, { duration: 1 }); showInfo(h.ll); showTab('info'); };
+  const draw = () => { list.innerHTML = hits.map((h, i) => `<div class="${i === on ? 'on' : ''}" data-i="${i}">${h.n}<small>${h.k}</small></div>`).join(''); list.style.display = hits.length ? 'block' : 'none'; };
+  document.getElementById('srchBtn').onclick = () => { wrap.classList.toggle('open'); if (wrap.classList.contains('open')) inp.focus(); else list.style.display = 'none'; };
+  inp.oninput = () => { const q = inp.value.trim().toLowerCase(); on = 0; if (q.length < 2) { hits = []; draw(); return; }
+    hits = SRCH.filter(h => h.n.toLowerCase().includes(q)).sort((a, b) => a.n.toLowerCase().indexOf(q) - b.n.toLowerCase().indexOf(q)).slice(0, 8); draw(); };
+  inp.onkeydown = e => { if (e.key === 'ArrowDown') { on = Math.min(hits.length - 1, on + 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { on = Math.max(0, on - 1); draw(); e.preventDefault(); } else if (e.key === 'Enter' && hits[on]) go(hits[on]); else if (e.key === 'Escape') { wrap.classList.remove('open'); list.style.display = 'none'; } };
+  list.onclick = e => { const d = e.target.closest('[data-i]'); if (d) go(hits[+d.dataset.i]); };
+  document.getElementById('meBtn').onclick = () => {
+    const ll = NAV ? navPos(NAV.s).ll : P.bradbury.ll, base = P.bradbury.ll, d = dist(base, ll);
+    STILL ? map.setView(ll, Math.max(map.getZoom(), 14), { animate: false }) : map.flyTo(ll, Math.max(map.getZoom(), 14), { duration: 1 });
+    L.popup({ className: 'me-pop' }).setLatLng(ll).setContent(`<b>You are here</b><br>${fmtLat(ll[0])}, ${Math.abs(ll[1]).toFixed(3)}°${ll[1] >= 0 ? 'E' : 'W'}<br>${d < 0.05 ? 'At base (Bradbury Landing)' : fmtKm(d) + ' ' + compass(bearing(base, ll)) + ' of base'}<br><span class="muted">${NAV ? 'On the route (simulated walk).' : 'Demo: the crew starts at base.'}</span><br><a href="guide.html#whereami" target="_blank" rel="noopener">How do we know where we are?</a>`).openOn(map);
+  };
+})();
+
 /* Clock */
 const clockR = document.getElementById('clockR'), clockT = document.getElementById('clockT'), clockZ = document.getElementById('clockZ');
 let selected = P.bradbury.ll.slice();
@@ -464,6 +505,7 @@ function updClock() {
   clockT.textContent = hhmm(h);
   clockZ.innerHTML = `<span class="pill ${z.z}">${z.label}</span> &nbsp;air ≈ ${Math.round(z.t)} °C at ${fmtLat(selected[0])} <span class="muted">(model)</span>`;
   if (map.hasLayer(zoneLayer)) drawZones();
+  if (LASTROUTE && !NAV && document.querySelector('#rOut .card')) planRoute(true); else if (LASTROUTE) drawRouteZones();
 }
 clockR.addEventListener('input', updClock);
 
@@ -506,27 +548,28 @@ document.getElementById('menuBtn').textContent = matchMedia('(max-width:900px)')
 
 /* ---------- Objectives ---------- */
 const OBJ = [
-  { id: 'base', t: 'Land safely and set up base', s: 'Gale Crater floor, near Bradbury Landing', view: [[-4.75, 137.35], 7], baseL: 'Height map (MOLA laser altimeter)', ov: { ez: 1, pois: 1, paths: 1, gale: 1 }, ez: P.bradbury.ll,
+  { id: 'base', t: '1. Land and build a base', s: 'Where: Gale Crater, near where Curiosity landed', view: [[-4.75, 137.35], 7], baseL: 'Height map (MOLA laser altimeter)', ov: { ez: 1, pois: 1, paths: 1, gale: 1 }, ez: P.bradbury.ll,
     why: 'Low ground means more air above you to slow a heavy lander, and being close to the equator means warmer days.',
     list: ['Low elevation: the Gale floor is about 4,500 m below Mars datum (rover data).', 'Close to the equator (4.6°S): the most GO hours on our temperature layer.', 'Flat landing ground, away from Mount Sharp’s steep slopes.', 'Science and resources within the 100 km Exploration Zone NASA plans around a human landing site.'] },
-  { id: 'water', t: 'Find water ice', s: 'Arcadia Planitia and Deuteronilus Mensae', view: [[46, -158], 4], baseL: 'Height map (MOLA laser altimeter)', ov: { ice: 1, pois: 1, ti: 1 },
+  { id: 'water', t: '2. Find water ice', s: 'Where: Arcadia Planitia and Deuteronilus Mensae', view: [[46, -158], 4], baseL: 'Height map (MOLA laser altimeter)', ov: { ice: 1, pois: 1, ti: 1 },
     why: 'Water means drinking water, oxygen and rocket fuel for the trip home, so the first bases want ice close by.',
     list: ['Strongest buried-ice signals: about 40° to 52°N (SWIM).', 'Ice within 3 m of the surface is stable above about 50° latitude, but those places are colder with long winter nights.', 'Trade-off: choose the warmest spot that is still near ice.', 'Look for low thermal inertia (TES layer) and smooth icy mantles in close-up images.'] },
-  { id: 'life', t: 'Search for signs of ancient life', s: 'Mount Sharp layers and Jezero delta', view: [[-4.7, 137.4], 11], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, jezero: 1 },
+  { id: 'life', t: '3. Look for signs of ancient life', s: 'Where: Mount Sharp layers and the Jezero delta', view: [[-4.7, 137.4], 11], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, jezero: 1 },
     why: 'Old lakes and rivers are the best places to look for traces of past life.',
     list: ['Yellowknife Bay: first rock drilled on Mars, from an ancient lake.', 'Pahrump Hills: mudstone at the base of Mount Sharp.', 'Boxwork ridges: minerals left by groundwater.', 'Jezero Crater: river delta studied and sampled by Perseverance (use “Jump to Jezero”).'] },
-  { id: 'power', t: 'Power the base', s: 'Solar farm sites', view: [[20, 20], 1.5], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, dust: 1 },
+  { id: 'power', t: '4. Get power from sunlight', s: 'Where: the best spots for solar farms', view: [[20, 20], 1.5], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, dust: 1 },
     why: 'Sunlight on Mars is less than half of Earth’s, and dust storms can block it for weeks.',
     list: ['Option 1: three farms on the equator (Meridiani, Tharsis, Elysium). Their biggest gap is about 158° of longitude, less than half a turn, so one farm is always in daylight.', 'Option 2: one farm on Planum Boreum, sunlit non-stop through northern spring and summer, then dark for months.', 'Keep panels clean: check the TES dust layer.', 'Keep a backup that does not depend on sunshine.'] },
-  { id: 'safe', t: 'Stay safe: radiation and dust', s: 'Shelters and storm rules', view: [[-4.72, 137.38], 12], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, zones: 0 },
+  { id: 'safe', t: '5. Stay safe from radiation and dust', s: 'Where: shelters and dust storm rules near Gale', view: [[-4.72, 137.38], 12], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, zones: 0 },
     why: 'Mars has thin air and no global magnetic field, so radiation is about 0.64 mSv a day at Gale (Curiosity RAD).',
     list: ['Murray Buttes: parked by the cliff, Curiosity measured 4% less radiation.', 'Cliffs, overhangs and caves are shelter spots during a solar storm.', 'Dusty days are CAUTION days: in 2018 UV sunlight at Gale dropped by 90% and you could see only about 2.7 km.', 'Helmet alert: arrow to the nearest shelter, radiation and dust levels, time left outside.'] },
-  { id: 'walk', t: 'Daily Marswalk', s: 'Route card: Bradbury Landing to Yellowknife Bay', view: [[-4.59, 137.445], 15], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1 }, route: ['bradbury', 'yellowknife'],
+  { id: 'walk', t: '6. Plan today\'s walk', s: 'Route card: Bradbury Landing to Yellowknife Bay', view: [[-4.59, 137.445], 15], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1 }, route: ['bradbury', 'yellowknife'],
     why: 'A short first walk on ground Curiosity has already driven.',
     list: ['Leave 10:30 in the GO zone; turn back by 14:30; inside by 15:30.', 'Walk in pairs; carry spare oxygen for the walk back.', 'Check the dust layer and solar storm alerts before leaving.', 'Use two ways to know where you are: map grid and landmarks (Mount Sharp rises to the south-east).'] }
 ];
 const objList = document.getElementById('objList'), objCard = document.getElementById('objCard');
-OBJ.forEach(o => { const b = document.createElement('button'); b.className = 'obj'; b.dataset.id = o.id; b.innerHTML = `<b>${o.t}</b><small>${o.s}</small>`; b.onclick = () => runObj(o); objList.appendChild(b); });
+const OBJ_ICON = {"base": "<path d=\"M3 19h18\"/><path d=\"M5 19a7 7 0 0 1 14 0\"/><path d=\"M12 12V9\"/><path d=\"M9 19v-3h6v3\"/>", "water": "<path d=\"M12 3c3.5 5 6 8.2 6 11.2A6 6 0 0 1 6 14.2C6 11.2 8.5 8 12 3z\"/>", "life": "<circle cx=\"10.5\" cy=\"10.5\" r=\"6\"/><path d=\"M15 15l6 6\"/>", "power": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1\"/>", "safe": "<path d=\"M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z\"/><path d=\"M9 12l2 2 4-4\"/>", "walk": "<circle cx=\"13\" cy=\"4\" r=\"2\"/><path d=\"M13 7l-2 6 3 3v5\"/><path d=\"M11 13l-3 7\"/><path d=\"M12 9l4 2\"/><path d=\"M12 9l-4 2\"/>"};
+OBJ.forEach(o => { const b = document.createElement('button'); b.className = 'obj'; b.dataset.id = o.id; b.innerHTML = `<svg class="oi" viewBox="0 0 24 24" aria-hidden="true">${OBJ_ICON[o.id] || ''}</svg><b>${o.t}</b><small>${o.s}</small>`; b.onclick = () => runObj(o); objList.appendChild(b); });
 function runObj(o, startView) {
   objList.querySelectorAll('.obj').forEach(b => b.classList.toggle('on', b.dataset.id === o.id));
   Object.values(base).forEach(l => map.removeLayer(l)); base[o.baseL].addTo(map);
@@ -553,11 +596,11 @@ function addCustom(ll) {
   fillSel(); rEnd.value = 'custom';
 }
 function nearIdx(path, ll) { let bi = 0, bd = 1e9; path.forEach((p, i) => { const d = dist(ll, [p.lat, p.lon]); if (d < bd) { bd = d; bi = i; } }); return { i: bi, d: bd }; }
-let LASTROUTE = null;
-function planRoute() {
+var LASTROUTE = null;
+function planRoute(keepView) {
   routeLayer.clearLayers();
   const A = P[rStart.value], B = P[rEnd.value]; if (!A || !B || A === B) { rOut.innerHTML = '<p class="muted">Pick two different places.</p>'; return; }
-  const mode = document.getElementById('rMode').value, v = Math.max(0.5, +document.getElementById('rSpeed').value || 2), stop = Math.max(0, +document.getElementById('rStop').value || 0), fly = mode === 'nav';
+  const mode = document.getElementById('rMode').value, v = Math.max(0.5, +document.getElementById('rSpeed').value || 2), fly = mode === 'nav';
   const ia = nearIdx(MSL, A.ll), ib = nearIdx(MSL, B.ll);
   let pts, km, gain = null, loss = null, onPath = !fly && ia.d < 0.3 && ib.d < 0.3, odo = null;
   if (onPath) {
@@ -573,27 +616,43 @@ function planRoute() {
   }
   const useKm = odo || km;
   LASTROUTE = { pts, dest: B.n, v, mode };
-  L.polyline(pts, { color: '#ffd34d', weight: 6, opacity: .9 }).addTo(routeLayer);
+  LASTROUTE.zl = L.layerGroup().addTo(routeLayer); drawRouteZones();
   L.polyline(pts, { color: '#1c1110', weight: 2, dashArray: '6 8' }).addTo(routeLayer);
-  map.fitBounds(L.latLngBounds(pts).pad(0.3));
-  const oneWayH = useKm / v + (fly ? 0.25 : 0), roundH = 2 * oneWayH + stop / 60, leave = 10.5, back = leave + roundH;
+  if (keepView !== true) map.fitBounds(L.latLngBounds(pts).pad(0.3));
+  const oneWayH = useKm / v + (fly ? 0.25 : 0), leave = +clockR.value, arrive = leave + oneWayH;
+  const zoneAt = a => a <= 15.5 ? 'GO' : a <= 17 ? 'CAUTION' : 'NOGO';
   let verdict, cls;
-  if (fly) { verdict = `Fly at about 1.5 km altitude. ${fmtKm(useKm)} takes ${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} including take-off and landing. Land only on a checked, flat landing zone, in daylight.${back > 17.5 ? ' A same-sol round trip would land after dark, so plan to stay overnight at the destination.' : ''}`; cls = back <= 17.5 ? 'GO' : 'CAUTION'; }
-  else if (mode === 'walk' && useKm > 15) { verdict = 'Too far to walk and come back in one sol. Use the pressurised rover or plan a multi-sol traverse.'; cls = 'NOGO'; }
-  else if (back <= 15.5) { verdict = `Out and back by ${hhmm(back)}: fits inside the GO window.`; cls = 'GO'; }
-  else if (back <= 17) { verdict = `Back by ${hhmm(back)}: past the 15:30 limit. Shorten the stop or start earlier.`; cls = 'CAUTION'; }
-  else { verdict = `Back by ${hhmm(back)}, after dark. Split into a multi-sol traverse with an overnight shelter.`; cls = 'NOGO'; }
-  const zA = zone(A.ll[0], 10.5), zB = zone(B.ll[0], 13.5);
+  if (fly) { cls = zoneAt(arrive); verdict = `Fly at about 1.5 km altitude. ${fmtKm(useKm)} takes ${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} including take-off and landing, so you arrive about ${hhmm(arrive)}. Land only on a checked, flat landing zone, in daylight.${cls === 'NOGO' ? ' That is after dark: stop at a shelter and finish the trip next sol.' : ''}`; }
+  else if (mode === 'walk' && useKm > 15) { verdict = 'Too far to walk safely in one sol. Use the pressurised rover or plan a multi-sol traverse.'; cls = 'NOGO'; }
+  else if (arrive <= 15.5) { verdict = `Arrive by ${hhmm(arrive)}: the whole one-way trip fits inside the GO window.`; cls = 'GO'; }
+  else if (arrive <= 17) { verdict = `Arrive at ${hhmm(arrive)}: after the 15:30 limit. Start earlier, or stop at a shelter on the way.`; cls = 'CAUTION'; }
+  else { verdict = `Arrive at ${hhmm(arrive)}, after dark. Split the trip over more than one sol, with an overnight shelter.`; cls = 'NOGO'; }
+  const zA = zone(A.ll[0], leave), zB = zone(B.ll[0], 13.5);
   rOut.innerHTML = `<div class="card"><dl class="kv">
     <dt>Route</dt><dd>${fly ? 'Straight line through the air (Navigator)' : onPath ? 'Along Curiosity’s real drive path' : 'Shortest path over the surface'}</dd>
     <dt>Distance</dt><dd><b>${fmtKm(useKm)}</b> one way${odo ? ' <span class="muted">(Curiosity odometer)</span>' : (onPath ? ' <span class="muted">(between NASA waypoints)</span>' : '')}</dd>
     ${gain != null ? `<dt>Climb</dt><dd>+${Math.round(gain)} m / −${Math.round(loss)} m</dd>` : ''}
     <dt>Heading</dt><dd>${compass(bearing(A.ll, B.ll))} (${Math.round(bearing(A.ll, B.ll))}°)</dd>
-    <dt>Time</dt><dd>${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} each way at ${v} km/h${fly ? ' (incl. 15 min take-off and landing)' : ''}, plus ${stop} min at the stop</dd>
-    <dt>Leave 10:30</dt><dd><span class="pill ${zA.z}">${zA.label}</span> at start</dd>
+    <dt>Time</dt><dd>${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} one way at ${v} km/h${fly ? ' (incl. 15 min take-off and landing)' : ''}</dd>
+    <dt>Arrive</dt><dd>about ${hhmm(arrive)} <span class="muted">(leaving at ${hhmm(leave)})</span></dd>
+    <dt>Leave ${hhmm(leave)}</dt><dd><span class="pill ${zA.z}">${zA.label}</span> at start <span class="muted">(move the time slider to change)</span></dd>
+    <dt>Route colour</dt><dd><span class="pill GO">GO</span> <span class="pill CAUTION">CAUTION</span> <span class="pill NOGO">NO-GO</span> <span class="muted">the zone when you reach each part of the route</span></dd>
     <dt>Verdict</dt><dd><span class="pill ${cls}">${cls === 'NOGO' ? 'NO-GO' : cls}</span> ${verdict}</dd>
   </dl><button class="btn" id="navStart" style="margin-top:10px">Start navigation</button></div>`;
   document.getElementById('navStart').onclick = startNav;
+}
+/* Colour each part of the route by the zone at the time you reach it */
+function drawRouteZones() {
+  const R = LASTROUTE; if (!R || !R.zl) return; R.zl.clearLayers();
+  const leave = NAV ? NAV.clock0 : +clockR.value, col = { GO: '#34a853', CAUTION: '#ea4335', NOGO: '#3b2a20' };
+  let run = [R.pts[0]], cur = null, km = 0;
+  const flush = () => { if (run.length > 1) L.polyline(run, { color: col[cur], weight: 8, opacity: .95, interactive: false }).addTo(R.zl); };
+  for (let i = 1; i < R.pts.length; i++) {
+    const segKm = dist(R.pts[i - 1], R.pts[i]), t = leave + (km + segKm / 2) / R.v + (R.mode === 'nav' ? 0.125 : 0), zm = zone(R.pts[i - 1][0], t).z, zr = t <= 15.5 ? 'GO' : t <= 17 ? 'CAUTION' : 'NOGO', rank = { GO: 0, CAUTION: 1, NOGO: 2 }, z = rank[zm] >= rank[zr] ? zm : zr; km += segKm;
+    if (z !== cur && cur) { flush(); run = [R.pts[i - 1]]; }
+    cur = z; run.push(R.pts[i]);
+  }
+  flush();
 }
 function drawProfile(seg) {
   const W = 340, H = 110, els = seg.map(p => p.el), mn = Math.min(...els), mx = Math.max(...els), sp = Math.max(10, mx - mn);
@@ -618,7 +677,7 @@ const ICONS = {
   right: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M18 38V24a6 6 0 0 1 6-6h11M29 11l7 7-7 7" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
   arrive: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M24 40s-11-12-11-20a11 11 0 0 1 22 0c0 8-11 20-11 20z" fill="#fff"/><circle cx="24" cy="20" r="4" fill="#2f6b45"/>'
 };
-let NAV = null;
+var NAV = null;
 const fmtDur = m => m < 1 ? 'under 1 min' : m < 60 ? Math.round(m) + ' min' : Math.floor(m / 60) + ' h ' + Math.round(m % 60) + ' min';
 function startNav() {
   if (!LASTROUTE) { planRoute(); if (!LASTROUTE) return; }
@@ -692,7 +751,7 @@ map.on('dragstart', () => { if (NAV) NAV.follow = false; });
 
 /* Start */
 fillSel(); drawPaths(); refreshNames(); updClock(); loadLive();
-runObj(OBJ[0], OBJ[0].view);   // home: Land safely and set up base, zoomed out over Gale Crater
+runObj(OBJ[0], OBJ[0].view);   // home: mission 1, zoomed out over Gale Crater
 </script>
 <script>
 window.CREW_CFG = {

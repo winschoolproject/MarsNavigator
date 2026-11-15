@@ -87,9 +87,9 @@
   .crew-lb{position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#f2e3cc;font:14px "Segoe UI",Arial}
   .crew-lb.open{display:flex}.crew-lb img,.crew-lb video{max-width:90vw;max-height:75vh;border-radius:8px}
   h5.crew-h{margin:12px 0 4px;font:700 14px Georgia,serif;color:#e3a857}
-  @media (max-width:899px), (max-aspect-ratio:13/10){
+  @media (max-width:899px), (max-aspect-ratio:3/2){
     .crew-fabs{left:auto!important;top:auto!important;right:12px!important;bottom:26px!important;position:fixed!important}
-    .crew-fab{width:48px;height:48px}
+    .crew-fab{width:44px;height:44px}.crew-fab .lbl2{display:none}.crew-fabs{gap:8px!important}
     .crew-panel{left:8px!important;right:8px!important;top:auto!important;bottom:92px!important;width:auto!important;height:min(70vh,560px)!important}
   }`;
   const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);

@@ -87,7 +87,7 @@ body.linktop #sitelink{top:14px;bottom:auto;right:18px;font-size:16px;padding:5p
 </head>
 <body>
 <div id="rotate">Turn your phone sideways to watch the presentation full size</div>
-<div id="stage">
+<div id="fitbox" style="position:fixed;inset:0;overflow:hidden"><div id="stage">
   <div id="bar">
     <b>Mars Navigator</b><span style="color:var(--clay);font-size:13px">Team presentation</span>
     <span class="sp"></span>
@@ -110,7 +110,7 @@ body.linktop #sitelink{top:14px;bottom:auto;right:18px;font-size:16px;padding:5p
     <div class="row"><button class="g" id="startVoice">Sound: on</button></div>
     <p style="font-size:12px">Keys: space = play or pause, arrows = previous or next slide. The presenters are illustrations and the voices are computer-generated.</p>
   </div>
-</div>
+</div></div>
 
 <script src="audio/narration.js"></script>
 <script>
@@ -238,7 +238,7 @@ const V = {
   objectives: () => `${head('PLAN BY OBJECTIVE', 'Pick today’s mission')}
     ${img('app-ice.jpg', 0, 96, 600, 338, '', .1)}
     <div class="chips" style="position:absolute;left:624px;top:100px;width:264px;flex-direction:column">
-      ${['Land and set up base', 'Find water ice', 'Search for ancient life', 'Power the base', 'Stay safe', 'Daily Marswalk'].map((t, i) => `<span class="chip pop ${i === 1 ? 'hl' : ''}" style="animation-delay:${.3 + i * .15}s">${i + 1}. ${t}</span>`).join('')}</div>
+      ${['Land and build a base', 'Find water ice', 'Look for ancient life', 'Get power from sunlight', 'Stay safe', 'Plan today’s walk'].map((t, i) => `<span class="chip pop ${i === 1 ? 'hl' : ''}" style="animation-delay:${.3 + i * .15}s">${i + 1}. ${t}</span>`).join('')}</div>
     <div class="src">NASA/JPL Mars Trek (MOLA) · buried ice band: SWIM project, PSI/NASA JPL</div>`,
   route: () => `${head('NAVIGATE', 'Turn by turn, on proven ground')}
     ${img('app-walk.jpg', 0, 96, 640, 360, '', .1)}

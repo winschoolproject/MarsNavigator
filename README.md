@@ -43,12 +43,12 @@ Every page also has a **crew chat** and a **field camera**.
 
 ## Mission objectives
 
-1. Land safely and set up base
+1. Land and build a base
 2. Find water ice
-3. Search for signs of ancient life
-4. Power the base
+3. Look for signs of ancient life
+4. Get power from sunlight
 5. Stay safe from radiation and dust
-6. Daily Marswalk
+6. Plan today's walk
 
 ## Data sources
 
@@ -68,6 +68,16 @@ Every page also has a **crew chat** and a **field camera**.
 - MANGLE nuclear Mars aircraft study, AIAA 2014-3820; ARES Mars airplane, NASA Langley; Ingenuity records, NASA JPL
 
 Full credits, with links, are on the [Field Guide page](https://winschoolproject.github.io/MarsNavigator/guide.html#team).
+
+## Tester feedback and next steps
+
+- Colours now follow a road-map style: GO green, CAUTION red, NO-GO dark brown.
+- Mission names are simpler and numbered.
+- The route planner is one way: the stay time at the end point was removed, and the verdict uses the arrival time.
+- Mission cards have small icons so each mission is easy to spot.
+- The planned route is coloured by zone (GO, CAUTION, NO-GO) at the time you reach each part, and follows the time slider.
+- Google-Maps-style tools: a place search box and a "Where am I?" button; the Field Guide explains how a crew knows where it is.
+- Next step: draw routes only through GO zones, and suggest a stop-over at a shelter when there is no continuous GO path.
 
 ## Future data source: the UAE's Hope probe
 

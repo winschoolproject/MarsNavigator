@@ -36,7 +36,7 @@ th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertic
 th{color:var(--dust);font-weight:700}
 .fix{background:#2a2016;border-left:4px solid var(--dust);padding:10px 14px;border-radius:6px;font-size:15px}
 .pill{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:700;font-size:13px;color:#1c1110}
-.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+.GO{background:#34a853;color:#fff}.CAUTION{background:#ea4335;color:#fff}.NOGO{background:#3b2a20;color:#f2e3cc;box-shadow:inset 0 0 0 1px #9a7a62}
 ol.rules{columns:2;column-gap:30px}
 ol.rules li{margin:0 0 6px;break-inside:avoid}
 .src li{margin:0 0 7px;word-break:break-word}
@@ -65,7 +65,7 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
   <b>Mars Navigator</b>
   <nav>
     <a href="index.html">Map</a><a href="globe.html">3D Globe</a><a href="present.html">Presentation</a>
-    <a href="#objectives">Objectives</a><a href="#on-mars">On Mars</a><a href="#travel">Travel</a><a href="#field">Field Guide</a><a href="#safety">Safety</a><a href="#power">Power</a><a href="#hope">Hope probe</a><a href="#team">Team &amp; Sources</a>
+    <a href="#objectives">Objectives</a><a href="#on-mars">On Mars</a><a href="#whereami">Where am I?</a><a href="#travel">Travel</a><a href="#field">Field Guide</a><a href="#safety">Safety</a><a href="#power">Power</a><a href="#feedback">Feedback</a><a href="#hope">Hope probe</a><a href="#team">Team &amp; Sources</a>
   </nav>
 </header>
 <main>
@@ -88,12 +88,12 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 <p class="by">How the map guides a crew: pick what you need to do today, and the map shows where, which data to look at, and a checklist.</p>
 <table>
 <tr><th>Objective</th><th>Where</th><th>Map layers to use</th><th>Common-sense rule</th></tr>
-<tr><td><b>1. Land safely and set up base</b></td><td>Gale Crater floor, near Bradbury Landing (4.6°S, 137.4°E)</td><td>MOLA height map, Gale CTX close-up, 100 km Exploration Zone</td><td>Low ground (more air to slow the lander), near the equator (warmer), flat, with science within 100 km.</td></tr>
+<tr><td><b>1. Land and build a base</b></td><td>Gale Crater floor, near Bradbury Landing (4.6°S, 137.4°E)</td><td>MOLA height map, Gale CTX close-up, 100 km Exploration Zone</td><td>Low ground (more air to slow the lander), near the equator (warmer), flat, with science within 100 km.</td></tr>
 <tr><td><b>2. Find water ice</b></td><td>Arcadia Planitia, Deuteronilus Mensae (about 40° to 52°N)</td><td>Buried ice band (SWIM), TES thermal inertia</td><td>Go as close to the equator as you can while still near ice.</td></tr>
-<tr><td><b>3. Search for signs of ancient life</b></td><td>Mount Sharp layers (Gale), Jezero delta</td><td>HiRISE route close-up, Curiosity and Perseverance paths</td><td>Old lakes and rivers first. Follow the rock layers.</td></tr>
-<tr><td><b>4. Power the base</b></td><td>Meridiani, Tharsis, Elysium (equator) or Planum Boreum (pole)</td><td>Solar farm sites, TES dust cover</td><td>Keep a backup that does not need sunshine.</td></tr>
+<tr><td><b>3. Look for signs of ancient life</b></td><td>Mount Sharp layers (Gale), Jezero delta</td><td>HiRISE route close-up, Curiosity and Perseverance paths</td><td>Old lakes and rivers first. Follow the rock layers.</td></tr>
+<tr><td><b>4. Get power from sunlight</b></td><td>Meridiani, Tharsis, Elysium (equator) or Planum Boreum (pole)</td><td>Solar farm sites, TES dust cover</td><td>Keep a backup that does not need sunshine.</td></tr>
 <tr><td><b>5. Stay safe from radiation and dust</b></td><td>Murray Buttes and other cliffs on the route</td><td>Shelter spots, dust layer, zone clock</td><td>Know your nearest shelter before you leave. Dusty days are CAUTION days.</td></tr>
-<tr><td><b>6. Daily Marswalk</b></td><td>Bradbury Landing to Yellowknife Bay (first walk)</td><td>Route planner, height profile, zone clock</td><td>Leave 10:30, turn back 14:30, inside by 15:30. Never alone.</td></tr>
+<tr><td><b>6. Plan today's walk</b></td><td>Bradbury Landing to Yellowknife Bay (first walk)</td><td>Route planner, height profile, zone clock</td><td>Leave 10:30, turn back 14:30, inside by 15:30. Never alone.</td></tr>
 </table>
 
 <!-- ============ ON MARS ============ -->
@@ -126,6 +126,17 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 <div class="card"><b>6. On this website today.</b> The chat and camera run in demo mode in your browser, because a public website has no base server. On Mars, the same buttons would talk to the base server instead.</div>
 </div>
 <p class="muted">Sources: NASA Mars Relay Network (science.nasa.gov/mars/mars-relay-network); Gladden et al., SpaceOps 2025 (rovers depend on relay for over 99% of returned data).</p>
+
+<!-- ============ WHERE AM I ============ -->
+<h2 id="whereami">How does a crew know where it is, and which way to go?</h2>
+<p>Mars has no GPS satellites, and its magnetic field is too weak and patchy for a compass. So a crew would use several clues together, and the map puts them on one screen.</p>
+<div class="grid">
+<div class="card"><b>1. The base is home</b><br>Every position is measured from the base, as a distance and a direction, for example "66 km NW of Bradbury Landing". The "Here" tab and the "Where am I?" button show this.</div>
+<div class="card"><b>2. The Sun is the compass</b><br>The app knows where the Sun is in the sky at any time (NASA's Mars24 method). Point at the Sun, or look at your shadow, and you know which way is north.</div>
+<div class="card"><b>3. Landmarks</b><br>Hills, craters and cliffs you can see are matched with the orbiter photos on the map. Rovers do the same: they compare their own camera pictures with maps made from orbit.</div>
+<div class="card"><b>4. Counting the way</b><br>Rovers count wheel turns and track how the ground moves past their cameras (visual odometry) to know how far they went. A rover or suit could do the same between landmarks.</div>
+</div>
+<p class="muted">In our demo the blinking arrow is simulated: it moves along the planned route. In the future, radio beacons around the base, or a small set of navigation satellites around Mars, could give GPS-like positions.</p>
 
 <!-- ============ TRAVEL ============ -->
 <h2 id="travel">Three ways to travel</h2>
@@ -344,6 +355,27 @@ On foot: impossible.<br>Rover at 10 km/h: about 16 days of non-stop driving.<br>
 <div class="card"><b>The challenge</b><br>About 10 months of night every Mars year. Should we build another farm at the south pole? And it is very cold: we are all learning negative numbers to count it.</div>
 </div>
 <p class="fix"><b>Team fact check (changes from the first draft):</b> the polar day lasts about 12½ Earth months, not 6, and the night about 10 months; with three equator farms at least <b>one</b> is always sunlit (often two), not always two; Tharsis helps because it is high above the dusty air, not because it is closer to the Sun. A sol is 24 h 39 min.</p>
+
+<!-- ============ FEEDBACK ============ -->
+<h2 id="feedback">What testers told us, and what we changed</h2>
+<table>
+<tr><th>Tester feedback</th><th>What we did</th></tr>
+<tr><td>Easy to find the tools; the drop-down lists keep the search focused.</td><td>Kept the layout and drop-downs.</td></tr>
+<tr><td>Make the colours like a normal road map.</td><td>GO is now <span class="pill GO">green</span>, CAUTION is <span class="pill CAUTION">red</span> and NO-GO is <span class="pill NOGO">dark brown</span>, on the map, the globe and in this guide.</td></tr>
+<tr><td>Best part: the route planner simulation with the choice of transport.</td><td>Kept it, and made it clearer that it plans a one-way trip.</td></tr>
+<tr><td>Mission choices could be worded more simply.</td><td>Renamed and numbered them, for example "1. Land and build a base", each with a "Where:" line.</td></tr>
+<tr><td>Remove the time spent at the end point, because the plan shows one-way travel.</td><td>Removed it. The planner now shows the arrival time and judges the trip by when you arrive.</td></tr>
+</table>
+<h3>Second tester</h3>
+<table>
+<tr><th>Tester feedback</th><th>What we did</th></tr>
+<tr><td>"Stay safe" and the daily walk looked alike.</td><td>Each mission card now has its own small icon: a shield for "Stay safe", a walker for "Plan today's walk".</td></tr>
+<tr><td>Show the GO parts of the route as the time slider moves.</td><td>The planned route is now coloured green, red or dark brown along its length, by the zone when you reach each part. Moving the slider changes the start time and re-colours the route.</td></tr>
+<tr><td>Best part: the Google Earth style view, with height and day and night temperature maps.</td><td>Kept.</td></tr>
+<tr><td>How does an astronaut know where they are and which way to go?</td><td>Added a "Where am I?" button on the map and a section that explains it: the base as home, the Sun as compass, landmarks and counting the way.</td></tr>
+<tr><td>Make it more like Google Maps.</td><td>Added a search box for Mars places (top left of the map) and the "Where am I?" button, next to the zoom buttons.</td></tr>
+</table>
+<div class="card" style="margin-top:14px"><b>Next step: routes through GO zones, with stop-overs</b><br>Draw each route only through GO zones. If there is no continuous GO path, suggest a stop-over at a shelter and wait until the next part of the route turns GO later in the sol (or the next sol).</div>
 
 <!-- ============ HOPE (FUTURE DATA) ============ -->
 <h2 id="hope">Next step: data from the UAE's Hope probe</h2>
