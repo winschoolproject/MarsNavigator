@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars Navigator | 3D Globe</title>
+<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<meta name="generator" content="Hand-written HTML and JavaScript with three.js. Code drafted with help from an SI assistant (Claude) and reviewed by the team.">
+<style>
+:root{--basalt:#1c1110;--panel:#2b1a16;--rust:#c1440e;--ember:#d8582a;--dust:#e3a857;--sand:#f2e3cc;--clay:#d9c2a3;--frost:#8db9cc;--sage:#7fa37a;--line:#4a2f26}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0b0706;color:var(--sand);font:13px/1.35 "Segoe UI",Calibri,Arial,sans-serif;overflow:hidden}
+#frame{position:absolute;left:50%;top:50%;width:min(100vw,177.78vh);height:min(56.25vw,100vh);transform:translate(-50%,-50%);background:radial-gradient(ellipse at 50% 50%,#1d1210 0%,#080505 70%);overflow:hidden;font-size:clamp(10px,calc(min(56.25vw,100vh) * 0.0128),20px)}
+/* ---------- phones, portrait tablets and narrow windows: stacked layout ---------- */
+@media (max-width:899px), (max-aspect-ratio:13/10){
+  html,body{overflow:auto;height:auto}
+  #frame{position:static;transform:none;width:100%;height:auto;min-height:100vh;display:flex;flex-direction:column;gap:10px;padding:10px 10px 96px;font-size:14px;overflow:visible}
+  #frame .box{position:static!important;width:auto!important;transform:none!important;max-width:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important}
+  #title{order:1}#gl{order:2}#presets{order:3}#pos{order:4}#dirs{order:5}#suit{order:6}#sunbox{order:7}#earth{order:8}#legend{order:9}
+  #gl{position:relative!important;inset:auto!important;height:min(96vw,64vh)!important;min-height:300px;border-radius:12px;background:radial-gradient(ellipse at 50% 50%,#1d1210 0%,#080505 75%)}
+  #presets{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;justify-content:flex-start!important;-webkit-overflow-scrolling:touch}
+  #presets button{flex:0 0 auto}
+  #gcompass{top:8px!important;width:70px!important}#gcompass svg{width:44px!important;height:44px!important}
+  nav a{padding:6px 10px}
+}
+#gl{position:absolute;inset:0;overflow:hidden}
+canvas{display:block;cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+.box{position:absolute;background:rgba(28,17,16,.9);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.muted{color:var(--clay);font-size:.88em}
+a{color:var(--dust)}
+#title{left:1.2%;top:1.6%;width:23.5%}
+#title b{font:700 1.5em Georgia,"Bookman Old Style",serif}
+nav{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+nav a{background:#2f6f73;border:1px solid #4fa3a5;color:#fff;padding:5px 11px;border-radius:7px;text-decoration:none;font-size:1.02em;font-weight:700;letter-spacing:.01em}
+nav a:hover{background:#3b8a8e}nav a.on{background:#e3a857;border-color:#e3a857;color:#1c1110}
+#pos{left:1.2%;top:18%;width:23.5%}
+#pos .ll{font:700 1.3em Consolas,"Courier New",monospace;color:var(--dust)}
+#dirs{left:1.2%;top:33%;width:23.5%}
+#dirs table{width:100%;border-collapse:collapse;font-size:.92em}
+#dirs td{padding:2px;border-bottom:1px solid #3a241d;vertical-align:top}
+#dirs td.c{font-weight:700;color:var(--dust);width:2.4em}
+#dirs td.k{text-align:right;white-space:nowrap}
+#legend{left:1.2%;top:63.5%;width:23.5%;bottom:2%;overflow:auto}
+#legend h4,#sunbox h4,#suit h4,#earth h4{margin:0 0 5px;font:700 1.08em "Segoe UI",Arial}
+.ramp{height:12px;border-radius:3px;margin:3px 0 2px}
+.rampl{display:flex;justify-content:space-between;font-size:.82em;color:var(--clay)}
+.sym{display:grid;grid-template-columns:22px 1fr;gap:3px 6px;align-items:center;font-size:.88em;margin-top:6px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%}
+#suit{right:1.2%;top:1.6%;width:23.5%}
+.meter{margin:3px 0}
+.meter .lab{display:flex;justify-content:space-between;font-size:.9em}
+.meter .bar{height:6px;background:#3a241d;border-radius:4px;overflow:hidden;margin-top:2px}
+.meter .bar i{display:block;height:100%;border-radius:4px}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:700;font-size:.85em;color:#1c1110}
+.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+#sunbox{right:1.2%;top:47%;width:23.5%}
+#sunbox dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:.9em}
+#sunbox dt{color:var(--clay)}#sunbox dd{margin:0;text-align:right}
+#time{margin-top:6px}
+#time input{width:100%;accent-color:var(--ember)}
+.leghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.leghead h4{margin:0!important;font-size:1.25em!important}
+.tb.big{background:#c1440e;border:2px solid #ffb37a;color:#fff;font-weight:700;font-size:1.15em;padding:7px 14px;border-radius:8px;box-shadow:0 0 10px rgba(255,140,60,.35)}.tb.big:hover{background:#d9561b}
+.tb{background:transparent;border:1px solid var(--line);color:var(--sand);border-radius:6px;padding:3px 8px;font:inherit;font-size:.88em;cursor:pointer}
+.tb:hover{border-color:var(--dust)}.tb.on{border-color:var(--dust);color:var(--dust)}
+#earth{right:1.2%;bottom:2%;width:23.5%;display:flex;gap:12px;align-items:center}
+#earthBall{flex:0 0 auto;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 34% 32%,#ffffff 0 4%,#9fd3ff 10%,#2d7fd1 34%,#1f5a2e 48%,#2a6fb8 56%,#123f7a 78%,#04142c 100%);box-shadow:0 0 14px rgba(110,170,255,.45)}
+#presets{left:50%;bottom:2%;transform:translateX(-50%);display:flex;gap:5px;flex-wrap:wrap;justify-content:center;padding:6px 8px;max-width:48%}
+#presets button{background:transparent;border:1px solid var(--line);color:var(--sand);border-radius:6px;padding:4px 9px;font:inherit;cursor:pointer}
+#presets button:hover{border-color:var(--dust)}
+#pin{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+#pin svg{position:absolute;left:-15px;top:-38px}
+.cmp{position:absolute;font:700 1em Georgia,serif;color:var(--dust);text-shadow:0 0 3px #000;transform:translate(-50%,-50%);pointer-events:none}
+.lbl{position:absolute;font:600 .85em "Segoe UI",Arial;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none}
+.lbl.site{color:#ffd9a0}
+.lbl.sun{color:#ffe066;font-size:.92em}
+#gcompass{position:absolute;left:50%;top:1.2%;transform:translateX(-50%);width:84px;text-align:center;background:rgba(28,17,16,.88);border:1px solid var(--line);border-radius:12px;padding:5px 4px 3px}
+#gcompass svg{width:58px;height:58px;display:block;margin:0 auto}
+#gcompass div{font:600 .82em "Segoe UI",Arial;color:var(--clay);white-space:nowrap}
+
+/* menu: one colour per page so each button is easy to spot; current page has a white outline */
+nav a[href="index.html"],nav a[href="globe.html"],nav a[href="guide.html"],nav a[href="present.html"],nav a[href="guide.html#team"],#menuBtn{color:#fff!important;font-weight:700!important;border-width:1px!important;border-style:solid!important}
+nav a[href="index.html"]{background:#c1440e!important;border-color:#ee7a45!important}
+nav a[href="globe.html"]{background:#2f6f73!important;border-color:#5fb0b2!important}
+nav a[href="guide.html"]{background:#4f7a3a!important;border-color:#82b066!important}
+nav a[href="present.html"]{background:#3d5f9a!important;border-color:#7a9ad6!important}
+nav a[href="guide.html#team"]{background:#6f4b8f!important;border-color:#a888c8!important}
+#menuBtn{background:#e3a857!important;border-color:#f3c98a!important;color:#1c1110!important}
+nav a:hover,#menuBtn:hover{filter:brightness(1.15)}
+nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
+</style>
+<script type="importmap">{"imports":{"three":"./lib/three/three.module.js"}}</script>
+</head>
+<body>
+<div id="frame">
+  <div id="gl"></div>
+  <div id="title" class="box"><b>Mars Navigator</b><div class="muted">Drag the planet. The pin stays put; Mars turns under it.</div>
+    <nav><a href="index.html">Map</a><a href="globe.html" class="on">3D Globe</a><a href="guide.html">Field Guide</a><a href="present.html">Presentation</a><a href="guide.html#team">Sources</a></nav></div>
+
+  <div id="pos" class="box">
+    <div class="muted">Pin position</div>
+    <div class="ll" id="ll">4.589°S 137.442°E</div>
+    <div id="where" style="margin-top:3px">Gale Crater</div>
+    <div class="muted" id="fromBase">At base (Bradbury Landing)</div>
+  </div>
+
+  <div id="dirs" class="box">
+    <div class="muted" style="margin-bottom:3px">What lies in each direction (nearest named place)</div>
+    <table id="dirT"></table>
+  </div>
+
+  <div id="legend" class="box">
+    <div class="leghead"><h4>Legend</h4><button class="tb big" id="layerBtn">Show height map</button></div>
+    <div id="legendMap"></div>
+    <div class="sym">
+      <svg width="16" height="20" viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39 C15 39 2 22 2 14 A13 13 0 0 1 28 14 C28 22 15 39 15 39Z" fill="#c1440e" stroke="#f2e3cc" stroke-width="3"/></svg><span>Your position (the pin)</span>
+      <span class="sw" style="background:#ffe066;box-shadow:0 0 6px #ffd34d"></span><span>Sun overhead here (noon point)</span>
+      <span class="sw" style="background:#ffd34d;width:9px;height:9px;margin-left:2px"></span><span>Landing sites, 1976 to 2021</span>
+      <span style="display:inline-block;width:16px;height:3px;background:#ff7a3d"></span><span>Curiosity's real drive path</span>
+      <span class="sw" style="background:#120b0a;border:1px solid #6b4a3a"></span><span>Dark side of the globe = night</span>
+    </div>
+    <div style="margin-top:6px;font-size:.88em"><span class="pill GO">GO</span> <span class="pill CAUTION">CAUTION</span> <span class="pill NOGO">NO-GO</span> walk zones · bar colours match</div>
+    <div class="muted" style="margin-top:5px">Team: <b style="color:var(--sand)">Pravya Sharma</b> (lead), <b style="color:var(--sand)">Advika Bisaria</b>, <b style="color:var(--sand)">Kshama</b> · Winchester School, Jebel Ali, Dubai.<br>Imagery: <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA/JPL Mars Trek</a> (Viking colour mosaic, MOLA). Names: USGS/IAU Gazetteer.</div>
+  </div>
+
+  <div id="suit" class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h4>Suit and surroundings</h4><span class="pill GO" id="zone">GO</span></div>
+    <div id="meters"></div>
+    <div class="muted" style="margin-top:3px">Outside air: our two-station model (Curiosity REMS, Perseverance MEDA). Radiation: Curiosity RAD average at Gale. Suit readings are simulated demo values.</div>
+  </div>
+
+  <div id="sunbox" class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h4>Sun and light</h4><button class="tb" id="nowBtn" title="Use the real Mars time and season right now">Mars time now</button></div>
+    <div id="time"><div style="display:flex;justify-content:space-between" class="muted"><span id="tmode">Local solar time at the pin</span><b id="tl" style="color:var(--sand)">10:30</b></div><input id="tr" type="range" min="0" max="24" step="0.25" value="10.5" aria-label="Local solar time at the pin"></div>
+    <dl id="sunDl"></dl>
+    <div class="muted" style="margin-top:4px">Season and Sun position: NASA Mars24 method (Allison and McEwen, 2000). Light is at the top of the air; dust and clouds lower it.</div>
+  </div>
+
+  <div id="earth" class="box">
+    <div id="earthBall" role="img" aria-label="Earth"></div>
+    <div><h4 style="margin-bottom:2px">Earth today</h4><div id="earthTxt" style="font-size:.92em"></div></div>
+  </div>
+
+  <div id="pin"><svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true"><path d="M15 39 C15 39 2 22 2 14 A13 13 0 0 1 28 14 C28 22 15 39 15 39Z" fill="#c1440e" stroke="#f2e3cc" stroke-width="2"/><circle cx="15" cy="14" r="5" fill="#f2e3cc"/></svg></div>
+
+  <div id="presets" class="box"></div>
+  <div id="gcompass" title="North is straight up at the pin">
+    <svg viewBox="0 0 100 100" role="img" aria-label="Compass, north up"><circle cx="50" cy="50" r="46" fill="#1f1412" stroke="#6b4a3a" stroke-width="2"/>
+      <text x="50" y="25" text-anchor="middle" font-size="16" font-weight="700" fill="#ff6a4d" font-family="Georgia,serif">N</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">S</text>
+      <text x="82" y="54.5" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">E</text><text x="18" y="54.5" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">W</text>
+      <polygon points="50,28 57,52 50,47 43,52" fill="#ff6a4d"/><polygon points="50,72 57,52 50,57 43,52" fill="#d9c2a3" opacity=".7"/></svg>
+    <div>North is up</div></div>
+</div>
+
+<script src="data.js"></script>
+<script>
+window.CREW_CFG = {
+  fab: 'left:calc((100vw - min(100vw,177.78vh))/2 + min(100vw,177.78vh)*0.262);top:calc((100vh - min(56.25vw,100vh))/2 + min(56.25vw,100vh)*0.02)',
+  panel: 'left:calc((100vw - min(100vw,177.78vh))/2 + min(100vw,177.78vh)*0.262);top:calc((100vh - min(56.25vw,100vh))/2 + min(56.25vw,100vh)*0.13);height:min(560px,calc(min(56.25vw,100vh)*0.74))',
+  loc: () => window.GLOBE_POS ? window.GLOBE_POS() : { lat: -4.58947, lon: 137.44163, label: 'Bradbury Landing (base)' }
+};
+</script>
+<script src="crew.js"></script>
+<script type="module">
+/* Mars Navigator, 3D globe (slide-sized, 16:9).
+   Globe texture stitched in the browser from NASA Mars Trek tiles (zoom 2, 8 x 4 tiles).
+   Mars clock and season: Mars24 algorithm (Allison and McEwen 2000, NASA GISS).
+   Earth and Mars positions: JPL approximate Keplerian elements (Standish), valid 1800 to 2050.
+   Code drafted with help from an SI assistant (Claude) and reviewed by the team. */
+import * as THREE from 'three';
+const R_KM = 3389.5, toR = d => d * Math.PI / 180, toD = r => r * 180 / Math.PI;
+const dist = (a, b) => { const p1 = toR(a[0]), p2 = toR(b[0]), dl = toR(b[1] - a[1]); const h = Math.sin((p2 - p1) / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2; return 2 * R_KM * Math.asin(Math.min(1, Math.sqrt(h))); };
+const bearing = (a, b) => { const p1 = toR(a[0]), p2 = toR(b[0]), dl = toR(b[1] - a[1]); return (toD(Math.atan2(Math.sin(dl) * Math.cos(p2), Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl))) + 360) % 360; };
+const fmtKm = k => k < 1 ? Math.round(k * 1000) + ' m' : (k < 100 ? k.toFixed(1) : Math.round(k).toLocaleString('en-US')) + ' km';
+const fmtLat = v => Math.abs(v).toFixed(3) + '°' + (v >= 0 ? 'N' : 'S'), fmtLon = v => Math.abs(v).toFixed(3) + '°' + (v >= 0 ? 'E' : 'W');
+const f1Lat = v => Math.abs(v).toFixed(1) + '°' + (v >= 0 ? 'N' : 'S'), f1Lon = v => Math.abs(v).toFixed(1) + '°' + (v >= 0 ? 'E' : 'W');
+const wrap = l => ((l + 540) % 360) - 180;
+const hhmm = h => { const m = Math.round((((h % 24) + 24) % 24) * 60); return String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+const DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+const DIRW = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
+
+/* Same temperature teaching model as the main map */
+function tempModel(lat, h) { const x = Math.max(0, Math.abs(lat) - 5), tMax = Math.max(-125, -1.6 * x), tMin = Math.max(-125, -70 - x), r = tMax - tMin; h = ((h % 24) + 24) % 24;
+  if (h >= 5.5 && h <= 13.5) return tMin + r * (1 - Math.cos(Math.PI * (h - 5.5) / 8)) / 2;
+  if (h > 13.5 && h <= 19) return tMax - 0.75 * r * (1 - Math.cos(Math.PI * (h - 13.5) / 5.5)) / 2;
+  const hh = h > 19 ? h - 19 : h + 5; return (tMax - 0.75 * r) - 0.25 * r * (hh / 10.5); }
+function zone(lat, h, sunUp) { const t = tempModel(lat, h); if (!sunUp || t < -60) return ['NOGO', 'NO-GO', t]; if (t < -35 || h >= 17) return ['CAUTION', 'CAUTION', t]; return ['GO', 'GO', t]; }
+
+/* ---- Mars clock (Mars24) ---- */
+function marsClock(date) {
+  const jdTT = date.getTime() / 86400000 + 2440587.5 + 69.184 / 86400, dt = jdTT - 2451545.0, r = Math.PI / 180;
+  const M = 19.3871 + 0.52402073 * dt, aFMS = 270.3871 + 0.524038496 * dt;
+  const P = [[0.0071, 2.2353, 49.409], [0.0057, 2.7543, 168.173], [0.0039, 1.1177, 191.837], [0.0037, 15.7866, 21.736], [0.0021, 2.1354, 15.704], [0.0020, 2.4694, 95.528], [0.0018, 32.8493, 49.095]];
+  let pbs = 0; for (const [A, t, p] of P) pbs += A * Math.cos(r * (0.985626 * dt / t + p));
+  const vM = (10.691 + 3.0e-7 * dt) * Math.sin(r * M) + 0.623 * Math.sin(2 * r * M) + 0.050 * Math.sin(3 * r * M) + 0.005 * Math.sin(4 * r * M) + 0.0005 * Math.sin(5 * r * M) + pbs;
+  const Ls = ((aFMS + vM) % 360 + 360) % 360;
+  const eot = 2.861 * Math.sin(2 * r * Ls) - 0.071 * Math.sin(4 * r * Ls) + 0.002 * Math.sin(6 * r * Ls) - vM;   // degrees
+  const msd = (jdTT - 2451549.5) / 1.0274912517 + 44796.0 - 0.0009626, mst = ((24 * msd) % 24 + 24) % 24;
+  const dec = toD(Math.asin(0.42565 * Math.sin(r * Ls))) + 0.25 * Math.sin(r * Ls);
+  const rAU = 1.5236 * (1.00436 - 0.09309 * Math.cos(r * M) - 0.004336 * Math.cos(2 * r * M) - 0.00031 * Math.cos(3 * r * M) - 0.00003 * Math.cos(4 * r * M));
+  return { Ls, eot, mst, dec, rAU };
+}
+const ltstAt = (mc, lonE) => ((mc.mst + lonE / 15 + mc.eot / 15) % 24 + 24) % 24;   // local true solar time at an east longitude
+function season(Ls) { const n = ['spring', 'summer', 'autumn', 'winter'][Math.floor(Ls / 90) % 4], s = ['autumn', 'winter', 'spring', 'summer'][Math.floor(Ls / 90) % 4]; return `northern ${n}, southern ${s}`; }
+
+/* ---- Earth and Mars positions (JPL approximate elements) ---- */
+const EL = { earth: [1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0, 0],
+  mars: [1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343] };
+function helio(k, T) { const q = EL[k], r = Math.PI / 180; const a = q[0] + q[1] * T, e = q[2] + q[3] * T, I = (q[4] + q[5] * T) * r, L = q[6] + q[7] * T, w = q[8] + q[9] * T, O = q[10] + q[11] * T;
+  let M = (((L - w) % 360) + 540) % 360 - 180; M *= r; const om = (w - O) * r, Om = O * r; let E = M + e * Math.sin(M); for (let i = 0; i < 8; i++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+  const x1 = a * (Math.cos(E) - e), y1 = a * Math.sqrt(1 - e * e) * Math.sin(E), co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Om), sO = Math.sin(Om), cI = Math.cos(I);
+  return [(co * cO - so * sO * cI) * x1 + (-so * cO - co * sO * cI) * y1, (co * sO + so * cO * cI) * x1 + (-so * sO + co * cO * cI) * y1, so * Math.sin(I) * x1 + co * Math.sin(I) * y1]; }
+function earthMarsAU(date) { const T = (date.getTime() / 86400000 + 2440587.5 - 2451545) / 36525, a = helio('earth', T), b = helio('mars', T); return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]); }
+
+const BASE = [-4.58947, 137.44163];
+const SITES = [['Curiosity', BASE], ['Perseverance', [18.44463, 77.45089]], ['InSight', [4.50, 135.62]], ['Viking 1', [22.27, -47.95]], ['Viking 2', [47.67, 134.30]],
+  ['Pathfinder', [19.13, -33.22]], ['Spirit', [-14.57, 175.47]], ['Opportunity', [-1.95, -5.53]], ['Phoenix', [68.22, -125.75]]];
+const PRESETS = [['Gale (base)', BASE], ['Jezero', [18.44, 77.45]], ['Olympus Mons', [18.65, -133.8]], ['Valles Marineris', [-14.01, -58.59]], ['Arcadia ice', [49.02, -171.85]], ['Hellas', [-42.43, 70.5]], ['North pole', [87.32, 54.96]]];
+
+/* ---- three.js scene ---- */
+const frame = document.getElementById('frame');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+const gl = document.getElementById('gl');
+gl.prepend(renderer.domElement); gl.appendChild(document.getElementById('pin')); gl.appendChild(document.getElementById('gcompass'));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 16 / 9, 0.1, 100);
+let camZ = 5.0, zoomK = 1; camera.position.set(0, 0, camZ);
+const MOBILE = () => matchMedia('(max-width:899px), (max-aspect-ratio:13/10)').matches;
+function setCam() { const a = camera.aspect || 1.78, fit = 1.3 / (Math.tan(Math.PI * 16 / 180) * Math.min(1, a)); const base = MOBILE() ? fit : Math.max(5.0, fit); camZ = Math.max(1.35, Math.min(12, base * zoomK)); camera.position.z = camZ; }
+scene.add(new THREE.AmbientLight(0xffffff, 0.11));
+const sunLight = new THREE.DirectionalLight(0xfff1e0, 2.4); scene.add(sunLight);
+const tilt = new THREE.Group(); scene.add(tilt);
+const mat = new THREE.MeshStandardMaterial({ color: 0xb8653c, roughness: 1, metalness: 0 });
+const globe = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 64), mat); tilt.add(globe);
+const halo = new THREE.Mesh(new THREE.SphereGeometry(1.025, 64, 32), new THREE.MeshBasicMaterial({ color: 0xd8582a, transparent: true, opacity: 0.08, side: THREE.BackSide })); scene.add(halo);
+
+function v3(lat, lon, r = 1.002) { const phi = toR(lon + 180), th = toR(90 - lat); return new THREE.Vector3(-r * Math.cos(phi) * Math.sin(th), r * Math.cos(th), r * Math.sin(phi) * Math.sin(th)); }
+SITES.forEach(([n, ll]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.009, 12, 8), new THREE.MeshBasicMaterial({ color: 0xffd34d })); m.position.copy(v3(ll[0], ll[1])); globe.add(m); });
+globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(MSL_PATH.map(p => v3(p[1], p[0], 1.003))), new THREE.LineBasicMaterial({ color: 0xff7a3d })));
+
+/* Sun: a glowing disc out in space, and a marker where it is overhead */
+function glowTex() { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,255,240,1)'); gr.addColorStop(0.18, 'rgba(255,236,150,1)'); gr.addColorStop(0.4, 'rgba(255,190,60,.45)'); gr.addColorStop(1, 'rgba(255,150,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); }
+const sunSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), depthWrite: false })); sunSprite.scale.set(0.34, 0.34, 1); scene.add(sunSprite);
+const subMark = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(), depthWrite: false })); subMark.scale.set(0.13, 0.13, 1); globe.add(subMark);
+const sunDirLbl = document.createElement('div'); sunDirLbl.className = 'lbl sun'; gl.appendChild(sunDirLbl);
+
+/* Texture: stitch Mars Trek tiles (equirectangular, zoom 2 = 8 x 4 tiles) */
+const LAYERS = { viking: ['Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg'], mola: ['Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg'] };
+const texCache = {};
+async function buildTex(key) {
+  if (texCache[key]) return texCache[key];
+  const [id, ext] = LAYERS[key], c = document.createElement('canvas'); c.width = 2048; c.height = 1024; const g = c.getContext('2d');
+  g.fillStyle = '#9a5634'; g.fillRect(0, 0, 2048, 1024);
+  const jobs = [];
+  for (let row = 0; row < 4; row++) for (let col = 0; col < 8; col++) jobs.push(new Promise(res => { const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => { g.drawImage(im, col * 256, row * 256, 256, 256); res(); }; im.onerror = res;
+    im.src = `https://trek.nasa.gov/tiles/Mars/EQ/${id}/1.0.0/default/default028mm/2/${row}/${col}.${ext}`; }));
+  await Promise.all(jobs);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; texCache[key] = t; return t;
+}
+const LEG = {
+  viking: `<div style="font-size:.9em"><b>Colour map</b> (Viking orbiters): close to the real colours of Mars. Bright orange = dust; dark grey-brown = rock and dark sand; white = ice and frost.</div>`,
+  mola: `<div style="font-size:.9em"><b>Height map</b> (MOLA laser altimeter), compared with average Mars ground level:</div>
+    <div class="ramp" style="background:linear-gradient(90deg,#3b1f8f,#2f5fd0,#2fa7c9,#3fbf6a,#c9d33a,#e8a534,#c8642c,#a4492b,#f4f0ec)"></div>
+    <div class="rampl"><span>Lowest<br>Hellas basin floor, about −8 km</span><span style="text-align:right">Highest<br>Olympus Mons, about +21 km</span></div>`
+};
+let layer = 'viking';
+async function setLayer(k) { layer = k; document.getElementById('legendMap').innerHTML = LEG[k]; document.getElementById('layerBtn').textContent = k === 'viking' ? 'Show height map' : 'Show colour map';
+  const t = await buildTex(k); mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; }
+document.getElementById('layerBtn').onclick = () => setLayer(layer === 'viking' ? 'mola' : 'viking');
+setLayer('viking');
+
+/* ---- view state ---- */
+let lat = BASE[0], lon = BASE[1], tLat = lat, tLon = lon;
+function applyView() { globe.rotation.y = toR(-90 - lon); tilt.rotation.x = toR(lat); }
+let drag = null;
+const touches = new Map(); let pinch0 = 0, zoom0 = 1;
+renderer.domElement.addEventListener('pointerdown', e => { touches.set(e.pointerId, [e.clientX, e.clientY]); renderer.domElement.setPointerCapture(e.pointerId);
+  if (touches.size === 2) { const [a, b] = [...touches.values()]; pinch0 = Math.hypot(a[0] - b[0], a[1] - b[1]); zoom0 = zoomK; drag = null; } else drag = { x: e.clientX, y: e.clientY }; });
+renderer.domElement.addEventListener('pointermove', e => { if (touches.has(e.pointerId)) touches.set(e.pointerId, [e.clientX, e.clientY]);
+  if (touches.size === 2 && pinch0) { const [a, b] = [...touches.values()]; zoomK = Math.max(0.3, Math.min(2.2, zoom0 * pinch0 / Math.max(20, Math.hypot(a[0] - b[0], a[1] - b[1])))); setCam(); return; }
+  if (!drag) return; const k = 0.18 * (camZ - 1) / 3.2; tLon -= (e.clientX - drag.x) * k; tLat += (e.clientY - drag.y) * k; tLat = Math.max(-89, Math.min(89, tLat)); drag = { x: e.clientX, y: e.clientY }; });
+addEventListener('pointerup', e => { touches.delete(e.pointerId); if (touches.size < 2) pinch0 = 0; drag = null; });
+addEventListener('pointercancel', e => { touches.delete(e.pointerId); pinch0 = 0; drag = null; });
+renderer.domElement.addEventListener('wheel', e => { e.preventDefault(); zoomK = Math.max(0.3, Math.min(2.2, zoomK * (1 + Math.sign(e.deltaY) * 0.08))); setCam(); }, { passive: false });
+const pre = document.getElementById('presets');
+PRESETS.forEach(([n, ll]) => { const b = document.createElement('button'); b.textContent = n; b.onclick = () => { tLat = ll[0]; tLon = ll[1]; }; pre.appendChild(b); });
+
+const cmpEls = DIRS.map(d => { const s = document.createElement('div'); s.className = 'cmp'; s.textContent = d; gl.appendChild(s); return s; });
+const LBL = GAZ.filter(g => g[3] >= 900).map(g => ({ n: g[0], ll: [g[1], g[2]], cls: '' })).concat(SITES.map(([n, ll]) => ({ n, ll, cls: 'site' })));
+LBL.forEach(o => { o.el = document.createElement('div'); o.el.className = 'lbl ' + o.cls; o.el.textContent = o.n; gl.appendChild(o.el); o.v = v3(o.ll[0], o.ll[1], 1.0); const g = GAZ.find(x => x[0] === o.n); o.pr = o.cls === 'site' ? 1e8 : (g ? g[3] : 0); });
+const sunLbl = { n: 'Sun overhead', el: document.createElement('div'), v: new THREE.Vector3(), dy: -18 }; sunLbl.el.className = 'lbl sun'; sunLbl.el.textContent = '☀ Sun overhead'; gl.appendChild(sunLbl.el); sunLbl.pr = 1e9; LBL.push(sunLbl); LBL.sort((a, b) => b.pr - a.pr);
+LBL.forEach(o => { o.w = o.el.offsetWidth || 80; o.h = o.el.offsetHeight || 14; });
+window.GLOBE_POS = () => ({ lat, lon: wrap(lon), label: 'globe pin' });
+
+/* ---- time: chosen local time, or real Mars time now ---- */
+const tr = document.getElementById('tr'), nowBtn = document.getElementById('nowBtn');
+let live = false;
+tr.addEventListener('input', () => { live = false; nowBtn.classList.remove('on'); document.getElementById('tmode').textContent = 'Local solar time at the pin'; lastKey = ''; });
+nowBtn.onclick = () => { live = !live; nowBtn.classList.toggle('on', live); document.getElementById('tmode').textContent = live ? 'Mars time now at the pin' : 'Local solar time at the pin'; lastKey = ''; };
+
+function nearestIn(ll, b0) { let best = null;
+  for (const g of GAZ) { const d = dist(ll, [g[1], g[2]]); if (d < 0.5) continue; let db = Math.abs(bearing(ll, [g[1], g[2]]) - b0); db = Math.min(db, 360 - db); if (db <= 22.5 && (!best || d < best.d)) best = { g, d }; }
+  return best; }
+function meter(lab, txt, frac, col) { return `<div class="meter"><div class="lab"><span>${lab}</span><b>${txt}</b></div><div class="bar"><i style="width:${Math.max(3, Math.min(100, frac * 100)).toFixed(0)}%;background:${col}"></i></div></div>`; }
+
+let lastKey = '', lastMin = -1, SUN = null;
+function update(force) {
+  const now = new Date(), mc = marsClock(now), ll = [lat, wrap(lon)];
+  if (live) tr.value = (Math.round(ltstAt(mc, ll[1]) * 4) / 4).toString();
+  const h = live ? ltstAt(mc, ll[1]) : +tr.value;
+  /* Sun geometry */
+  const dec = mc.dec, H = (h - 12) * 15;                                   // hour angle at the pin, degrees (afternoon positive)
+  const subLon = wrap(ll[1] - H), p = toR(ll[0]), d = toR(dec), Hr = toR(H);
+  const sinEl = Math.sin(p) * Math.sin(d) + Math.cos(p) * Math.cos(d) * Math.cos(Hr), el = toD(Math.asin(sinEl));
+  const az = (toD(Math.atan2(-Math.sin(Hr) * Math.cos(d), Math.sin(d) * Math.cos(p) - Math.cos(d) * Math.sin(p) * Math.cos(Hr))) + 360) % 360;
+  SUN = { dec, subLon };
+  const key = ll[0].toFixed(2) + ll[1].toFixed(2) + h.toFixed(3);
+  const minute = Math.floor(now.getTime() / 60000);
+  if (key === lastKey && minute === lastMin && !force) return; lastKey = key; lastMin = minute;
+
+  document.getElementById('ll').textContent = fmtLat(ll[0]) + ' ' + fmtLon(ll[1]);
+  const inC = GAZ.filter(g => g[4] === 'AA' && g[3] >= 1 && dist(ll, [g[1], g[2]]) <= g[3] / 2).sort((a, b) => a[3] - b[3])[0];
+  const near = GAZ.map(g => ({ g, d: dist(ll, [g[1], g[2]]) })).sort((a, b) => a.d - b.d)[0];
+  document.getElementById('where').textContent = inC ? 'Inside ' + inC[0] + ' crater' : 'Near ' + near.g[0] + ' (' + fmtKm(near.d) + ')';
+  const dB = dist(BASE, ll);
+  document.getElementById('fromBase').textContent = dB < 0.05 ? 'At base (Bradbury Landing)' : fmtKm(dB) + ' from base, heading ' + DIRS[Math.round(bearing(BASE, ll) / 45) % 8] + ' from Bradbury Landing';
+  document.getElementById('dirT').innerHTML = DIRS.map((dd, i) => { const n = nearestIn(ll, i * 45); return `<tr><td class="c">${dd}</td><td>${n ? n.g[0] : 'none nearby'}</td><td class="k">${n ? fmtKm(n.d) : ''}</td></tr>`; }).join('');
+
+  /* Sun and light panel */
+  const cosH0 = -Math.tan(p) * Math.tan(d);
+  let riseSet;
+  if (cosH0 <= -1) riseSet = 'Sun up all sol (polar day)';
+  else if (cosH0 >= 1) riseSet = 'Sun down all sol (polar night)';
+  else { const H0 = toD(Math.acos(cosH0)) / 15; riseSet = `${hhmm(12 - H0)} rise · ${hhmm(12 + H0)} set`; }
+  const flux = 1361 / (mc.rAU * mc.rAU), ground = Math.max(0, flux * sinEl);
+  const sunUp = el > 0;
+  document.getElementById('tl').textContent = hhmm(h);
+  document.getElementById('sunDl').innerHTML = `
+    <dt>Mars season</dt><dd>${season(mc.Ls)} (Ls ${mc.Ls.toFixed(0)}°)</dd>
+    <dt>Sun at the pin</dt><dd>${sunUp ? el.toFixed(0) + '° up, to the ' + DIRW[Math.round(az / 45) % 8] : 'below the horizon (night)'}</dd>
+    <dt>Sunrise / sunset</dt><dd>${riseSet}</dd>
+    <dt>Sun overhead at</dt><dd>${f1Lat(dec)}, ${f1Lon(subLon)}</dd>
+    <dt>Mars to Sun</dt><dd>${mc.rAU.toFixed(3)} AU (${Math.round(mc.rAU * 149.598)} million km)</dd>
+    <dt>Sunlight reaching Mars</dt><dd>${Math.round(flux)} W/m² (${Math.round(flux / 1361 * 100)}% of Earth's)</dd>
+    <dt>On flat ground here now</dt><dd>${sunUp ? 'about ' + Math.round(ground) + ' W/m²' : '0 W/m² (night)'}</dd>`;
+
+  /* Earth panel */
+  const au = earthMarsAU(now), km = au * 149597870.7, lt = km / 299792.458 / 60;
+  document.getElementById('earthTxt').innerHTML = `${au.toFixed(2)} AU away (${Math.round(km / 1e6)} million km).<br>A radio message takes <b>${lt.toFixed(1)} min</b> one way, so a question and answer takes about ${Math.round(2 * lt)} min.`;
+
+  /* Suit + surroundings */
+  const [zc, zl, t] = zone(ll[0], h, sunUp), zEl = document.getElementById('zone'); zEl.className = 'pill ' + zc; zEl.textContent = zl;
+  const out = h - 10.5, walking = out >= 0 && h <= 15.5;
+  const o2 = walking ? Math.max(5, 100 - out * 12) : 100;
+  const suitT = 21 + (t + 40) * 0.02, hum = 42 + (walking ? out * 2 : 0), hr = walking ? 92 + Math.round(out * 2) : 72;
+  const tc = t >= -35 ? '#7fa37a' : t >= -60 ? '#e3a857' : '#8db9cc';
+  document.getElementById('meters').innerHTML =
+    meter('Outside air (model)', Math.round(t) + ' °C', (t + 125) / 145, tc) +
+    meter('Inside suit', suitT.toFixed(1) + ' °C', (suitT - 10) / 20, '#7fa37a') +
+    meter('Oxygen tank', Math.round(o2) + ' %', o2 / 100, o2 > 40 ? '#7fa37a' : o2 > 20 ? '#e3a857' : '#d8582a') +
+    meter('Suit pressure', '29.6 kPa', 0.74, '#7fa37a') +
+    meter('Humidity in suit', Math.round(hum) + ' %', hum / 100, hum < 60 ? '#7fa37a' : '#e3a857') +
+    meter('Heart rate', hr + ' bpm', (hr - 40) / 140, hr < 120 ? '#7fa37a' : '#e3a857') +
+    meter('Radiation (Gale average)', '0.64 mSv/day', 0.64 / 1.84, '#e3a857') +
+    meter('Time left outside', walking ? Math.max(0, 15.5 - h).toFixed(1) + ' h to 15:30' : (h < 10.5 ? 'not out yet' : 'back inside'), walking ? Math.max(0, 15.5 - h) / 5 : 0, '#7fa37a');
+}
+
+/* ---- render loop ---- */
+function resize() { const w = gl.clientWidth, h = gl.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); setCam(); }
+addEventListener('resize', resize); resize();
+const tmp = new THREE.Vector3(), camDir = new THREE.Vector3(), sunW = new THREE.Vector3();
+function loop() {
+  lat += (tLat - lat) * 0.15; const dl = ((tLon - lon + 540) % 360) - 180; lon += dl * 0.15;
+  applyView(); update(false);
+  /* place the Sun: direction of the overhead point, turned with the globe */
+  const sv = v3(SUN.dec, SUN.subLon, 1);
+  subMark.position.copy(v3(SUN.dec, SUN.subLon, 1.03));
+  globe.updateMatrixWorld(true);
+  sunW.copy(sv).applyMatrix4(globe.matrixWorld).normalize();
+  sunLight.position.copy(sunW).multiplyScalar(10);
+  /* the Sun disc sits off the edge of the globe, in the direction of the Sun as seen in this view */
+  const sx = sunW.x, sy = sunW.y, sl = Math.hypot(sx, sy);
+  if (sl > 0.12) sunSprite.position.set(sx / sl * 1.17, sy / sl * 1.17, 0); else sunSprite.position.set(-0.85, 0.85, 0);
+  sunSprite.material.opacity = sunW.z < -0.2 ? 0.55 : 1;
+  sunDirLbl.textContent = sunW.z > 0.85 ? '☀ Sun is behind you' : (sunW.z < -0.6 ? '☀ Sun is behind Mars' : '☀ Sun is this way');
+  sunLbl.v.copy(sv);
+  renderer.render(scene, camera);
+  const W = gl.clientWidth, H = gl.clientHeight;
+  tmp.copy(sunSprite.position).project(camera); sunDirLbl.style.left = ((tmp.x + 1) / 2 * W) + 'px'; sunDirLbl.style.top = ((1 - tmp.y) / 2 * H + 0.06 * H) + 'px';
+  const rr = Math.max(46, Math.min(140, 0.6 * H / (camZ - 1) * 0.6));
+  cmpEls.forEach((el, i) => { const a = toR(i * 45); el.style.left = (W / 2 + Math.sin(a) * rr) + 'px'; el.style.top = (H / 2 - 14 - Math.cos(a) * rr) + 'px'; });
+  /* place labels without overlaps: panels, compass letters, the pin and the Sun label come first */
+  const fr = gl.getBoundingClientRect(), placed = [];
+  const rel = e => { const r = e.getBoundingClientRect(); return { l: r.left - fr.left, t: r.top - fr.top, r: r.right - fr.left, b: r.bottom - fr.top }; };
+  frame.querySelectorAll('.box,#gcompass').forEach(e => placed.push(rel(e)));
+  document.querySelectorAll('.crew-fabs,.crew-panel.open').forEach(e => placed.push(rel(e)));
+  cmpEls.forEach(e => { const x = parseFloat(e.style.left), y = parseFloat(e.style.top); placed.push({ l: x - 10, t: y - 9, r: x + 10, b: y + 9 }); });
+  placed.push({ l: W / 2 - 16, t: H / 2 - 40, r: W / 2 + 16, b: H / 2 });
+  { const x = parseFloat(sunDirLbl.style.left), y = parseFloat(sunDirLbl.style.top), w = sunDirLbl.offsetWidth; const r = { l: x - w / 2, t: y - 8, r: x + w / 2, b: y + 8 };
+    if (r.l < 2 || r.r > W - 2 || placed.some(p => !(r.r < p.l || r.l > p.r || r.b < p.t || r.t > p.b))) sunDirLbl.style.visibility = 'hidden'; else { sunDirLbl.style.visibility = 'visible'; placed.push(r); } }
+  LBL.forEach(o => { tmp.copy(o.v).applyMatrix4(globe.matrixWorld); camDir.copy(camera.position).sub(tmp).normalize(); const facing = tmp.clone().normalize().dot(camDir);
+    if (facing < 0.25) { o.el.style.display = 'none'; return; } tmp.project(camera);
+    const x = (tmp.x + 1) / 2 * W, y = (1 - tmp.y) / 2 * H + (o.dy || 0), r = { l: x - o.w / 2 - 5, t: y - o.h / 2 - 3, r: x + o.w / 2 + 5, b: y + o.h / 2 + 3 };
+    if (r.l < 2 || r.r > W - 2 || r.t < 2 || r.b > H - 2 || placed.some(p => !(r.r < p.l || r.l > p.r || r.b < p.t || r.t > p.b))) { o.el.style.display = 'none'; return; }
+    placed.push(r); o.el.style.display = ''; o.el.style.left = x + 'px'; o.el.style.top = y + 'px'; o.el.style.opacity = Math.min(1, (facing - 0.25) * 3); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

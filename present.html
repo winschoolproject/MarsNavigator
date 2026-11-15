@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars Navigator | Team presentation</title>
+<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<meta name="generator" content="Hand-written HTML, CSS and JavaScript. Illustrated presenters drawn in SVG. Code drafted with help from an SI assistant (Claude) and reviewed by the team.">
+<style>
+:root{--basalt:#1c1110;--panel:#2b1a16;--rust:#c1440e;--ember:#d8582a;--dust:#e3a857;--sand:#f2e3cc;--clay:#d9c2a3;--frost:#8db9cc;--sage:#7fa37a;--line:#4a2f26}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#080505;color:var(--sand);font-family:"Segoe UI",Calibri,Arial,sans-serif;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:radial-gradient(ellipse at 70% 40%,#2a1712 0%,#120a09 70%);overflow:hidden}
+/* top bar */
+#bar{position:absolute;left:0;right:0;top:0;height:50px;display:flex;align-items:center;gap:10px;padding:0 16px;background:rgba(15,9,8,.92);border-bottom:1px solid var(--line);z-index:20}
+#bar b{font:700 19px Georgia,"Bookman Old Style",serif}
+#bar .sp{flex:1}
+#bar button,#bar a{background:transparent;border:1px solid var(--line);color:var(--sand);border-radius:6px;padding:5px 10px;font:13px "Segoe UI",Arial;cursor:pointer;text-decoration:none}
+#bar button.on{border-color:var(--dust);color:var(--dust)}
+#bar button:hover,#bar a:hover{border-color:var(--dust)}
+#time{font:600 13px Consolas,monospace;color:var(--clay);min-width:92px;text-align:right}
+#prog{position:absolute;left:0;right:0;top:50px;height:5px;display:flex;gap:3px;padding:0 16px;z-index:20}
+#prog i{flex:1;background:#3a241d;border-radius:3px;overflow:hidden;position:relative}
+#prog i b{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--dust)}
+/* visual panel */
+#vis{position:absolute;left:372px;top:72px;width:888px;height:500px}
+.scene{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.scene.on{opacity:1;transform:none}
+.kick{font:600 13px Consolas,"Courier New",monospace;color:var(--dust);letter-spacing:1px}
+.h{font:700 34px/1.12 Georgia,"Bookman Old Style",serif;margin:6px 0 14px;color:var(--sand)}
+.frame{position:absolute;border:6px solid #f7eedd;border-radius:4px;box-shadow:0 10px 26px rgba(0,0,0,.55);overflow:hidden;background:#000}
+.frame img{width:100%;height:100%;object-fit:cover;display:block;animation:kb 14s ease-out forwards}
+.frame.contain img{object-fit:contain;background:#0b0706}
+@keyframes kb{from{transform:scale(1.0)}to{transform:scale(1.07)}}
+.cap{position:absolute;font:italic 12px "Segoe UI",Arial;color:var(--clay)}
+.stat{position:absolute}
+.stat .n{font:700 44px Georgia,serif;color:var(--dust);line-height:1}
+.stat .t{font:14px "Segoe UI",Arial;color:var(--sand);margin-top:4px;max-width:210px}
+.pop{opacity:0;animation:pop .5s ease forwards}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#2b1a16;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font:14px "Segoe UI",Arial}
+.chip.hl{border-color:var(--dust);color:var(--dust)}
+.src{position:absolute;left:0;bottom:-26px;font:11px Consolas,monospace;color:#9b8270}
+/* presenter */
+#who{position:absolute;left:10px;top:118px;width:360px;height:470px;z-index:5}
+#who::before{content:'';position:absolute;left:30px;top:40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(227,168,87,.22) 0%,rgba(193,68,14,.10) 45%,rgba(0,0,0,0) 70%)}
+.girl{position:absolute;left:0;top:0;width:360px;height:470px;opacity:0;transform:translateY(40px);transition:opacity .45s ease,transform .45s ease}
+.girl.on{opacity:1;transform:none}
+.girl svg{width:100%;height:100%;overflow:visible}
+.girl .eyes{animation:blink 4.6s infinite;transform-origin:150px 171px}
+.girl:nth-child(2) .eyes{animation-duration:5.3s;animation-delay:-1.4s}.girl:nth-child(3) .eyes{animation-duration:3.9s;animation-delay:-2.6s}
+@keyframes blink{0%,95%,100%{transform:scaleY(1)}97%{transform:scaleY(.07)}}
+.girl .iris{transition:transform .5s ease}
+.girl.point .iris{transform:translate(3px,0)}
+.girl .head{transform-origin:150px 250px;transition:transform .6s ease}
+.girl.point .head{transform:rotate(2.5deg)}
+.girl.talk .head{animation:nod 2.4s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:rotate(0)}30%{transform:rotate(-1.4deg) translateY(-1px)}70%{transform:rotate(1.1deg)}}
+.girl .tail{transform-origin:196px 96px;animation:sway 3.4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(0)}50%{transform:rotate(2.2deg)}}
+.girl .bob{animation:breathe 3.6s ease-in-out infinite;transform-origin:150px 400px}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.006,1.012)}}
+/* caption */
+#capbar{position:absolute;left:0;right:0;bottom:0;height:136px;background:linear-gradient(180deg,rgba(18,10,9,.0),rgba(18,10,9,.96) 22%);z-index:10;padding:16px 150px 0 372px}
+#name{font:700 15px "Segoe UI",Arial;color:var(--dust);letter-spacing:.5px}
+#name span{color:var(--clay);font-weight:400}
+#line{font:500 22px/1.3 "Segoe UI",Arial;color:#fff;margin-top:3px;min-height:58px}
+#line .w{transition:color .15s}
+#line .w.past{color:#fff}#line .w.fut{color:#cdb9a6}
+#credit{position:absolute;left:16px;bottom:6px;font:600 11px "Segoe UI",Arial;color:var(--clay);z-index:12}
+#hint{position:absolute;right:16px;bottom:8px;font:11px "Segoe UI",Arial;color:#9b8270;z-index:12}
+#start{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(8,5,5,.72)}
+#start h1{font:700 40px Georgia,serif;margin:0}
+#start .row{display:flex;gap:10px}
+#start button{background:var(--rust);color:#fff;border:0;border-radius:10px;padding:14px 22px;font:600 17px "Segoe UI",Arial;cursor:pointer}
+#start button.g{background:transparent;border:1px solid var(--line);color:var(--sand);font-size:14px;padding:8px 14px}
+#start p{color:var(--clay);font-size:14px;margin:0;max-width:640px;text-align:center}
+#rotate{display:none}
+@media (orientation:portrait) and (max-width:900px){#rotate{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;justify-content:flex-start;padding:10px 130px 10px 14px;background:rgba(20,12,11,.92);color:#e3a857;font:600 14px 'Segoe UI',Arial;border-top:1px solid #4a2f26}}
+body.rec #rotate,body.rec #bar,body.rec #hint,body.rec #start,body.rec .crew-fabs{display:none!important}
+body.rec #prog{top:0}
+#sitelink{position:absolute;right:16px;bottom:5px;z-index:12;font:700 13px "Segoe UI",Arial;color:#ffd08a;text-decoration:none;background:rgba(193,68,14,.35);border:1px solid #e3a857;border-radius:5px;padding:2px 9px}#sitelink:hover{background:rgba(193,68,14,.6)}
+a.site{display:inline-block;font:700 21px "Segoe UI",Arial;color:#ffd08a;text-decoration:none;border:2px solid #e3a857;background:rgba(193,68,14,.3);border-radius:8px;padding:8px 16px}a.site:hover{background:rgba(193,68,14,.55)}
+</style>
+</head>
+<body>
+<div id="rotate">Turn your phone sideways to watch the presentation full size</div>
+<div id="stage">
+  <div id="bar">
+    <b>Mars Navigator</b><span style="color:var(--clay);font-size:13px">Team presentation</span>
+    <span class="sp"></span>
+    <button data-mode="30">30 sec</button><button data-mode="60">1 min</button><button data-mode="120">2 min</button>
+    <button id="prev" title="Previous (←)">◀</button><button id="play" title="Play or pause (space)">Play</button><button id="next" title="Next (→)">▶</button>
+    <button id="voice" title="Turn the narration sound on or off" class="on">Sound: on</button>
+    <span id="time">0:00 / 0:30</span>
+    <a href="index.html">Map</a><a href="globe.html">3D Globe</a><a href="guide.html">Field Guide</a><a href="guide.html#team">Team &amp; Sources</a>
+  </div>
+  <div id="prog"></div>
+  <div id="vis"></div>
+  <div id="who"></div>
+  <div id="capbar"><div id="name"></div><div id="line"></div></div>
+  <a id="sitelink" href="https://pravyasharma.github.io/NASAMARSDEC26/" target="_blank" rel="noopener">Try it: pravyasharma.github.io/NASAMARSDEC26</a>
+  <div id="credit">Pravya Sharma (team lead) · Advika Bisaria · Kshama · Winchester School, Jebel Ali, Dubai · NASA Space Apps Challenge 2026</div>
+  <div id="start">
+    <h1>Mars Navigator</h1>
+    <p>Pravya, Kshama and Advika explain the project. Pick a length:</p>
+    <div class="row"><button data-go="30">30 seconds</button><button data-go="60">1 minute</button><button data-go="120">2 minutes</button></div>
+    <div class="row"><button class="g" id="startVoice">Sound: on</button></div>
+    <p style="font-size:12px">Keys: space = play or pause, arrows = previous or next slide. The presenters are illustrations and the voices are computer-generated.</p>
+  </div>
+</div>
+
+<script src="audio/narration.js"></script>
+<script>
+/* Mars Navigator team presentation.
+   The three presenters are original SVG illustrations, not photos. Narration timing is fixed for the
+   30 s, 1 min and 2 min versions; with "Voice" on, each slide waits for the voice to finish.
+   Code drafted with help from an SI assistant (Claude) and reviewed by the team. */
+'use strict';
+const Q = new URLSearchParams(location.search);
+const REC = Q.has('rec');
+if (REC) document.body.classList.add('rec');
+
+/* ---------- presenters (original illustrations) ---------- */
+const PEOPLE = {
+  P: { name: 'Pravya Sharma', first: 'Pravya', role: 'team lead', skin: '#c48a63', light: '#dcaa84', shade: '#a26c4b', hair: '#1b1210', hairHi: '#47302a', brow: '#24160f', eye: '#4a2a17', eye2: '#8a5a33', lip: '#a95550', lip2: '#bf6b63', style: 'pony', accent: '#e3a857', earring: true, jacket: '#c1440e', jacket2: '#93330a', patch: 'P' },
+  K: { name: 'Kshama', first: 'Kshama', role: 'safety layer', skin: '#b37853', light: '#cd9670', shade: '#8f5c3d', hair: '#140d0b', hairHi: '#3b2721', brow: '#1d120d', eye: '#3a2214', eye2: '#77502f', lip: '#9c4d49', lip2: '#b4605a', style: 'bob', accent: '#7fb7d0', earring: false, jacket: '#3d6f8f', jacket2: '#2a5068', patch: 'K' },
+  A: { name: 'Advika Bisaria', first: 'Advika', role: 'solar power', skin: '#cf9b74', light: '#e6b993', shade: '#ac7752', hair: '#24170f', hairHi: '#5a3a28', brow: '#2c1b12', eye: '#55311b', eye2: '#9a6a3b', lip: '#b35e57', lip2: '#c9766c', style: 'braid', accent: '#ffd34d', earring: true, jacket: '#d9a13a', jacket2: '#a97a22', patch: 'A' }
+};
+function girlSVG(p) {
+  /* Original semi-realistic portrait: head and shoulders, natural proportions, soft shading.
+     Mouth (.jaw/.inner/.teeth) is driven by the audio envelope; eyes blink and glance. */
+  const id = p.patch, H = p.hair, HI = p.hairHi, SK = p.skin, SH = p.shade, LT = p.light;
+  const hairBack = {
+    pony: `<path d="M84 168 C78 104 108 70 150 68 C194 68 224 102 218 170 C214 196 206 214 200 222 L100 222 C92 212 86 196 84 168Z" fill="url(#hr${id})"/>
+      <g class="tail"><path d="M196 92 C236 96 250 140 244 196 C240 240 226 286 214 318 C222 268 222 226 214 190 C208 156 200 126 188 104Z" fill="url(#hr${id})"/>
+      <path d="M214 112 C234 134 238 176 232 220 M206 120 C222 150 224 196 220 250" stroke="${HI}" stroke-width="2.4" fill="none" opacity=".55" stroke-linecap="round"/></g>
+      <rect x="186" y="86" width="16" height="12" rx="5" transform="rotate(28 194 92)" fill="${p.accent}"/>`,
+    bob: `<path d="M80 172 C72 100 106 64 150 64 C196 64 230 100 222 172 C220 210 226 240 232 262 C214 268 196 262 188 246 L112 246 C104 262 86 268 68 262 C74 240 82 210 80 172Z" fill="url(#hr${id})"/>`,
+    braid: `<path d="M84 168 C78 102 108 68 150 68 C192 68 222 102 216 168 C216 196 214 214 212 230 L88 230 C86 214 84 196 84 168Z" fill="url(#hr${id})"/>`
+  }[p.style];
+  const hairFront = {
+    pony: `<path d="M90 150 C92 104 118 82 152 82 C186 82 210 104 212 148 C204 126 190 112 170 108 C152 120 128 118 114 112 C102 122 94 134 90 150Z" fill="url(#hr${id})"/>
+      <path d="M118 96 C138 92 160 94 182 102 M108 110 C124 102 146 100 166 104" stroke="${HI}" stroke-width="2" fill="none" opacity=".5" stroke-linecap="round"/>`,
+    bob: `<path d="M86 172 C82 110 112 80 150 80 C190 80 218 108 216 166 C214 150 210 140 204 134 C196 140 186 142 176 140 C170 146 160 148 150 146 C140 148 128 146 120 140 C110 142 100 140 94 136 C90 144 87 156 86 172Z" fill="url(#hr${id})"/>
+      <path d="M92 126 C120 92 182 92 210 126" stroke="${p.accent}" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+      <path d="M120 140 L122 132 M150 146 L150 136 M176 140 L174 132" stroke="${HI}" stroke-width="1.4" opacity=".5" stroke-linecap="round"/>`,
+    braid: `<path d="M90 152 C90 104 116 82 150 82 C186 82 212 104 212 152 C200 124 178 110 150 108 C122 110 100 124 90 152Z" fill="url(#hr${id})"/>
+      <path d="M150 84 L150 108" stroke="${SH}" stroke-width="2" opacity=".55"/>
+      <path d="M146 90 C128 94 108 110 98 134 M154 90 C172 94 194 110 204 134" stroke="${HI}" stroke-width="2" fill="none" opacity=".5" stroke-linecap="round"/>`
+  }[p.style];
+  const eye = (cx, dir) => `
+    <clipPath id="ey${id}${cx}"><path d="M${cx - 15} 172 C${cx - 9} 163 ${cx + 9} 163 ${cx + 15} 172 C${cx + 9} 179 ${cx - 9} 179 ${cx - 15} 172Z"/></clipPath>
+    <path d="M${cx - 15} 172 C${cx - 9} 163 ${cx + 9} 163 ${cx + 15} 172 C${cx + 9} 179 ${cx - 9} 179 ${cx - 15} 172Z" fill="#fbf6ef"/>
+    <g clip-path="url(#ey${id}${cx})"><g class="iris"><circle cx="${cx}" cy="171.5" r="7.6" fill="url(#ir${id})"/><circle cx="${cx}" cy="171.5" r="3.6" fill="#120a07"/>
+      <circle cx="${cx + 2.6}" cy="168.8" r="2.1" fill="#fff"/><circle cx="${cx - 2.4}" cy="174.2" r=".9" fill="#fff" opacity=".7"/></g>
+    <path d="M${cx - 15} 168 C${cx - 8} 164 ${cx + 8} 164 ${cx + 15} 168 L${cx + 15} 163 L${cx - 15} 163Z" fill="#000" opacity=".12"/></g>
+    <path d="M${cx - 15} 172 C${cx - 9} 162.5 ${cx + 9} 162.5 ${cx + 15} 172" stroke="#1d110c" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <path d="M${cx + dir * 14} 170.5 l${dir * 4} -3.5" stroke="#1d110c" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M${cx - 12} 177.5 C${cx - 6} 180 ${cx + 6} 180 ${cx + 12} 177.5" stroke="${SH}" stroke-width="1.2" fill="none" opacity=".8"/>
+    <path d="M${cx - 13} 163 C${cx - 6} 158.5 ${cx + 6} 158.5 ${cx + 13} 163" stroke="${SH}" stroke-width="1.3" fill="none" opacity=".6"/>`;
+  return `<svg viewBox="0 0 300 400" role="img" aria-label="Illustrated presenter ${p.name}">
+  <defs>
+    <radialGradient id="fc${id}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="${LT}"/><stop offset=".55" stop-color="${SK}"/><stop offset="1" stop-color="${SH}"/></radialGradient>
+    <linearGradient id="hr${id}" x1="0" x2=".3" y1="0" y2="1"><stop offset="0" stop-color="${HI}"/><stop offset=".45" stop-color="${H}"/><stop offset="1" stop-color="${H}"/></linearGradient>
+    <radialGradient id="ir${id}" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="${p.eye2}"/><stop offset=".75" stop-color="${p.eye}"/><stop offset="1" stop-color="#1a0e08"/></radialGradient>
+    <linearGradient id="jk${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${p.jacket}"/><stop offset="1" stop-color="${p.jacket2}"/></linearGradient>
+    <linearGradient id="nk${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${SH}"/><stop offset=".4" stop-color="${SK}"/></linearGradient>
+    <linearGradient id="rim${id}" x1="1" x2="0"><stop offset="0" stop-color="#ff9a5a" stop-opacity=".35"/><stop offset=".35" stop-color="#ff9a5a" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g class="bob">
+    ${hairBack}
+    <!-- shoulders, mission jacket -->
+    <g transform="translate(0 -24)">
+    <path d="M36 430 C38 334 74 304 118 292 L182 292 C226 304 262 334 264 430Z" fill="url(#jk${id})"/>
+    <path d="M118 292 C126 306 138 314 150 316 C162 314 174 306 182 292 L176 286 L124 286Z" fill="#f4ece0"/>
+    <path d="M114 290 L136 318 L126 336 L104 300Z M186 290 L164 318 L174 336 L196 300Z" fill="${p.jacket2}"/>
+    <path d="M150 318 L150 430" stroke="#00000033" stroke-width="2"/><path d="M146 330 h8 M146 346 h8 M146 362 h8" stroke="#e8d8bf" stroke-width="1.5" opacity=".6"/>
+    <circle cx="96" cy="346" r="15" fill="#1c1110" stroke="#f4ece0" stroke-width="1.6"/>
+    <path d="M88 350 a9 9 0 0 1 16 -7" stroke="#c1440e" stroke-width="3" fill="none"/><circle cx="97" cy="342" r="3.2" fill="#e3a857"/>
+    <rect x="176" y="336" width="54" height="17" rx="3" fill="#f4ece0"/><text x="203" y="348.5" text-anchor="middle" font-size="10" font-weight="700" fill="#2a1a14" font-family="Segoe UI,Arial">${p.first.toUpperCase()}</text>
+    </g>
+    ${p.style === 'braid' ? [0, 1].map(side => { const x0 = side ? 206 : 94, dx = side ? 6 : -6; return [0, 1, 2, 3].map(i => `<ellipse cx="${x0 + dx * Math.min(i, 3) * .6}" cy="${206 + i * 22}" rx="${11.5 - i * .7}" ry="13.5" fill="url(#hr${id})"/><path d="M${x0 + dx * Math.min(i, 3) * .6 - 9} ${200 + i * 22} q9 9 18 1" stroke="${HI}" stroke-width="1.5" fill="none" opacity=".55"/>`).join('') + `<rect x="${x0 + dx * 1.8 - 7}" y="${286}" width="14" height="7" rx="3" fill="${p.accent}"/><path d="M${x0 + dx * 1.8 - 5} 293 l-2 10 M${x0 + dx * 1.8} 293 l0 11 M${x0 + dx * 1.8 + 5} 293 l2 10" stroke="${H}" stroke-width="2.4" stroke-linecap="round"/>`; }).join('') : ''}
+    <!-- neck -->
+    <path d="M130 222 L131 268 C140 276 160 276 169 268 L170 222Z" fill="url(#nk${id})"/><path d="M131 236 C140 246 160 246 169 236 L169 230 L131 230Z" fill="${SH}" opacity=".55"/>
+    <g class="head">
+      <!-- ears -->
+      <path d="M88 162 C78 160 76 178 82 188 C86 196 92 196 94 192Z" fill="${SH}"/><path d="M212 162 C222 160 224 178 218 188 C214 196 208 196 206 192Z" fill="${SH}"/>
+      ${p.earring ? `<circle cx="84" cy="194" r="2.6" fill="${p.accent}"/><circle cx="216" cy="194" r="2.6" fill="${p.accent}"/>` : ''}
+      <!-- face -->
+      <path d="M150 92 C192 92 212 124 212 164 C212 202 200 228 178 240 C166 246 158 248 150 248 C142 248 134 246 122 240 C100 228 88 202 88 164 C88 124 108 92 150 92Z" fill="url(#fc${id})"/>
+      <path d="M150 92 C192 92 212 124 212 164 C212 202 200 228 178 240 C166 246 158 248 150 248 C142 248 134 246 122 240 C100 228 88 202 88 164 C88 124 108 92 150 92Z" fill="url(#rim${id})"/>
+      <ellipse cx="116" cy="200" rx="15" ry="9" fill="#e86f6f" opacity=".2"/><ellipse cx="184" cy="200" rx="15" ry="9" fill="#e86f6f" opacity=".2"/>
+      <!-- eyes and brows -->
+      <g class="eyes">${eye(124, -1)}${eye(176, 1)}</g>
+      <path class="brow" d="M108 154 C116 148 128 147 138 151" stroke="${p.brow}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path class="brow" d="M162 151 C172 147 184 148 192 154" stroke="${p.brow}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <!-- nose -->
+      <path d="M154 186 C156 192 158 196 157 201" stroke="${SH}" stroke-width="1.6" fill="none" opacity=".7" stroke-linecap="round"/>
+      <path d="M141 203 C144 208 148 207 150 206 C152 207 156 208 159 203" stroke="${SH}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="150" cy="199" rx="5" ry="3" fill="${LT}" opacity=".35"/>
+      <!-- mouth: driven by audio -->
+      <g class="mouth">
+        <path class="inner" d="M137 222 C143 225 157 225 163 222 C160 224 156 225 150 225 C144 225 140 224 137 222Z" fill="#4a1414"/>
+        <path class="teeth" d="M140 222.5 C146 224 154 224 160 222.5 L159 225 C153 226 147 226 141 225Z" fill="#fbf6ef" opacity="0"/>
+        <path class="upper" d="M135 221.5 C140 218 145 217.5 150 219 C155 217.5 160 218 165 221.5 C158 223 142 223 135 221.5Z" fill="${p.lip}"/>
+        <path class="lower" d="M137 222.5 C142 228.5 158 228.5 163 222.5 C157 224.5 143 224.5 137 222.5Z" fill="${p.lip2}"/>
+        <path class="corner" d="M134 221 C135 222.5 136 223 137.5 223 M166 221 C165 222.5 164 223 162.5 223" stroke="${SH}" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      </g>
+      <path d="M140 236 C146 239 154 239 160 236" stroke="${SH}" stroke-width="1" fill="none" opacity=".45"/>
+      ${hairFront}
+    </g>
+  </g></svg>`;
+}
+
+const who = document.getElementById('who');
+const GIRL = {};
+for (const k in PEOPLE) { const d = document.createElement('div'); d.className = 'girl'; d.innerHTML = girlSVG(PEOPLE[k]); who.appendChild(d); GIRL[k] = d; }
+
+/* ---------- slide visuals ---------- */
+const img = (src, x, y, w, h, cls = '', delay = 0) => `<div class="frame pop ${cls}" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;animation-delay:${delay}s"><img src="img/${src}" alt=""></div>`;
+const stat = (n, t, x, y, d) => `<div class="stat pop" style="left:${x}px;top:${y}px;animation-delay:${d}s"><div class="n">${n}</div><div class="t">${t}</div></div>`;
+const head = (k, h) => `<div class="kick">${k}</div><div class="h">${h}</div>`;
+const V = {
+  title: () => `${head('NASA SPACE APPS CHALLENGE 2026', 'Mars Navigator')}
+    <div style="font:20px/1.4 'Segoe UI';color:var(--clay);max-width:520px" class="pop">A layered Mars map that tells the first crews <b style="color:#fff">where</b> to walk, <b style="color:#fff">when</b> to walk, and how to stay <b style="color:#fff">safe</b>.</div>
+    ${img('app-globe.jpg', 470, 120, 418, 236, '', .3)}
+    <div class="chips pop" style="position:absolute;left:0;top:300px;animation-delay:.6s"><span class="chip">Pravya Sharma · lead</span><span class="chip">Advika Bisaria</span><span class="chip">Kshama</span></div>
+    <div class="cap" style="left:0;top:350px">Winchester School, Jebel Ali, Dubai</div>`,
+  problem: () => `${head('THE PROBLEM', 'No GPS. No compass. No quick help.')}
+    ${stat('0', 'GPS satellites at Mars, and no magnetic field for a compass', 0, 110, .2)}
+    ${stat('22 min', 'longest one-way radio delay to Earth', 300, 110, .5)}
+    ${stat('−70 °C', 'a normal night at Gale Crater (Curiosity)', 600, 110, .8)}
+    ${img('mola-topography.jpg', 0, 250, 888, 230, '', 1.0)}
+    <div class="src">MOLA height map · NASA/JPL · Curiosity REMS</div>`,
+  objectives: () => `${head('PLAN BY OBJECTIVE', 'Pick today’s mission')}
+    ${img('app-ice.jpg', 0, 96, 600, 338, '', .1)}
+    <div class="chips" style="position:absolute;left:624px;top:100px;width:264px;flex-direction:column">
+      ${['Land and set up base', 'Find water ice', 'Search for ancient life', 'Power the base', 'Stay safe', 'Daily Marswalk'].map((t, i) => `<span class="chip pop ${i === 1 ? 'hl' : ''}" style="animation-delay:${.3 + i * .15}s">${i + 1}. ${t}</span>`).join('')}</div>
+    <div class="src">NASA/JPL Mars Trek (MOLA) · buried ice band: SWIM project, PSI/NASA JPL</div>`,
+  route: () => `${head('NAVIGATE', 'Turn by turn, on proven ground')}
+    ${img('app-walk.jpg', 0, 96, 640, 360, '', .1)}
+    ${stat('10:30', 'leave in the GO zone', 670, 110, .5)}
+    ${stat('14:30', 'turn back, no exceptions', 670, 230, .8)}
+    ${stat('15:30', 'everyone inside', 670, 350, 1.1)}
+    <div class="src">HiRISE via NASA Mars Trek · path: NASA Curiosity waypoints</div>`,
+  radiation: () => `${head('SAFETY LAYER · KSHAMA', 'Radiation: know your shelter')}
+    ${img('rad-radiation-types.jpg', 0, 100, 470, 312, 'contain', .1)}
+    ${stat('≈ 6', 'chest X-rays of radiation every day (Curiosity RAD)', 510, 110, .4)}
+    ${stat('≈ 100×', 'a normal day on Earth', 510, 250, .7)}
+    <div class="src">Hassler et al., Science 2014 · image NASA/JPL-Caltech/SwRI (PIA16938)</div>`,
+  shelter: () => `${head('SAFETY LAYER · KSHAMA', 'Cliffs are natural shields')}
+    ${img('murray-buttes-selfie.jpg', 0, 96, 600, 358, '', .1)}
+    ${stat('4%', 'less radiation beside the Murray Buttes cliff, 2016', 630, 110, .5)}
+    <div class="chips" style="position:absolute;left:630px;top:270px;flex-direction:column"><span class="chip pop" style="animation-delay:.8s">Cliffs</span><span class="chip pop" style="animation-delay:1s">Overhangs</span><span class="chip pop" style="animation-delay:1.2s">Caves</span></div>
+    <div class="src">NASA JPL 2021 · photo NASA/JPL-Caltech/MSSS (PIA20844)</div>`,
+  dust: () => `${head('SAFETY LAYER · KSHAMA', 'Dusty days are CAUTION days')}
+    ${img('dust-storm-2018.jpg', 0, 96, 430, 242, '', .1)}
+    ${img('kshama-helmet-alert.png', 458, 96, 430, 268, '', .4)}
+    ${stat('90%', 'less UV sunlight at Gale, 2018 storm', 0, 360, .7)}
+    ${stat('2.7 km', 'how far you could see', 260, 360, .9)}
+    <div class="src">REMS studies 2019 · NASA/JPL-Caltech/MSSS (PIA22487) · helmet: team idea, SI-assisted image</div>`,
+  power1: () => `${head('POWER THE BASE · ADVIKA', 'Three farms on the equator')}
+    ${img('advika-sun-belt.png', 0, 96, 420, 336, '', .1)}
+    ${img('advika-three-farms.png', 448, 96, 420, 336, '', .4)}
+    <div class="chips" style="position:absolute;left:0;top:448px"><span class="chip pop" style="animation-delay:.7s">Meridiani</span><span class="chip pop" style="animation-delay:.85s">Tharsis</span><span class="chip pop" style="animation-delay:1s">Elysium</span><span class="chip hl pop" style="animation-delay:1.2s">one is always in daylight</span></div>
+    <div class="src">USGS/IAU Gazetteer · diagrams: Advika’s ideas, SI-assisted images</div>`,
+  power2: () => `${head('POWER THE BASE · ADVIKA', 'Or one farm at the north pole')}
+    ${img('advika-polar-sun.png', 0, 96, 420, 336, '', .1)}
+    ${img('advika-sunflower-panels.png', 448, 96, 420, 336, '', .4)}
+    <div class="chips" style="position:absolute;left:0;top:448px"><span class="chip pop" style="animation-delay:.7s">sunflower panels follow the Sun</span><span class="chip pop" style="animation-delay:.9s">about 372 sols of sunshine</span><span class="chip pop" style="animation-delay:1.1s">then ~10 months of night</span></div>
+    <div class="src">diagrams: Advika’s ideas, SI-assisted images</div>`,
+  navigator: () => `${head('THREE WAYS TO TRAVEL', 'Walk, drive, or fly the Navigator')}
+    ${[['On foot', '2 km/h', 'short walks near base'], ['Pressurised rover', '10 km/h', 'day trips with a cabin to shelter in'], ['Nuclear-Powered Navigator', '≈ 350 km/h', 'flies 1.5 km up; anywhere on Mars in hours']].map((r, i) => `<div class="pop" style="position:absolute;left:${i * 296}px;top:110px;width:276px;height:250px;background:#2b1a16;border:1px solid ${i === 2 ? 'var(--dust)' : 'var(--line)'};border-radius:14px;padding:16px;animation-delay:${.2 + i * .3}s">
+      <svg viewBox="0 0 120 60" style="width:120px;height:60px">${i === 0 ? '<circle cx="60" cy="12" r="9" fill="#e3a857"/><path d="M60 22 L60 42 M60 42 L48 58 M60 42 L72 58 M44 30 L76 30" stroke="#e3a857" stroke-width="5" stroke-linecap="round"/>' : i === 1 ? '<rect x="18" y="16" width="84" height="28" rx="8" fill="#e3a857"/><rect x="62" y="21" width="30" height="12" rx="3" fill="#2b1a16"/><circle cx="34" cy="48" r="9" fill="#f2e3cc"/><circle cx="86" cy="48" r="9" fill="#f2e3cc"/>' : '<path d="M8 34 L70 28 L96 14 L104 16 L90 30 L114 32 L114 36 L90 38 L104 52 L96 54 L70 40 L8 38Z" fill="#e3a857"/><circle cx="40" cy="36" r="4" fill="#2b1a16"/>'}</svg>
+      <div style="font:700 18px Georgia,serif;margin-top:6px">${r[0]}</div><div style="font:700 38px Georgia,serif;color:var(--dust);margin-top:6px">${r[1]}</div><div style="font:15px 'Segoe UI';color:var(--clay);margin-top:6px">${r[2]}</div></div>`).join('')}
+    <div class="pop" style="position:absolute;left:0;top:384px;width:888px;font:14px 'Segoe UI';color:var(--clay);animation-delay:1.3s">Navigator estimates from NASA-funded studies: MANGLE nuclear aircraft (about Mach 0.4 at 1.5 km) and the ARES Mars airplane (145 m/s). For scale, Ingenuity flew at up to 36 km/h. A crewed version is a concept.</div>
+    <div class="src">AIAA 2014-3820 (MANGLE) · NASA Langley (ARES) · NASA JPL (Ingenuity)</div>`,
+  onmars: () => `${head('ON MARS', 'It runs at the base, not on the internet')}
+    <svg viewBox="0 0 888 300" style="position:absolute;left:0;top:100px;width:888px;height:300px" class="pop">
+      <g font-family="Segoe UI,Arial" text-anchor="middle" fill="#f2e3cc">
+        ${[[0, 'Suits, rovers', 'and Navigator'], [235, 'Base server', 'app + maps + chat'], [470, 'Relay orbiters', 'MRO, MAVEN, TGO…'], [705, 'Earth', 'Deep Space Network']].map(([x, a, b], i) => `<rect x="${x}" y="70" width="183" height="130" rx="14" fill="#2b1a16" stroke="${i === 1 ? '#e3a857' : '#4a2f26'}" stroke-width="2"/><text x="${x + 91}" y="125" font-size="19" font-weight="700" fill="${i === 1 ? '#e3a857' : '#f2e3cc'}">${a}</text><text x="${x + 91}" y="155" font-size="14" fill="#d9c2a3">${b}</text>`).join('')}
+        <g stroke="#e3a857" stroke-width="3"><path d="M185 135 H233"/><path d="M420 135 H468"/><path d="M655 135 H703"/></g>
+        <g font-size="13" fill="#d9c2a3"><text x="209" y="232">instant</text><text x="444" y="232">when overhead</text><text x="679" y="232">3 to 22 min</text></g>
+      </g></svg>
+    <div class="pop" style="position:absolute;left:0;top:400px;width:888px;font:15px 'Segoe UI';color:var(--clay);animation-delay:.8s">Maps are loaded before launch, so the app works with no Earth link. Today, rovers send over 99% of their data home through relay orbiters.</div>
+    <div class="src">NASA Mars Relay Network · SpaceOps 2025</div>`,
+  globe: () => `${head('3D GLOBE', 'You stay in the middle')}
+    ${img('app-globe.jpg', 0, 96, 700, 394, '', .1)}
+    <div class="chips" style="position:absolute;left:720px;top:110px;flex-direction:column;width:168px"><span class="chip pop" style="animation-delay:.4s">8 directions</span><span class="chip pop" style="animation-delay:.6s">Sun right now</span><span class="chip pop" style="animation-delay:.8s">Earth distance</span><span class="chip pop" style="animation-delay:1s">suit meter</span></div>
+    <div class="src">NASA/JPL Mars Trek · Mars24 (NASA GISS) · JPL · suit values simulated</div>`,
+  crew: () => `${head('EVERY TEAM, ONE APP', 'Chat and field camera')}
+    ${img('app-chat.jpg', 0, 96, 700, 394, '', .1)}
+    <div class="chips" style="position:absolute;left:720px;top:110px;flex-direction:column;width:168px"><span class="chip pop" style="animation-delay:.4s">all teams</span><span class="chip pop" style="animation-delay:.6s">Mission Control delay</span><span class="chip pop" style="animation-delay:.8s">photos and videos</span><span class="chip pop" style="animation-delay:1s">tagged on the map</span></div>
+    <div class="src">demo mode: data stays in the browser</div>`,
+  end: () => `${head('NASA SPACE APPS CHALLENGE 2026', 'Know where you are.<br>Know when to turn back.')}
+    <div class="chips pop" style="animation-delay:.3s;margin-top:10px"><span class="chip">NASA Mars Trek</span><span class="chip">Curiosity + Perseverance</span><span class="chip">RAD · REMS · MEDA · MOXIE</span><span class="chip">Mars24</span><span class="chip">USGS/IAU</span><span class="chip">ESA/DLR/FU Berlin</span><span class="chip">SWIM (PSI)</span></div>
+    <div class="pop" style="animation-delay:.6s;margin-top:28px;font:22px Georgia,serif"><b>Pravya Sharma</b> <span style="color:var(--clay);font-size:16px">team lead</span> · <b>Advika Bisaria</b> · <b>Kshama</b></div>
+    <div class="pop" style="animation-delay:.8s;margin-top:6px;color:var(--clay)">Winchester School, Jebel Ali, Dubai</div>
+    <div class="pop" style="animation-delay:1s;margin-top:18px"><a class="site" href="https://pravyasharma.github.io/NASAMARSDEC26/" target="_blank" rel="noopener">https://pravyasharma.github.io/NASAMARSDEC26/</a></div>`
+};
+
+/* ---------- scripts and recorded narration (audio/narration.js) ---------- */
+const NAR = window.NARRATION || {};
+function timed(mode) { return (NAR[mode] || []).map(x => ({ who: x.who, vis: x.vis, text: x.text, file: x.file, env: x.env || '', dur: x.dur + 0.35 })); }
+
+/* ---------- player ---------- */
+let mode = +(Q.get('mode') || 60); if (!NAR[mode]) mode = 60;
+let S = [], idx = 0, t = 0, playing = false, last = 0, voiceOn = !REC, speaking = false, spoke = false;
+const vis = document.getElementById('vis'), prog = document.getElementById('prog'), line = document.getElementById('line'), nameEl = document.getElementById('name');
+const total = () => S.reduce((a, b) => a + b.dur, 0);
+const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+function setMode(m) {
+  mode = m; S = timed(m); idx = 0; t = 0; spoke = false;
+  document.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('on', +b.dataset.mode === m));
+  prog.innerHTML = S.map(() => '<i><b></b></i>').join('');
+  show(0);
+}
+function show(i) {
+  idx = Math.max(0, Math.min(S.length - 1, i)); t = 0; spoke = false;
+  const sc = S[idx], p = PEOPLE[sc.who];
+  vis.innerHTML = `<div class="scene">${V[sc.vis]()}</div>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => vis.firstChild.classList.add('on')));
+  for (const k in GIRL) GIRL[k].classList.toggle('on', k === sc.who);
+  for (const k in GIRL) GIRL[k].classList.remove('point');
+  setTimeout(() => GIRL[sc.who].classList.add('point'), 500);
+  setTimeout(() => GIRL[sc.who].classList.remove('point'), 2600);
+  nameEl.innerHTML = `${p.name} <span>· ${p.role}</span>`;
+  line.innerHTML = sc.text.split(' ').map(w => `<span class="w fut">${w}</span>`).join(' ');
+  line.style.fontSize = sc.text.length > 150 ? '18px' : sc.text.length > 105 ? '20px' : '22px';
+  [...prog.children].forEach((e, j) => e.firstChild.style.width = j < idx ? '100%' : '0');
+  if (voiceOn && playing) speak(sc);
+  paint();
+}
+function paint() {
+  const sc = S[idx], frac = Math.min(1, t / sc.dur);
+  prog.children[idx].firstChild.style.width = (frac * 100) + '%';
+  const words = line.querySelectorAll('.w'), n = Math.floor(frac * words.length * 1.05);
+  words.forEach((w, j) => w.className = 'w ' + (j < n ? 'past' : 'fut'));
+  const before = S.slice(0, idx).reduce((a, b) => a + b.dur, 0);
+  document.getElementById('time').textContent = fmt(before + Math.min(t, sc.dur)) + ' / ' + fmt(total());
+  const talk = playing && (voiceOn ? speaking : t < sc.dur - 0.25);
+  GIRL[sc.who].classList.toggle('talk', talk);
+  mouth(GIRL[sc.who], talk ? envAt(sc, t) : 0);
+}
+let mo = 0;
+function envAt(sc, tt) { if (!sc.env) return 0.35 + 0.35 * Math.sin(tt * 17); const i = Math.floor(tt * 30); const v = (+sc.env[i] || 0) / 9; const w = (+sc.env[i + 1] || 0) / 9; return v * .6 + w * .4; }
+function mouth(g, o) {
+  mo += (o - mo) * 0.55; const k = Math.max(0, Math.min(1, mo));
+  const h = 0.6 + 8.5 * k, w = 12.5 + 1.8 * k, y = 222;
+  const m = g.__m || (g.__m = { inner: g.querySelector('.inner'), teeth: g.querySelector('.teeth'), lower: g.querySelector('.lower'), brows: g.querySelectorAll('.brow') });
+  m.inner.setAttribute('d', `M${150 - w} ${y} C${150 - w * .6} ${y - .6} ${150 + w * .6} ${y - .6} ${150 + w} ${y} C${150 + w * .6} ${y + h * 1.35} ${150 - w * .6} ${y + h * 1.35} ${150 - w} ${y}Z`);
+  m.teeth.setAttribute('opacity', k > .22 ? .92 : 0);
+  m.lower.setAttribute('transform', `translate(0 ${(h - .6) * .95})`);
+  m.brows.forEach(b => b.setAttribute('transform', `translate(0 ${-1.6 * k})`));
+}
+function tick(ts) {
+  if (!playing) return;
+  const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0; last = ts; t += dt;
+  const sc = S[idx];
+  const done = voiceOn ? (t >= sc.dur && (spoke || !speaking)) || t > sc.dur + 4 : t >= sc.dur;
+  if (done) {
+    if (idx < S.length - 1) show(idx + 1);
+    else { t = sc.dur; paint(); stop(true); return; }
+  }
+  paint(); requestAnimationFrame(tick);
+}
+function play() { if (REC) { const f = document.createElement('div'); f.style.cssText = 'position:absolute;inset:0;background:#fff;z-index:99'; document.getElementById('stage').appendChild(f); setTimeout(() => f.remove(), 200); }
+  if (idx === S.length - 1 && t >= S[idx].dur) show(0); playing = true; last = 0; document.getElementById('play').textContent = 'Pause'; if (voiceOn) speak(S[idx]); requestAnimationFrame(tick); }
+function stop(end) { playing = false; document.getElementById('play').textContent = 'Play'; audio.pause(); speaking = false; paint(); if (end && REC) window.__done = true; }
+
+/* ---------- recorded narration ---------- */
+const audio = new Audio(); audio.preload = 'auto';
+audio.onplaying = () => { speaking = true; }; audio.onended = () => { speaking = false; spoke = true; }; audio.onerror = () => { speaking = false; spoke = true; };
+function speak(sc) { if (!sc.file) { spoke = true; return; } audio.pause(); audio.src = sc.file; audio.currentTime = 0; speaking = true; spoke = false; audio.play().catch(() => { speaking = false; spoke = true; }); }
+function setVoice(on) {
+  voiceOn = on;
+  document.getElementById('voice').textContent = 'Sound: ' + (voiceOn ? 'on' : 'off'); document.getElementById('voice').classList.toggle('on', voiceOn);
+  document.getElementById('startVoice').textContent = 'Sound: ' + (voiceOn ? 'on' : 'off');
+  if (!voiceOn) { audio.pause(); speaking = false; } else if (playing) speak(S[idx]);
+}
+/* ---------- controls ---------- */
+document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { const was = playing; stop(); setMode(+b.dataset.mode); if (was) play(); });
+document.getElementById('play').onclick = () => playing ? stop() : play();
+document.getElementById('prev').onclick = () => show(idx - 1);
+document.getElementById('next').onclick = () => show(idx + 1);
+document.getElementById('voice').onclick = () => setVoice(!voiceOn);
+document.getElementById('startVoice').onclick = () => setVoice(!voiceOn);
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { document.getElementById('start').style.display = 'none'; setMode(+b.dataset.go); play(); });
+addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea,select')) return;
+  if (e.code === 'Space') { e.preventDefault(); playing ? stop() : play(); }
+  if (e.key === 'ArrowRight') show(idx + 1); if (e.key === 'ArrowLeft') show(idx - 1);
+});
+function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.getElementById('stage').style.transform = `translate(-50%,-50%) scale(${s})`; }
+addEventListener('resize', fit); fit();
+setMode(mode);
+if (REC) { document.getElementById('start').style.display = 'none'; setTimeout(play, 600); }
+</script>
+<script>window.CREW_CFG = { fab: 'right:14px;bottom:34px', row: true, panel: 'right:14px;bottom:100px;height:min(520px,calc(100vh - 170px))' };</script>
+<script src="crew.js"></script>
+</body>
+</html>

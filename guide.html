@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars Navigator | Field Guide, Team and Sources</title>
+<meta name="description" content="Interplanetary Survival Guide: Martian Map. Field guide, safety layer and solar power plan for the first human crews on Mars. NASA Space Apps Challenge 2026.">
+<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<style>
+:root{--basalt:#1c1110;--panel:#2b1a16;--panel2:#3a241d;--rust:#c1440e;--ember:#d8582a;--dust:#e3a857;--sand:#f2e3cc;--clay:#d9c2a3;--frost:#8db9cc;--sage:#7fa37a;--line:#4a2f26}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--basalt);color:var(--sand);font:16px/1.6 "Segoe UI",Calibri,Arial,sans-serif}
+a{color:var(--dust)}
+header{position:sticky;top:0;z-index:10;background:#140c0b;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+header b{font:700 20px Georgia,"Bookman Old Style",serif}
+header nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+header nav a{border:1px solid var(--line);color:var(--sand);padding:5px 11px;border-radius:6px;text-decoration:none;font-size:14px}
+header nav a:hover{border-color:var(--dust)}
+main{max-width:1060px;margin:0 auto;padding:10px 20px 60px}
+h1{font:700 40px/1.15 Georgia,"Bookman Old Style",serif;margin:30px 0 6px}
+h2{font:700 28px Georgia,"Bookman Old Style",serif;margin:54px 0 4px;padding-top:10px;border-top:2px solid var(--rust)}
+h3{font:700 19px Georgia,serif;color:var(--dust);margin:26px 0 6px}
+.by{color:var(--clay);font-style:italic;margin:0 0 16px}
+.lede{font-size:19px;color:var(--clay);max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card b{color:var(--dust)}
+.stat{font:700 28px Georgia,serif;color:var(--dust);display:block}
+figure{margin:16px 0}
+figure img{width:100%;border-radius:8px;display:block}
+figcaption{font-size:13px;color:var(--clay);margin-top:5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--dust);font-weight:700}
+.fix{background:#2a2016;border-left:4px solid var(--dust);padding:10px 14px;border-radius:6px;font-size:15px}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:700;font-size:13px;color:#1c1110}
+.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+ol.rules{columns:2;column-gap:30px}
+ol.rules li{margin:0 0 6px;break-inside:avoid}
+.src li{margin:0 0 7px;word-break:break-word}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.team .card b{font:700 20px Georgia,serif;color:var(--sand);display:block}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.cta a{background:var(--rust);color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:600}
+.cta a.ghost{background:transparent;border:1px solid var(--line);color:var(--sand)}
+.muted{color:var(--clay);font-size:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}ol.rules{columns:1}h1{font-size:30px}h2{font-size:23px}main{padding:6px 14px 90px}table{display:block;overflow-x:auto;white-space:normal}header nav{flex-wrap:nowrap;overflow-x:auto;width:100%;margin-left:0}header nav a{flex:0 0 auto}.cta a{flex:1 1 100%;text-align:center}}
+
+/* menu: one colour per page so each button is easy to spot; current page has a white outline */
+nav a[href="index.html"],nav a[href="globe.html"],nav a[href="guide.html"],nav a[href="present.html"],nav a[href="guide.html#team"],#menuBtn{color:#fff!important;font-weight:700!important;border-width:1px!important;border-style:solid!important}
+nav a[href="index.html"]{background:#c1440e!important;border-color:#ee7a45!important}
+nav a[href="globe.html"]{background:#2f6f73!important;border-color:#5fb0b2!important}
+nav a[href="guide.html"]{background:#4f7a3a!important;border-color:#82b066!important}
+nav a[href="present.html"]{background:#3d5f9a!important;border-color:#7a9ad6!important}
+nav a[href="guide.html#team"]{background:#6f4b8f!important;border-color:#a888c8!important}
+#menuBtn{background:#e3a857!important;border-color:#f3c98a!important;color:#1c1110!important}
+nav a:hover,#menuBtn:hover{filter:brightness(1.15)}
+nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <b>Mars Navigator</b>
+  <nav>
+    <a href="index.html">Map</a><a href="globe.html">3D Globe</a><a href="present.html">Presentation</a>
+    <a href="#objectives">Objectives</a><a href="#on-mars">On Mars</a><a href="#travel">Travel</a><a href="#field">Field Guide</a><a href="#safety">Safety</a><a href="#power">Power</a><a href="#team">Team &amp; Sources</a>
+  </nav>
+</header>
+<main>
+
+<p class="muted" style="margin-top:26px">NASA Space Apps Challenge 2026 · Interplanetary Survival Guide: Martian Map</p>
+<h1>Know where you are.<br>Know when to turn back.</h1>
+<p class="lede">A layered Mars map and field guide for the first human crews. It tells an astronaut <b>where</b> to walk (terrain and real rover routes), <b>when</b> to walk (temperature zones through the sol), and <b>how to stay safe</b> (radiation shelters, dust storms and power).</p>
+<div class="cta"><a href="present.html">Watch the team presentation</a><a href="index.html" class="ghost">Open the map</a><a href="globe.html" class="ghost">Spin the 3D globe</a></div>
+<p class="muted">Team lead <b>Pravya Sharma</b>, with <b>Advika Bisaria</b> and <b>Kshama</b>, Winchester School, Jebel Ali, Dubai.</p>
+<div class="grid" style="margin-top:14px">
+<div class="card"><b>Turn-by-turn navigation.</b> A blinking arrow shows where you are, with the next turn, time and distance left and arrival time, like a phone map. A compass stays at the top.</div>
+<div class="card"><b>Crew chat.</b> Several teams on the ground can talk in one place, with a separate line to Mission Control that shows today's radio delay to Earth.</div>
+<div class="card"><b>Field camera.</b> Take or upload photos and videos on foot or from the rover. Each one is tagged with your map position and shared with the other teams.</div>
+<div class="card"><b>Sun, light and Earth.</b> The 3D globe shows where the Sun is right now, how much sunlight Mars gets, and how far away Earth is.</div>
+</div>
+<p class="muted">On this public website the chat and camera run in demo mode: messages and files stay in your browser and are shared between its open tabs. A real mission would send them through the orbiters that relay rover data today.</p>
+
+<!-- ============ OBJECTIVES ============ -->
+<h2 id="objectives">Plan by mission objective</h2>
+<p class="by">How the map guides a crew: pick what you need to do today, and the map shows where, which data to look at, and a checklist.</p>
+<table>
+<tr><th>Objective</th><th>Where</th><th>Map layers to use</th><th>Common-sense rule</th></tr>
+<tr><td><b>1. Land safely and set up base</b></td><td>Gale Crater floor, near Bradbury Landing (4.6°S, 137.4°E)</td><td>MOLA height map, Gale CTX close-up, 100 km Exploration Zone</td><td>Low ground (more air to slow the lander), near the equator (warmer), flat, with science within 100 km.</td></tr>
+<tr><td><b>2. Find water ice</b></td><td>Arcadia Planitia, Deuteronilus Mensae (about 40° to 52°N)</td><td>Buried ice band (SWIM), TES thermal inertia</td><td>Go as close to the equator as you can while still near ice.</td></tr>
+<tr><td><b>3. Search for signs of ancient life</b></td><td>Mount Sharp layers (Gale), Jezero delta</td><td>HiRISE route close-up, Curiosity and Perseverance paths</td><td>Old lakes and rivers first. Follow the rock layers.</td></tr>
+<tr><td><b>4. Power the base</b></td><td>Meridiani, Tharsis, Elysium (equator) or Planum Boreum (pole)</td><td>Solar farm sites, TES dust cover</td><td>Keep a backup that does not need sunshine.</td></tr>
+<tr><td><b>5. Stay safe from radiation and dust</b></td><td>Murray Buttes and other cliffs on the route</td><td>Shelter spots, dust layer, zone clock</td><td>Know your nearest shelter before you leave. Dusty days are CAUTION days.</td></tr>
+<tr><td><b>6. Daily Marswalk</b></td><td>Bradbury Landing to Yellowknife Bay (first walk)</td><td>Route planner, height profile, zone clock</td><td>Leave 10:30, turn back 14:30, inside by 15:30. Never alone.</td></tr>
+</table>
+
+<!-- ============ ON MARS ============ -->
+<h2 id="on-mars">How the app works on Mars</h2>
+<p class="by">The website you are using now runs on the internet. On Mars there is no internet in the Earth sense, so the same app runs from the base's own computers.</p>
+<svg viewBox="0 0 1000 300" role="img" aria-label="Diagram: suits, rovers and the Navigator talk to the base server over a local radio network; the base talks to Mars relay orbiters, which talk to the Deep Space Network on Earth" style="width:100%;background:#2b1a16;border:1px solid #4a2f26;border-radius:10px">
+  <g font-family="Segoe UI,Arial" font-size="15" fill="#f2e3cc" text-anchor="middle">
+    <rect x="20" y="40" width="190" height="220" rx="12" fill="#3a241d" stroke="#6b4a3a"/><text x="115" y="70" font-weight="700" fill="#e3a857">On the ground</text>
+    <text x="115" y="110">Suits (helmet display)</text><text x="115" y="145">Rovers</text><text x="115" y="180">Navigator aircraft</text><text x="115" y="215">Tablets</text>
+    <rect x="300" y="80" width="190" height="140" rx="12" fill="#3a241d" stroke="#e3a857"/><text x="395" y="112" font-weight="700" fill="#e3a857">Base server</text>
+    <text x="395" y="142">this app + all maps</text><text x="395" y="167">crew chat + photos</text><text x="395" y="192">works with no Earth link</text>
+    <rect x="580" y="80" width="170" height="140" rx="12" fill="#3a241d" stroke="#6b4a3a"/><text x="665" y="112" font-weight="700" fill="#e3a857">Relay orbiters</text>
+    <text x="665" y="142">MRO, Odyssey, MAVEN,</text><text x="665" y="167">Trace Gas Orbiter,</text><text x="665" y="192">Mars Express</text>
+    <rect x="830" y="80" width="150" height="140" rx="12" fill="#3a241d" stroke="#6b4a3a"/><text x="905" y="112" font-weight="700" fill="#e3a857">Earth</text>
+    <text x="905" y="142">Deep Space</text><text x="905" y="167">Network dishes</text><text x="905" y="192">Mission Control</text>
+  </g>
+  <g stroke="#e3a857" stroke-width="3" fill="none"><path d="M212 150 H296"/><path d="M492 150 H576"/><path d="M752 150 H826"/></g>
+  <g font-family="Segoe UI,Arial" font-size="12.5" fill="#d9c2a3" text-anchor="middle">
+    <text x="254" y="138">local radio</text><text x="254" y="172">instant</text>
+    <text x="534" y="138">UHF relay</text><text x="534" y="172">when overhead</text>
+    <text x="789" y="138">radio</text><text x="789" y="172">3 to 22 min</text>
+  </g>
+</svg>
+<div class="grid" style="margin-top:14px">
+<div class="card"><b>1. Runs at the base, not on the internet.</b> The whole app (pages, maps, libraries) is installed on a small server in the habitat and in each rover. Suits, rovers and tablets reach it over a local radio network, the way phones use Wi-Fi. Nothing needs Earth to work.</div>
+<div class="card"><b>2. Maps are loaded before launch.</b> Every NASA map tile for the landing region is stored on board. Even this public website already keeps a copy of the pages and every map tile you have viewed, so it keeps working if the connection drops.</div>
+<div class="card"><b>3. Chat between teams is instant.</b> Teams on Mars talk through the base server in real time. Only messages to Earth wait for the radio delay.</div>
+<div class="card"><b>4. Earth gets updates through orbiters.</b> Today Curiosity and Perseverance send over 99% of their data back through relay orbiters, which pass it to NASA's Deep Space Network. Photos and logs from the crew would travel the same way, a few minutes later.</div>
+<div class="card"><b>5. Solar conjunction.</b> About every 26 months the Sun blocks the link for roughly two weeks. The app keeps working; messages to Earth simply wait in a queue.</div>
+<div class="card"><b>6. On this website today.</b> The chat and camera run in demo mode in your browser, because a public website has no base server. On Mars, the same buttons would talk to the base server instead.</div>
+</div>
+<p class="muted">Sources: NASA Mars Relay Network (science.nasa.gov/mars/mars-relay-network); Gladden et al., SpaceOps 2025 (rovers depend on relay for over 99% of returned data).</p>
+
+<!-- ============ TRAVEL ============ -->
+<h2 id="travel">Three ways to travel</h2>
+<p class="by">Pick the right ride for the distance. The route planner on the map does the maths for each.</p>
+<table>
+<tr><th>Mode</th><th>Planning speed</th><th>Best for</th><th>Based on</th></tr>
+<tr><td><b>On foot</b> (suited)</td><td>about 2 km/h</td><td>Short walks near base, in pairs, inside the GO window</td><td>Our turn-back rule: leave 10:30, back by 15:30</td></tr>
+<tr><td><b>Pressurised rover</b></td><td>about 10 km/h (our planning figure)</td><td>Day trips and multi-sol traverses, with a cabin to shelter in</td><td>Rovers today are far slower (Curiosity has driven about 39 km in 14 years)</td></tr>
+<tr><td><b>Nuclear-Powered Navigator</b> (concept aircraft)</td><td>about 350 km/h cruise, 1.5 km up</td><td>Reaching ice, solar farms or a second base in hours, and rescue flights</td><td>NASA-funded studies: MANGLE nuclear aircraft concept and the ARES Mars airplane</td></tr>
+</table>
+<div class="two" style="margin-top:14px">
+<div>
+<h3>The Nuclear-Powered Navigator</h3>
+<p>A vertical take-off aircraft that heats Mars air with a small nuclear reactor instead of burning fuel, so it can stay in the air for very long flights. Current estimates:</p>
+<ul>
+<li><b>Cruise speed:</b> about Mach 0.4, roughly 350 km/h, at 1.5 km altitude (MANGLE study, AIAA 2014-3820).</li>
+<li><b>Range:</b> enough to circle Mars about 160 times in one Mars year, flying two thirds of the time (MANGLE).</li>
+<li><b>Top speed:</b> a rocket-powered Mars airplane (ARES) was designed to cruise at 145 m/s, about 520 km/h. Going much faster is hard because the air is thin and sound travels slower on Mars.</li>
+<li><b>For scale:</b> NASA's Ingenuity helicopter flew 72 times on Mars, up to 24 m high and 10 m/s (36 km/h).</li>
+</ul>
+<p class="muted">Honest note: these are robotic study designs. A Navigator big enough to carry people has not been designed yet, so treat crewed numbers as estimates.</p>
+</div>
+<div class="card" style="align-self:start">
+<b>Example: Gale base to Jezero</b><br>About 3,750 km in a straight line.<br>
+On foot: impossible.<br>Rover at 10 km/h: about 16 days of non-stop driving.<br>Navigator at 350 km/h: about 11 hours of flying.
+</div>
+</div>
+
+<!-- ============ FIELD GUIDE ============ -->
+<h2 id="field">Part 1 · Mars Field Guide: temperature and navigation</h2>
+<p class="by">By Pravya Sharma (team lead)</p>
+
+<h3>Mars in eight numbers</h3>
+<div class="grid">
+  <div class="card"><span class="stat">687 days</span>one Mars year. Seasons last about twice as long.</div>
+  <div class="card"><span class="stat">38%</span>of Earth's gravity. A 60 kg pack feels like 23 kg.</div>
+  <div class="card"><span class="stat">~1%</span>of Earth's air pressure. Mostly CO₂, not breathable.</div>
+  <div class="card"><span class="stat">24 h 39 m</span>one Mars day, called a sol.</div>
+  <div class="card"><span class="stat">3 to 22 min</span>for a radio message to reach Earth, one way.</div>
+  <div class="card"><span class="stat">0.64 mSv</span>radiation per day on the surface (Curiosity RAD).</div>
+  <div class="card"><span class="stat">−60 °C</span>roughly the planet's average temperature.</div>
+  <div class="card"><span class="stat">No compass</span>No global magnetic field, so it won't point north.</div>
+</div>
+
+<h3>No GPS, no compass: how to navigate</h3>
+<div class="grid">
+  <div class="card"><b>1. Map grid.</b> Mars has latitude and longitude, just like Earth. Every spot on our map has coordinates.</div>
+  <div class="card"><b>2. Landmarks.</b> In Gale Crater, Mount Sharp (5.5 km tall) is visible from almost everywhere, rising to the south-east of the landing site.</div>
+  <div class="card"><b>3. The Sun.</b> Rises in the east, sets in the west. Its height in the sky tells you the time and when to head back.</div>
+  <div class="card"><b>4. Match the view.</b> Perseverance now finds its own position by matching its camera views to orbiter photos.</div>
+</div>
+<p><b>Rule: always use two. If they disagree, stop and check.</b></p>
+
+<div class="two">
+<figure><img src="img/mola-topography.jpg" alt="Colour height map of Mars from the MOLA laser altimeter"><figcaption>How high is the ground? Tharsis volcanoes are highest, Hellas basin lowest. Low ground means more air above you. Source: NASA/JPL, MOLA laser altimeter (Mars Global Surveyor).</figcaption></figure>
+<figure><img src="img/gale-3d-landing.jpg" alt="3D view of Gale Crater with the landing area marked"><figcaption>Our landing region: Gale Crater, 154 km wide, with Mount Sharp in the middle. Curiosity landed here in 2012. Image: NASA/JPL-Caltech/ESA/DLR/FU Berlin/MSSS.</figcaption></figure>
+</div>
+
+<h3>Warmth or water? The landing trade-off</h3>
+<p><span class="pill GO">GO</span> within about 30° of the equator, by day &nbsp; <span class="pill CAUTION">CAREFUL</span> mid-latitudes, mornings, evenings, dust &nbsp; <span class="pill NOGO">NO-GO</span> night, and the poles (CO₂ frost below about −125 °C).<br>Buried ice is most likely in the northern mid-latitudes, so the sweet spot is as close to the equator as you can get while still near ice.</p>
+
+<h3>Know what is under your boots</h3>
+<table>
+<tr><th>Ground</th><th>What it is like</th><th>What to do</th></tr>
+<tr><td>Bedrock</td><td>Firm. Holds heat, warmer at night.</td><td>Best surface</td></tr>
+<tr><td>Dust, fine sand</td><td>Loose. Loses heat fast after sunset.</td><td>Slow down</td></tr>
+<tr><td>Bagnold Dunes</td><td>Deep soft sand at the foot of Mount Sharp.</td><td>Go around (Curiosity once detoured 1.6 km)</td></tr>
+<tr><td>Steep slopes</td><td>Loose rock high on Mount Sharp.</td><td>No-go on foot</td></tr>
+<tr><td>Boxwork ridges</td><td>1 to 2 m ridges in a web pattern.</td><td>Natural paths</td></tr>
+</table>
+<figure><img src="img/themis-night-ir.jpg" alt="Night-time infrared image of cratered ground from orbit"><figcaption>Seeing the ground at night from orbit: bright means warm rock (firmer ground), dark means dust and sand. This scene runs from about −105 °C to −75 °C. Source: NASA/JPL/Arizona State University, THEMIS on Mars Odyssey.</figcaption></figure>
+
+<h3>Bearable afternoons, deadly nights</h3>
+<div class="two">
+<div>
+<p>Two weather stations show the same pattern:</p>
+<ul>
+<li><b>Gale (Curiosity REMS):</b> highs near 0 °C, lows near −70 °C before dawn.</li>
+<li><b>Jezero (Perseverance MEDA):</b> −22 °C by day, −83 °C at night on a spring sol.</li>
+</ul>
+<p>The two readings are from different seasons, so not a perfect match. Our map's temperature layer is a simple model fitted to these two stations: it shows the daily pattern and the effect of latitude, not seasons or weather.</p>
+<table>
+<tr><th>Time</th><th>What the crew does</th></tr>
+<tr><td>Dawn</td><td>Coldest moment. Stay in.</td></tr>
+<tr><td>Morning</td><td>Check weather and dust, suit up.</td></tr>
+<tr><td>10:30</td><td>Walk starts as it warms.</td></tr>
+<tr><td>Early afternoon</td><td>Warmest part of the sol.</td></tr>
+<tr><td>14:30</td><td>Turn back. No exceptions.</td></tr>
+<tr><td>15:30</td><td>Back at base, well before sunset.</td></tr>
+</table>
+</div>
+<figure><img src="img/gale-sunset.jpg" alt="Blue sunset over the rim of Gale Crater"><figcaption>A real Martian sunset over Gale Crater. The dust makes it blue. Image: NASA/JPL-Caltech/MSSS/Texas A&amp;M Univ.</figcaption></figure>
+</div>
+
+<h3>What can hurt you, and what to do about it</h3>
+<table>
+<tr><th>Hazard</th><th>What we know</th><th>What to do</th></tr>
+<tr><td>Cold nights</td><td>Down to −70 to −90 °C after sunset</td><td>Inside before sunset. Heated suits, warm shelter.</td></tr>
+<tr><td>Dust storms</td><td>In 2018 one covered the whole planet</td><td>Check the daily orbiter weather pictures. Cancel walks.</td></tr>
+<tr><td>Dust devils</td><td>Jezero has the most seen anywhere on Mars</td><td>Keep clear. Gusts can damage kit.</td></tr>
+<tr><td>Radiation</td><td>About 0.64 mSv a day; solar storms spike it</td><td>Shelter under rock, soil or water in a solar storm (see Part 2).</td></tr>
+<tr><td>Toxic soil</td><td>Perchlorate salts can harm the thyroid</td><td>Suits stay outside the habitat. Brush off all dust.</td></tr>
+<tr><td>Sand and slopes</td><td>Soft dunes, loose steep rock</td><td>Stick to the route. Never cut across dunes.</td></tr>
+</table>
+
+<h3>Living off the land, staying in touch</h3>
+<div class="grid">
+  <div class="card"><b>Water.</b> Buried ice across the northern mid-latitudes, found from orbit. Drink it, grow food with it, split it into air and fuel.</div>
+  <div class="card"><b>Oxygen.</b> MOXIE on Perseverance made 122 g of oxygen from Martian air, up to 12 g an hour, at least 98% pure.</div>
+  <div class="card"><b>Sunlight.</b> Less than half of what Earth gets, and a storm can block it for weeks (see Part 3).</div>
+  <div class="card"><b>Radio.</b> Orbiters relay messages; up to 22 minutes each way. About every 26 months the Sun sits between Earth and Mars: roughly two weeks of silence. The crew must be its own Mission Control.</div>
+</div>
+
+<h3>Mount Sharp is a history book in rock</h3>
+<div class="two">
+<div><ol><li><b>Clay layer.</b> Formed in water. Could it once have supported tiny life?</li><li><b>Sulfate layer.</b> Salts left as the water dried up, about 3 billion years ago.</li><li><b>Boxwork ridges.</b> Water was still seeping underground after the lakes were gone.</li></ol></div>
+<figure><img src="img/curiosity-buckskin-selfie.jpg" alt="Curiosity rover self-portrait on a rock outcrop on lower Mount Sharp"><figcaption>Curiosity's selfie on lower Mount Sharp. Image: NASA/JPL-Caltech/MSSS.</figcaption></figure>
+</div>
+
+<h3>Golden rules for every Marswalk</h3>
+<ol class="rules">
+<li>Check weather and dust before every walk</li><li>Never walk alone, always in pairs</li><li>Use two ways to know where you are</li><li>Stay on the route card, go around dunes</li><li>Turn back at 14:30, whatever happens</li><li>Be inside before sunset</li><li>Carry spare oxygen for the walk back</li><li>Leave dusty suits outside the habitat</li><li>Head for shelter if a solar storm is forecast</li><li>The crew decides. Don't wait for Earth</li>
+</ol>
+
+<!-- ============ SAFETY ============ -->
+<h2 id="safety">Part 2 · Mars Safety Layer: radiation and dust</h2>
+<p class="by">By Kshama</p>
+<figure><img src="img/first-humans-concept.jpg" alt="Artist's concept of astronauts, a rover and habitats on the surface of Mars"><figcaption>Image: NASA, "First Humans on Mars" artist's concept (PIA23302).</figcaption></figure>
+
+<h3>Mars has thin air and no magnetic shield</h3>
+<div class="two">
+<div>
+<div class="grid"><div class="card"><span class="stat">≈ 6</span>chest X-rays' worth of radiation every day</div><div class="card"><span class="stat">≈ 100×</span>more than a normal day on Earth</div></div>
+<p>Curiosity's RAD instrument measured about 0.64 millisieverts a day at Gale Crater (a chest X-ray is about 0.1). RAD measures two kinds of radiation: solar particles and cosmic rays. Earth's magnetic field shields us; Mars has no such shield.</p>
+<p class="muted">Source: Hassler et al., Science, 2014.</p>
+</div>
+<figure><img src="img/rad-radiation-types.jpg" alt="NASA diagram of solar energetic particles and galactic cosmic rays"><figcaption>Image: NASA/JPL-Caltech/SwRI (PIA16938).</figcaption></figure>
+</div>
+
+<h3>Safety map: Gale Crater</h3>
+<div class="two">
+<figure><img src="img/kshama-safety-map.png" alt="Map of a Marswalk route from the landing site to the boxwork, with shelter spots and a dusty caution area"><figcaption>Kshama's safety map: GO path, shelter spots, CAUTION (dusty) and NO-GO (too steep). Team design, drawn with an SI image tool; not to scale.</figcaption></figure>
+<figure><img src="img/boxwork-hirise.jpg" alt="HiRISE photo from orbit of boxwork ridges on Mount Sharp"><figcaption>Our science stop: real boxwork ridges on Mount Sharp, seen from orbit. Photo: NASA/JPL-Caltech/University of Arizona (PIA26306).</figcaption></figure>
+</div>
+
+<h3>Cliffs and big rocks are natural shields</h3>
+<div class="two">
+<div><p>When Curiosity parked next to a tall rock hill called Murray Buttes (9 to 21 September 2016), it measured about 4% less radiation. The rock blocked part of the sky, so fewer cosmic rays reached the rover.</p>
+<p>So our map marks cliffs, overhangs and caves along the route as places to wait out a solar storm. Shelter spots are like safe houses along the walk. Caves and lava tubes could block much more.</p>
+<p class="muted">Source: NASA JPL (2021), How NASA's Curiosity Rover Is Making Mars Safer for Astronauts.</p></div>
+<figure><img src="img/murray-buttes-selfie.jpg" alt="Curiosity self-portrait at Murray Buttes with a layered cliff behind it"><figcaption>Curiosity's selfie at Murray Buttes, 2016. Photo: NASA/JPL-Caltech/MSSS (PIA20844).</figcaption></figure>
+</div>
+
+<h3>Dusty days are CAUTION days</h3>
+<div class="two">
+<figure><img src="img/dust-storm-2018.jpg" alt="Mars from orbit before and during the 2018 global dust storm"><figcaption>Mars before (left) and during (right) the 2018 dust storm. Image: NASA/JPL-Caltech/MSSS (PIA22487).</figcaption></figure>
+<div><ul><li><b>Less solar power:</b> at Gale, daily UV sunlight dropped by 90%.</li><li><b>Hard to see:</b> you could only see about 2.7 km.</li><li><b>Odd temperatures:</b> days got cooler and nights got warmer.</li><li>This storm ended the Opportunity rover's mission.</li></ul>
+<p class="muted">Sources: Viúdez-Moreiras et al. (2019), JGR Planets; Guzewich et al. (2019); NASA (2019).</p></div>
+</div>
+
+<h3>A smart alert inside the helmet</h3>
+<div class="two">
+<figure><img src="img/kshama-helmet-alert.png" alt="Helmet visor display with a solar storm warning, an arrow to a shelter, a radiation meter, dust level and time left outside"><figcaption>Helmet display: Kshama's design, drawn with an SI image tool. Arrow to the nearest shelter, radiation and dust levels, time left outside. Our 3D globe shows the same idea as a live suit meter.</figcaption></figure>
+<figure><img src="img/astronauts-dust-storm-art.jpg" alt="Artist's concept of astronauts walking on Mars during a dust storm"><figcaption>NASA art: "Astronauts in Martian Dust Storms". Image: NASA/Paul DiMare.</figcaption></figure>
+</div>
+
+<h3>Three layers make one safe Marswalk map</h3>
+<div class="two">
+<div class="grid" style="grid-template-columns:1fr">
+<div class="card"><b>Layer 1: Temperature and time.</b> GO, CAUTION and NO-GO zones through the sol (Pravya).</div>
+<div class="card"><b>Layer 2: Terrain and route.</b> Slopes, rocks and the safe path to the science stop (team).</div>
+<div class="card"><b>Layer 3: Radiation and dust.</b> Shelter spots, storm alerts and dusty CAUTION days (Kshama).</div>
+</div>
+<figure><img src="img/mount-sharp-curiosity-route.jpg" alt="3D view of Mount Sharp built from orbiter data with Curiosity's route as a white line"><figcaption>NASA also layers orbiter data to plan Curiosity's route up Mount Sharp. Image: NASA/JPL-Caltech/ESA/Univ. of Arizona/JHUAPL/MSSS/USGS Astrogeology (PIA23179).</figcaption></figure>
+</div>
+
+<!-- ============ POWER ============ -->
+<h2 id="power">Part 3 · Solar Power on Mars: power all day long</h2>
+<p class="by">By Advika Bisaria</p>
+<p>Why we need it: switch off the lights and the batteries once, and we will know. Two options:</p>
+
+<h3>Option 1: The Super-Power Belt (equator)</h3>
+<div class="two">
+<div>
+<p><b>The fact:</b> a Mars day (sol) is 24 h 39 min, a little longer than Earth's. About half is sunny, half is night.</p>
+<p><b>The idea:</b> build 3 solar farms around the equator so that at least one is always in sunshine. As Mars spins, when one farm goes into night, the next one says good morning.</p>
+<p><b>Where:</b></p>
+<ol>
+<li><b>Meridiani Planum</b> (0.0°, 3.1°W): flat plains, easy to build on.</li>
+<li><b>Tharsis</b> (1.6°N, 112.6°W): high volcanic region, above much of the dust in the air.</li>
+<li><b>Elysium Planitia</b> (3.0°N, 154.7°E): wide, open, flat land with few shadows.</li>
+</ol>
+<p class="muted">Coordinates: USGS/IAU Gazetteer of Planetary Nomenclature.</p>
+</div>
+<div><figure><img src="img/advika-sun-belt.png" alt="Diagram of Mars with a ring of solar farms around the equator"><figcaption>Advika's idea, drawn with an SI image tool: the non-stop sun belt.</figcaption></figure>
+<figure><img src="img/advika-three-farms.png" alt="Diagram of three solar farms around Mars"><figcaption>The three farms (schematic, drawn with an SI image tool). The real gaps between them are about 109°, 93° and 158° of longitude.</figcaption></figure></div>
+</div>
+<div class="grid">
+<div class="card"><b>The good</b><br>Non-stop electricity every day of the year. The biggest gap between farms (about 158°) is less than half a turn of Mars, so at any moment at least one farm is in daylight, and often two.</div>
+<div class="card"><b>The challenge</b><br>Long power lines: neighbouring farms are roughly 5,500 to 9,400 km apart along the equator, about as far as a flight from Dubai to Manila (about 6,900 km). Dust storms cover the panels, so they must be kept clean.</div>
+</div>
+
+<h3>Option 2: Land of the Midnight Sun (north pole)</h3>
+<div class="two">
+<div>
+<p><b>The axis:</b> Mars is tilted (about 25°), a lot like Earth (about 23.4°).</p>
+<p><b>The idea:</b> one big solar farm on Planum Boreum, the north polar cap.</p>
+<p><b>The magic:</b> the Sun never sets there for about 372 sols (roughly 12½ Earth months) through northern spring and summer. Then comes polar night, about 10 Earth months long.</p>
+<p><b>Sunflower design:</b> the Sun stays low (never more than about 25° above the horizon), so tall panels turn to follow it, like a sunflower.</p>
+</div>
+<div><figure><img src="img/advika-polar-sun.png" alt="Diagram of the Sun circling low above the north polar cap"><figcaption>Advika's idea, drawn with an SI image tool: the summer sun loop over Planum Boreum.</figcaption></figure>
+<figure><img src="img/advika-sunflower-panels.png" alt="Diagram of tall rotating solar panels following the Sun"><figcaption>Tall spinning "sunflower" panels (drawn with an SI image tool).</figcaption></figure></div>
+</div>
+<div class="grid">
+<div class="card"><b>The good</b><br>Only one farm, no thousands of kilometres of wires. Water from the polar ice nearby.</div>
+<div class="card"><b>The challenge</b><br>About 10 months of night every Mars year. Should we build another farm at the south pole? And it is very cold: we are all learning negative numbers to count it.</div>
+</div>
+<p class="fix"><b>Team fact check (changes from the first draft):</b> the polar day lasts about 12½ Earth months, not 6, and the night about 10 months; with three equator farms at least <b>one</b> is always sunlit (often two), not always two; Tharsis helps because it is high above the dusty air, not because it is closer to the Sun. A sol is 24 h 39 min.</p>
+
+<!-- ============ TEAM & SOURCES ============ -->
+<h2 id="team">Team, credits and sources</h2>
+<div class="team">
+<div class="card"><b>Pravya Sharma</b>Team lead. Field guide, temperature zones, navigation and the Marswalk route plan.</div>
+<div class="card"><b>Advika Bisaria</b>Solar power plan: the equatorial belt and the polar farm.</div>
+<div class="card"><b>Kshama</b>Safety layer: radiation, shelters, dust storms and the helmet alert.</div>
+</div>
+
+<p class="muted" style="margin-top:10px">All three team members are students at <b>Winchester School, Jebel Ali, Dubai</b>.</p>
+<h3>NASA data used</h3>
+<ul class="src">
+<li>NASA Solar System Treks, Mars Trek portal and map tiles: <a href="https://trek.nasa.gov/mars/">https://trek.nasa.gov/mars/</a></li>
+<li>Viking colour mosaic (Viking Orbiters): <a href="https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml</a></li>
+<li>MOLA colour shaded relief (Mars Global Surveyor): <a href="https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/WMTSCapabilities.xml</a></li>
+<li>THEMIS day infrared (Mars Odyssey): <a href="https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018/1.0.0/WMTSCapabilities.xml</a></li>
+<li>THEMIS night infrared (Mars Odyssey): <a href="https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/WMTSCapabilities.xml</a></li>
+<li>TES thermal inertia (Mars Global Surveyor): <a href="https://trek.nasa.gov/tiles/Mars/EQ/TES_Thermal_Inertia/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/TES_Thermal_Inertia/1.0.0/WMTSCapabilities.xml</a></li>
+<li>TES dust cover index (Mars Global Surveyor): <a href="https://trek.nasa.gov/tiles/Mars/EQ/TES_Dust/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/TES_Dust/1.0.0/WMTSCapabilities.xml</a></li>
+<li>Gale Crater CTX mosaic (Mars Reconnaissance Orbiter): <a href="https://trek.nasa.gov/tiles/Mars/EQ/Gale_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/Gale_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml</a></li>
+<li>Curiosity route HiRISE mosaic (Mars Reconnaissance Orbiter): <a href="https://trek.nasa.gov/tiles/Mars/EQ/curiosity_hirise_mosaic/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/curiosity_hirise_mosaic/1.0.0/WMTSCapabilities.xml</a></li>
+<li>Jezero Crater CTX mosaic (Mars Reconnaissance Orbiter): <a href="https://trek.nasa.gov/tiles/Mars/EQ/Jezero_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml">https://trek.nasa.gov/tiles/Mars/EQ/Jezero_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml</a></li>
+<li>Curiosity rover waypoints (route, heights, sols): <a href="https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json">https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json</a></li>
+<li>Perseverance rover waypoints: <a href="https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json">https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json</a></li>
+<li>NASA Planetary Photojournal (images credited above by PIA number): <a href="https://photojournal.jpl.nasa.gov/">https://photojournal.jpl.nasa.gov/</a></li>
+<li>Mars24 Sunclock method, NASA Goddard Institute for Space Studies (Mars season, Mars time and where the Sun is overhead): <a href="https://www.giss.nasa.gov/tools/mars24/">https://www.giss.nasa.gov/tools/mars24/</a>; Allison and McEwen (2000), Planetary and Space Science 48, 215-235.</li>
+<li>JPL Solar System Dynamics, approximate positions of the planets (Earth to Mars distance): <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html">https://ssd.jpl.nasa.gov/planets/approx_pos.html</a></li>
+<li>Curiosity RAD radiation, REMS weather; Perseverance MEDA weather and MOXIE oxygen results (NASA/JPL), as cited in each section.</li>
+</ul>
+
+<h3>Travel and connectivity sources</h3>
+<ul class="src">
+<li>NASA Mars Relay Network: <a href="https://science.nasa.gov/mars/mars-relay-network/">https://science.nasa.gov/mars/mars-relay-network/</a></li>
+<li>Gladden et al. (2025), SpaceOps, Mars relay operations: rovers depend on relay for over 99% of returned data.</li>
+<li>MANGLE, Mars Aerial Nuclear Global Landing Explorer, AIAA 2014-3820 (University of Miami): <a href="https://acfdlab.miami.edu/publications/AIAA-2014-3820.pdf">https://acfdlab.miami.edu/publications/AIAA-2014-3820.pdf</a></li>
+<li>ARES Mars airplane, NASA Langley (cruise 145 m/s): <a href="https://ntrs.nasa.gov/citations/20080030375">https://ntrs.nasa.gov/citations/20080030375</a></li>
+<li>Ingenuity Mars Helicopter records (NASA JPL, 2024): <a href="https://www.jpl.nasa.gov/videos/the-most-extreme-flights-of-nasas-ingenuity-mars-helicopter-mars-report/">https://www.jpl.nasa.gov/videos/the-most-extreme-flights-of-nasas-ingenuity-mars-helicopter-mars-report/</a></li>
+</ul>
+<h3>Other data and tools</h3>
+<ul class="src">
+<li>USGS / IAU Gazetteer of Planetary Nomenclature (place names, sizes, coordinates): <a href="https://planetarynames.wr.usgs.gov/">https://planetarynames.wr.usgs.gov/</a></li>
+<li>Subsurface Water Ice Mapping (SWIM) project, Planetary Science Institute with NASA JPL: <a href="https://swim.psi.edu/">https://swim.psi.edu/</a>; Morgan et al. (2021), Nature Astronomy, 5, 230-236.</li>
+<li>ESA / DLR / FU Berlin (HRSC on Mars Express), credited on the Gale Crater 3D image.</li>
+<li>Hassler et al. (2014), Science 343, doi:10.1126/science.1244797 · Viúdez-Moreiras et al. (2019), JGR Planets 124 · Guzewich et al. (2019).</li>
+<li>Software: <a href="https://leafletjs.com/">Leaflet</a> (BSD-2 licence) and <a href="https://threejs.org/">three.js</a> (MIT licence).</li>
+</ul>
+
+<h3>Honest notes</h3>
+<ul>
+<li>The temperature layer is our own simple model fitted to two real weather stations. It is a teaching tool, not a forecast.</li>
+<li>Suit readings on the 3D globe are simulated demo values.</li>
+<li>The map has a built-in copy of the NASA rover waypoints (Curiosity to sol 5073, Perseverance to sol 2022) and tries to load the newest version from NASA when it opens.</li>
+<li>Prepared by the team with help from an SI assistant for coding and fact-checking; every fact was checked by the team. The six team diagrams were drawn with an SI image tool from the team's own ideas and carry an "SI-assisted image" mark. No NASA image was changed or generated.</li>
+</ul>
+<p class="muted">NASA does not endorse this project. Images and data are used under NASA's media guidelines.</p>
+</main>
+<script src="crew.js"></script>
+</body>
+</html>

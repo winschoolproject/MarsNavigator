@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars Navigator | Interplanetary Survival Guide: Martian Map</title>
+<meta name="description" content="A layered Mars map that plans a safe Marswalk by mission objective, built on NASA Mars Trek imagery, rover data and the USGS gazetteer. NASA Space Apps Challenge 2026.">
+<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<meta name="generator" content="Hand-written HTML, CSS and JavaScript with Leaflet. Code drafted with help from an SI assistant (Claude) and reviewed by the team.">
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<style>
+:root{--basalt:#1c1110;--panel:#2b1a16;--panel2:#3a241d;--rust:#c1440e;--ember:#d8582a;--dust:#e3a857;--sand:#f2e3cc;--clay:#d9c2a3;--frost:#8db9cc;--sage:#7fa37a;--line:#4a2f26}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--basalt);color:var(--sand);font:15px/1.45 "Segoe UI",Calibri,Arial,sans-serif}
+a{color:var(--dust)}
+header{height:56px;display:flex;align-items:center;gap:18px;padding:0 16px;background:#140c0b;border-bottom:1px solid var(--line)}
+header h1{font:700 21px Georgia,"Bookman Old Style",serif;margin:0;letter-spacing:.3px}
+header h1 span{color:var(--dust);font-weight:400;font-size:15px;margin-left:8px}
+header nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+header nav a,header nav button{background:transparent;border:1px solid var(--line);color:var(--sand);padding:6px 12px;border-radius:6px;text-decoration:none;font:inherit;cursor:pointer}
+header nav a:hover,header nav button:hover{border-color:var(--dust)}
+#wrap{position:absolute;top:56px;bottom:0;left:0;right:0;display:flex}
+aside.hide{display:none!important}
+aside{width:390px;min-width:390px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;background:none;border:0;color:var(--clay);padding:12px 4px;font:600 14px inherit;cursor:pointer;border-bottom:3px solid transparent}
+.tabs button.on{color:var(--sand);border-bottom-color:var(--ember)}
+.pane{display:none;overflow:auto;padding:16px;flex:1}
+.pane.on{display:block}
+h2{font:700 18px Georgia,"Bookman Old Style",serif;margin:4px 0 10px}
+h3{font:700 15px Georgia,serif;margin:16px 0 6px;color:var(--dust)}
+.muted{color:var(--clay);font-size:13px}
+.obj{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);color:var(--sand);border-radius:8px;padding:10px 12px;margin:0 0 8px;cursor:pointer;font:inherit}
+.obj b{display:block;font-size:15px}
+.obj small{color:var(--clay)}
+.obj.on{border-color:var(--dust);box-shadow:0 0 0 1px var(--dust) inset}
+.card{background:var(--panel2);border-radius:8px;padding:12px;margin:10px 0}
+ul.check{padding-left:18px;margin:6px 0}
+ul.check li{margin:3px 0}
+label.row{display:flex;align-items:center;gap:8px;margin:6px 0;cursor:pointer}
+select,input[type=number]{background:#1f1412;color:var(--sand);border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit;width:100%}
+input[type=range]{width:100%;accent-color:var(--ember)}
+.btn{background:var(--rust);color:#fff;border:0;border-radius:6px;padding:8px 12px;font:600 14px inherit;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--sand)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--clay)}
+.kv dd{margin:0}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px;color:#1c1110}
+.GO{background:var(--sage)}.CAUTION{background:var(--dust)}.NOGO{background:var(--frost)}
+#map{flex:1;background:#0b0706}
+#clock{position:absolute;right:12px;top:12px;z-index:800;background:rgba(28,17,16,.92);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:290px}
+#clock .t{font:700 20px Georgia,serif}
+#topstrip{position:absolute;top:10px;left:452px;right:318px;z-index:820;display:flex;justify-content:center;align-items:flex-start;gap:10px;pointer-events:none}
+#topstrip>*{pointer-events:auto}
+#compass{flex:0 0 auto;width:86px;text-align:center;background:rgba(28,17,16,.88);border:1px solid var(--line);border-radius:12px;padding:6px 4px 4px}
+#compass svg{width:68px;height:68px;display:block;margin:0 auto}
+#cmpTxt{font:600 11px "Segoe UI",Arial;color:var(--clay);margin-top:2px;white-space:nowrap}
+#navBanner{flex:0 1 540px;min-width:0;background:#1f3d2a;border:1px solid #4f7a5c;border-radius:12px;padding:10px 12px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+#navBanner[hidden]{display:none}
+#navTop{display:flex;gap:12px;align-items:center}
+#navIco{flex:0 0 46px;height:46px}
+#navInstr{font:700 19px "Segoe UI",Arial;line-height:1.2}
+#navToward{font-size:13px;color:#cfe3d4}
+#navBottom{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;border-top:1px solid #4f7a5c;padding-top:7px}
+#navStats{flex:1;font:600 15px "Segoe UI",Arial;min-width:180px}#navStats span{color:#9fe0b0}
+#navBanner .btn{padding:6px 10px;font-size:13px}
+.me-wrap{position:relative;width:46px;height:46px}
+.me-pulse{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(66,153,255,.35);animation:mepulse 1.6s ease-out infinite}
+.me-arrow{position:absolute;left:7px;top:7px;width:32px;height:32px;animation:meblink 1s ease-in-out infinite}
+@keyframes mepulse{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes meblink{0%,100%{opacity:1}50%{opacity:.35}}
+.photo-pin{width:30px;height:30px;border-radius:50%;background:#c1440e;border:2px solid #f2e3cc;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.photo-pin svg{width:16px;height:16px}
+.leaflet-popup-content img.ph,.leaflet-popup-content video.ph{width:220px;border-radius:6px;display:block;margin:6px 0}
+#readout{position:absolute;left:400px;bottom:36px;z-index:800;background:rgba(28,17,16,.85);border-radius:6px;padding:4px 10px;font:13px Consolas,"Courier New",monospace}
+.leaflet-container{font:13px "Segoe UI",Arial,sans-serif}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--sand)}
+.leaflet-popup-content{margin:12px 14px}
+.leaflet-control-layers{background:var(--panel)!important;color:var(--sand)!important;border:1px solid var(--line)!important}
+.leaflet-control-attribution{background:rgba(20,12,11,.8)!important;color:var(--clay)!important}
+.leaflet-control-attribution a{color:var(--dust)!important}
+.leaflet-control-scale-line{background:rgba(28,17,16,.8);color:var(--sand);border-color:var(--sand)}
+.lbl{background:none;border:0;box-shadow:none;color:#fff;font:600 12px "Segoe UI",Arial;text-shadow:0 0 3px #000,0 0 3px #000}
+.lbl.big{font-size:14px;letter-spacing:.5px}
+.leaflet-tooltip.lbl:before{display:none}
+#profile svg{width:100%;height:120px;background:#1f1412;border-radius:6px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+.credit{font-size:13px;color:var(--clay);border-top:1px solid var(--line);margin-top:16px;padding-top:10px}
+@media (max-width:900px){aside{position:absolute;z-index:900;height:100%;width:100%;min-width:0;display:none}aside.open{display:flex}
+  header{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 10px;gap:6px}
+  header h1{font-size:18px}
+  header nav{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  header nav a,header nav button{flex:0 0 auto;font-size:13px;padding:6px 10px}
+  #wrap{top:var(--hdr,96px)}
+  #readout{display:none}
+  #clock{top:auto;bottom:34px;left:8px;right:auto;width:200px;padding:8px 10px}
+  #clock .t{font-size:17px}
+  #topstrip{left:56px;right:8px;justify-content:flex-start}
+  #compass{width:70px}#compass svg{width:52px;height:52px}
+  #navBanner{flex:1 1 auto}#navInstr{font-size:15px}#navStats{font-size:13px;min-width:0}
+header h1 span{display:none}}
+
+/* menu: one colour per page so each button is easy to spot; current page has a white outline */
+nav a[href="index.html"],nav a[href="globe.html"],nav a[href="guide.html"],nav a[href="present.html"],nav a[href="guide.html#team"],#menuBtn{color:#fff!important;font-weight:700!important;border-width:1px!important;border-style:solid!important}
+nav a[href="index.html"]{background:#c1440e!important;border-color:#ee7a45!important}
+nav a[href="globe.html"]{background:#2f6f73!important;border-color:#5fb0b2!important}
+nav a[href="guide.html"]{background:#4f7a3a!important;border-color:#82b066!important}
+nav a[href="present.html"]{background:#3d5f9a!important;border-color:#7a9ad6!important}
+nav a[href="guide.html#team"]{background:#6f4b8f!important;border-color:#a888c8!important}
+#menuBtn{background:#e3a857!important;border-color:#f3c98a!important;color:#1c1110!important}
+nav a:hover,#menuBtn:hover{filter:brightness(1.15)}
+nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
+.cu-tag span{display:inline-block;white-space:nowrap;transform:translate(calc(-100% - 4px),calc(-100% - 4px));background:rgba(20,12,11,.82);color:#f2e3cc;border:1px solid #e3a857;border-radius:4px;padding:2px 7px;font:600 11px 'Segoe UI',Arial;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Mars Navigator<span>Interplanetary Survival Guide: Martian Map</span></h1>
+  <nav>
+    <button id="menuBtn" title="Show or hide the planning panel">Panel</button>
+    <a href="index.html" class="cur">Map</a>
+    <a href="globe.html">3D Globe</a>
+    <a href="guide.html">Field Guide</a>
+    <a href="present.html">Presentation</a>
+    <a href="guide.html#team">Team &amp; Sources</a>
+  </nav>
+</header>
+<div id="wrap">
+<aside id="side">
+  <div class="tabs">
+    <button data-p="plan" class="on">Mission</button>
+    <button data-p="route">Route</button>
+    <button data-p="layers">Layers</button>
+    <button data-p="info">Here</button>
+  </div>
+
+  <div class="pane on" id="p-plan">
+    <h2>What is your mission today?</h2>
+    <p class="muted">Pick an objective. The map moves there, turns on the right NASA data layers and shows a checklist.</p>
+    <div id="objList"></div>
+    <div id="objCard"></div>
+  </div>
+
+  <div class="pane" id="p-route">
+    <h2>Route planner</h2>
+    <p class="muted">Routes inside Gale Crater follow the path Curiosity actually drove, so the ground is proven passable. Other routes are drawn as the shortest path over the surface.</p>
+    <label>Start<select id="rStart"></select></label>
+    <label style="display:block;margin-top:8px">Destination<select id="rEnd"></select></label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <label>Travel mode<select id="rMode"><option value="walk">On foot (suited)</option><option value="rover">Pressurised rover</option><option value="nav">Nuclear-Powered Navigator (aircraft)</option></select></label>
+      <label>Speed, km/h<input id="rSpeed" type="number" min="0.5" max="600" step="0.5" value="2"></label>
+    </div>
+    <label style="display:block;margin-top:8px">Time at each science stop, minutes<input id="rStop" type="number" min="0" max="240" step="5" value="30"></label>
+    <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="rGo">Plan route</button><button class="btn ghost" id="rClear">Clear</button></div>
+    <div id="rOut"></div>
+    <div id="profile"></div>
+    <p class="muted">Speeds are planning assumptions you can change. The turn-back rule (leave 10:30, back by 15:30 local solar time) comes from our temperature layer.</p>
+    <h3>Three ways to travel</h3>
+    <div class="card" style="font-size:14px">
+      <b>1. On foot</b> (default 2 km/h): short walks near base, in pairs, inside the GO window.<br>
+      <b>2. Pressurised rover</b> (default 10 km/h, our planning figure): longer trips with a shirt-sleeve cabin and a place to shelter.<br>
+      <b>3. Nuclear-Powered Navigator</b> (concept aircraft, default 350 km/h): flies about 1.5 km above the ground and lands upright, so it can reach anywhere on Mars in hours.<br>
+      <span class="muted">Navigator figures come from NASA-funded studies: the nuclear-powered MANGLE concept (cruise about Mach 0.4, roughly 350 km/h, at 1.5 km, range enough to circle Mars 160 times in a Mars year; AIAA 2014-3820) and the ARES Mars airplane (designed cruise 145 m/s, about 520 km/h). Thin air and a low speed of sound limit how fast any Mars aircraft can go. For scale, the Ingenuity helicopter's record was 10 m/s (36 km/h) at up to 24 m. No crewed Mars aircraft exists yet.</span>
+    </div>
+  </div>
+
+  <div class="pane" id="p-layers">
+    <h2>Map layers</h2>
+    <p class="muted">Use the stack button on the map (top right, under the clock) to switch the base map. Overlays:</p>
+    <div id="ovList"></div>
+    <h3>Legend</h3>
+    <div class="legend">
+      <div><i style="background:var(--sage)"></i>GO: warm enough to walk (daytime, our model)</div>
+      <div><i style="background:var(--dust)"></i>CAUTION: cold, short walks only</div>
+      <div><i style="background:var(--frost)"></i>NO-GO: night, or below −60 °C</div>
+      <div><i style="background:#ffffff;opacity:.7"></i>Buried ice most likely (SWIM, Arcadia band)</div>
+      <div><i style="background:#ff7a3d"></i>Curiosity's real drive path</div>
+      <div><i style="background:#6fd1ff"></i>Perseverance's real drive path</div>
+      <div><i style="background:#ffd34d"></i>Your planned route</div>
+      <div><i style="background:#4fa3ff"></i>You, during navigation (blinking arrow), and the part already walked</div>
+      <div><i style="background:#c1440e;border-radius:50%"></i>Crew photo or video (from the camera button)</div>
+    </div>
+  </div>
+
+  <div class="pane" id="p-info">
+    <h2>Here</h2>
+    <p class="muted">Click anywhere on Mars to see what is there.</p>
+    <div id="infoOut"></div>
+  </div>
+  <div class="credit" style="padding:0 16px 12px">Team lead <b>Pravya Sharma</b>, with <b>Advika Bisaria</b> and <b>Kshama</b>, Winchester School, Jebel Ali, Dubai. Imagery: NASA/JPL Mars Trek. <a href="guide.html#team">All credits</a></div>
+</aside>
+
+<div id="map"></div>
+<div id="clock">
+  <div class="muted">Local solar time at the selected spot</div>
+  <div class="t" id="clockT">10:30</div>
+  <input id="clockR" type="range" min="0" max="24" step="any" value="10.5" aria-label="Local solar time">
+  <div id="clockZ" style="margin-top:4px"></div>
+</div>
+<div id="topstrip">
+  <div id="compass" title="Compass. North is always at the top of this map.">
+    <svg viewBox="0 0 100 100" aria-label="Compass" role="img">
+      <circle cx="50" cy="50" r="46" fill="#1f1412" stroke="#6b4a3a" stroke-width="2"/>
+      <g stroke="#6b4a3a" stroke-width="2"><line x1="50" y1="6" x2="50" y2="14"/><line x1="50" y1="86" x2="50" y2="94"/><line x1="6" y1="50" x2="14" y2="50"/><line x1="86" y1="50" x2="94" y2="50"/></g>
+      <text x="50" y="25" text-anchor="middle" font-size="15" font-weight="700" fill="#ff6a4d" font-family="Georgia,serif">N</text>
+      <text x="50" y="88" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">S</text>
+      <text x="82" y="54.5" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">E</text>
+      <text x="18" y="54.5" text-anchor="middle" font-size="12" fill="#d9c2a3" font-family="Georgia,serif">W</text>
+      <g id="needle"><polygon points="50,28 57,52 50,47 43,52" fill="#ff6a4d"/><polygon points="50,72 57,52 50,57 43,52" fill="#d9c2a3" opacity=".7"/></g>
+      <g id="heading" style="display:none"><polygon points="50,30 58,58 50,52 42,58" fill="#4fa3ff" stroke="#fff" stroke-width="1.5"/></g>
+    </svg>
+    <div id="cmpTxt">North is up</div>
+  </div>
+  <div id="navBanner" hidden>
+    <div id="navTop"><svg id="navIco" viewBox="0 0 48 48" aria-hidden="true"></svg><div><div id="navInstr">Head north</div><div id="navToward">toward Yellowknife Bay</div></div></div>
+    <div id="navBottom"><div id="navStats"></div><button class="btn" id="navSim">Simulate walk</button><button class="btn ghost" id="navStop" style="color:#fff;border-color:#4f7a5c">End</button></div>
+  </div>
+</div>
+<div id="readout">Move the mouse over Mars</div>
+</div>
+
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="data.js"></script>
+<script>
+/* Mars Navigator, main map.
+   Map tiles: NASA Solar System Treks (Mars Trek) WMTS, https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars
+   Code drafted with help from an SI assistant (Claude) and reviewed by the team. */
+'use strict';
+const R_KM = 3389.5;                       // Mars mean radius (km)
+const toR = d => d * Math.PI / 180, toD = r => r * 180 / Math.PI;
+function dist(a, b) {                      // great-circle distance on Mars, km; a,b = [lat,lon]
+  const p1 = toR(a[0]), p2 = toR(b[0]), dp = p2 - p1, dl = toR(b[1] - a[1]);
+  const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
+  return 2 * R_KM * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function bearing(a, b) {
+  const p1 = toR(a[0]), p2 = toR(b[0]), dl = toR(b[1] - a[1]);
+  const y = Math.sin(dl) * Math.cos(p2), x = Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl);
+  return (toD(Math.atan2(y, x)) + 360) % 360;
+}
+function dest(a, brg, km) {
+  const d = km / R_KM, b = toR(brg), p1 = toR(a[0]), l1 = toR(a[1]);
+  const p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(b));
+  const l2 = l1 + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(p1), Math.cos(d) - Math.sin(p1) * Math.sin(p2));
+  return [toD(p2), ((toD(l2) + 540) % 360) - 180];
+}
+const compass = b => ['N','NE','E','SE','S','SW','W','NW'][Math.round(b / 45) % 8];
+const fmtKm = k => k < 1 ? Math.round(k * 1000) + ' m' : (k < 100 ? k.toFixed(1) : Math.round(k).toLocaleString('en-US')) + ' km';
+const fmtLat = v => Math.abs(v).toFixed(3) + '°' + (v >= 0 ? 'N' : 'S');
+const fmtLon = v => Math.abs(v).toFixed(3) + '°' + (v >= 0 ? 'E' : 'W');
+const hhmm = h => { h = ((h % 24) + 24) % 24; const m = Math.round(h * 60); return String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+
+/* Temperature teaching model (our team's layer). Fitted to two real records:
+   Curiosity REMS, Gale (4.6°S): daily air highs ≈ 0 °C, lows ≈ −70 °C (NASA/JPL, Aug 2012 to Feb 2013)
+   Perseverance MEDA, Jezero (18.4°N): −22 °C by day, −83 °C at night on a spring sol (2021).
+   It ignores seasons, dust and terrain, and never goes below the CO2 frost point (about −125 °C). */
+function tempModel(lat, h) {
+  const x = Math.max(0, Math.abs(lat) - 5);
+  const tMax = Math.max(-125, 0 - 1.6 * x), tMin = Math.max(-125, -70 - 1.0 * x), rng = tMax - tMin;
+  h = ((h % 24) + 24) % 24;
+  if (h >= 5.5 && h <= 13.5) return tMin + rng * (1 - Math.cos(Math.PI * (h - 5.5) / 8)) / 2;
+  if (h > 13.5 && h <= 19) return tMax - 0.75 * rng * (1 - Math.cos(Math.PI * (h - 13.5) / 5.5)) / 2;
+  const hh = h > 19 ? h - 19 : h + 5;               // 19:00 to 05:30 next morning, linear
+  return (tMax - 0.75 * rng) - 0.25 * rng * (hh / 10.5);
+}
+function zone(lat, h) {
+  const t = tempModel(lat, h), day = h >= 6 && h < 18;
+  if (!day || t < -60) return { z: 'NOGO', label: 'NO-GO', t };
+  if (t < -35 || h >= 17) return { z: 'CAUTION', label: 'CAUTION', t };
+  return { z: 'GO', label: 'GO', t };
+}
+
+/* ---------- Map ---------- */
+const MARS_CRS = L.extend({}, L.CRS.EPSG4326, { R: R_KM * 1000 });   // Mars-sized distances for the scale bar
+const STILL = /[?&]still/.test(location.search);   // no animations (used for screenshots)
+const map = L.map('map', { crs: MARS_CRS, zoomAnimation: !STILL, fadeAnimation: !STILL, minZoom: 1, maxZoom: 18, worldCopyJump: false, zoomSnap: 0.5,
+  maxBounds: [[-90, -200], [90, 200]], attributionControl: true }).setView([-4.75, 137.35], 7);
+const TREK = 'https://trek.nasa.gov/tiles/Mars/EQ/';
+const ATTR = 'Imagery: <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA/JPL Mars Trek</a>';
+function trek(id, ext, maxN, opts = {}) {
+  return L.tileLayer(TREK + id + '/1.0.0/default/default028mm/{z}/{y}/{x}.' + ext,
+    Object.assign({ tileSize: 256, maxNativeZoom: maxN, maxZoom: 18, noWrap: true, attribution: ATTR }, opts));
+}
+const base = {
+  'Colour photo map (Viking Orbiters)': trek('Mars_Viking_MDIM21_ClrMosaic_global_232m', 'jpg', 7),
+  'Height map (MOLA laser altimeter)': trek('Mars_MGS_MOLA_ClrShade_merge_global_463m', 'jpg', 7),
+  'Ground heat by day (THEMIS infrared)': trek('THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018', 'png', 9, { bounds: [[-65, -180], [65, 180]] }),
+  'Ground heat at night (THEMIS infrared)': trek('THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018', 'png', 9, { bounds: [[-65, -180], [65, 180]] })
+};
+base['Colour photo map (Viking Orbiters)'].addTo(map);
+
+/* A sharper black-and-white NASA photo that covers only one crater. Shown from zoom 7 so it never looks like a stray grey box,
+   with a thin outline and a label saying what it is. */
+function closeUp(id, bounds, label) {
+  const tiles = trek(id, 'png', 12, { zIndex: 5, bounds, minZoom: 7 });
+  const box = L.rectangle(bounds, { color: '#e3a857', weight: 1.2, opacity: .8, fill: false, dashArray: '4 4', interactive: false, className: 'cu-box' });
+  const tag = L.marker([bounds[0][0], bounds[1][1]], { interactive: false, icon: L.divIcon({ className: 'cu-tag', html: `<span>Sharper NASA photo: ${label} (MRO CTX, black and white)</span>`, iconSize: null, iconAnchor: [0, 0] }) });
+  const g = L.layerGroup([tiles, box, tag]);
+  const fit = () => { const on = map.getZoom() >= 7; box.setStyle({ opacity: on ? .8 : 0 }); const el = tag.getElement(); if (el) el.style.display = on ? '' : 'none'; };
+  g.on('add', () => { map.on('zoomend', fit); setTimeout(fit, 0); });
+  g.on('remove', () => map.off('zoomend', fit));
+  return g;
+}
+const tileOv = {
+  gale: { name: 'Gale Crater close-up (MRO CTX, about 6 m per pixel)', layer: closeUp('Gale_CTX_BlockAdj_dd', [[-6.5733, 135.1843], [-2.8078, 139.2413]], 'Gale Crater'), on: true },
+  hirise: { name: 'Curiosity route close-up (MRO HiRISE, about 25 cm per pixel)', layer: trek('curiosity_hirise_mosaic', 'png', 16, { zIndex: 6, bounds: [[-4.9255, 137.1225], [-4.2490, 137.7298]], minZoom: 9 }), on: true },
+  jezero: { name: 'Jezero Crater close-up (MRO CTX)', layer: closeUp('Jezero_CTX_BlockAdj_dd', [[15.9058, 75.1538], [19.4453, 78.8717]], 'Jezero Crater'), on: true },
+  ti: { name: 'Thermal inertia: rock vs dust (MGS TES)', layer: trek('TES_Thermal_Inertia', 'png', 1, { opacity: 0.6, zIndex: 7 }), on: false },
+  dust: { name: 'Surface dust cover (MGS TES)', layer: trek('TES_Dust', 'png', 1, { opacity: 0.6, zIndex: 7 }), on: false }
+};
+
+/* Zones overlay: latitude bands for daytime, all NO-GO at night */
+const zoneLayer = L.layerGroup();
+function drawZones() {
+  zoneLayer.clearLayers();
+  const h = +clockR.value;
+  for (let lat = -90; lat < 90; lat += 5) {
+    const z = zone(lat + 2.5, h).z;
+    const col = z === 'GO' ? '#7fa37a' : z === 'CAUTION' ? '#e3a857' : '#8db9cc';
+    L.rectangle([[lat, -180], [lat + 5, 180]], { stroke: false, fillColor: col, fillOpacity: 0.22, interactive: false }).addTo(zoneLayer);
+  }
+}
+/* Buried ice (SWIM) */
+const iceLayer = L.layerGroup();
+[[[40, 150], [52, 180]], [[40, -180], [52, -135]]].forEach(b => L.rectangle(b, { color: '#ffffff', weight: 1, dashArray: '4 4', fillColor: '#ffffff', fillOpacity: 0.18 })
+  .bindPopup('<b>Buried water ice most likely</b><br>Strongest ice signals in the SWIM Arcadia study: about 40° to 52°N.<br><span class="muted">Source: Subsurface Water Ice Mapping (SWIM) project, Planetary Science Institute / NASA JPL; Morgan et al., Nature Astronomy, 2021.</span>').addTo(iceLayer));
+
+/* Points of interest */
+const P = {
+  bradbury: { n: 'Bradbury Landing (Curiosity, 2012)', ll: [-4.58947, 137.44163], k: 'land', note: 'Curiosity touched down here on 6 Aug 2012 (UTC). Low crater floor, about 4,500 m below Mars datum.' },
+  yellowknife: { n: 'Yellowknife Bay (first rock drilled on Mars)', ll: [-4.58947, 137.44914], k: 'sci', note: 'Curiosity drilled “John Klein” here in 2013 and found an ancient lake environment that could have supported microbes.' },
+  pahrump: { n: 'Pahrump Hills (base of Mount Sharp)', ll: [-4.66265, 137.37745], k: 'sci', note: 'Curiosity reached the base layers of Mount Sharp here in late 2014: mudstone laid down in an old lake.' },
+  murray: { n: 'Murray Buttes (natural radiation shelter)', ll: [-4.69520, 137.35301], k: 'shelter', note: 'Curiosity parked by this cliff from 9 to 21 Sep 2016 and RAD measured 4% less radiation (7.5% less neutral particles). Source: NASA JPL, 2021.' },
+  boxwork: { n: 'Boxwork ridges (Curiosity, 2025 to 2026)', ll: [-4.80521, 137.37945], k: 'sci', note: 'Web-like ridges left by ancient groundwater. Curiosity explored them from sol 4534 (May 2025) to early 2026.' },
+  sharp: { n: 'Mount Sharp (Aeolis Mons)', ll: [-5.08, 137.85], k: 'sci', note: 'Layered mountain about 5.5 km tall in the middle of Gale Crater: a record of Mars drying out.' },
+  jezeroLand: { n: 'Octavia E. Butler Landing (Perseverance, 2021)', ll: [18.44463, 77.45089], k: 'land', note: 'Perseverance landed here on 18 Feb 2021 inside Jezero Crater, an ancient lake with a river delta.' },
+  jezero: { n: 'Jezero Crater (ancient lake and delta)', ll: [18.41, 77.69], k: 'sci', note: '48 km crater that once held a lake. Perseverance is collecting samples here.' },
+  arcadia: { n: 'Arcadia Planitia (buried ice)', ll: [49.02, -171.85], k: 'ice', note: 'Broad plains that match the most ice signals in the SWIM study (Morgan et al., 2021).' },
+  deuteronilus: { n: 'Deuteronilus Mensae (ice-rich glaciers)', ll: [45.11, 23.92], k: 'ice', note: 'Extensive buried glacial networks, one of the most promising ice regions in the SWIM study.' },
+  meridiani: { n: 'Meridiani Planum (solar farm 1)', ll: [-0.04, -3.14], k: 'power', note: 'Flat equatorial plains, easy to build on. Advika’s solar farm site 1.' },
+  tharsis: { n: 'Tharsis Montes (solar farm 2)', ll: [1.57, -112.58], k: 'power', note: 'High volcanic region: less dusty air above the panels. Advika’s solar farm site 2.' },
+  elysium: { n: 'Elysium Planitia (solar farm 3)', ll: [2.98, 154.74], k: 'power', note: 'Wide, open, flat land with few shadows. Advika’s solar farm site 3.' },
+  boreum: { n: 'Planum Boreum (polar solar farm)', ll: [87.32, 54.96], k: 'power', note: 'The north polar cap. Months of non-stop summer sunshine, then a long polar night. Advika’s option 2.' }
+};
+const LANDERS = [
+  ['Viking 1 (1976)', [22.27, -47.95]], ['Viking 2 (1976)', [47.67, 134.30]], ['Mars Pathfinder (1997)', [19.13, -33.22]],
+  ['Spirit (2004)', [-14.57, 175.47]], ['Opportunity (2004)', [-1.95, -5.53]], ['Phoenix (2008)', [68.22, -125.75]],
+  ['Curiosity (2012)', P.bradbury.ll], ['InSight (2018)', [4.50, 135.62]], ['Perseverance (2021)', P.jezeroLand.ll]];
+const ICON = { land: '#f2e3cc', sci: '#e3a857', shelter: '#8db9cc', ice: '#ffffff', power: '#ffd34d' };
+const poiLayer = L.layerGroup(), landerLayer = L.layerGroup();
+Object.entries(P).forEach(([id, p]) => {
+  p.m = L.circleMarker(p.ll, { radius: 7, color: '#1c1110', weight: 2, fillColor: ICON[p.k], fillOpacity: 1 })
+    .bindPopup(`<b>${p.n}</b><br>${p.note}<br><span class="muted">${fmtLat(p.ll[0])}, ${fmtLon(p.ll[1])}</span>`)
+    .bindTooltip(p.n, { className: 'lbl', direction: 'right', offset: [8, 0] }).addTo(poiLayer);
+});
+LANDERS.forEach(([n, ll]) => L.circleMarker(ll, { radius: 5, color: '#f2e3cc', weight: 2, fillColor: '#c1440e', fillOpacity: 1 })
+  .bindTooltip('Lander: ' + n, { className: 'lbl', direction: 'right', offset: [6, 0] }).addTo(landerLayer));
+
+/* Named features (USGS gazetteer) */
+const namesLayer = L.layerGroup();
+const nameMarks = GAZ.map(([n, lat, lon, d, t]) => ({ n, d, m: L.circleMarker([lat, lon], { radius: 2.5, stroke: false, fillColor: '#f2e3cc', fillOpacity: .8 })
+  .bindTooltip(n, { className: 'lbl' + (d >= 1500 ? ' big' : ''), direction: 'top', offset: [0, -3], permanent: true })
+  .bindPopup(`<b>${n}</b><br>${FEATURE_TYPES[t] || t}, ${d < 1 ? 'under 1 km' : 'about ' + d.toLocaleString('en-US') + ' km'} across<br><span class="muted">${fmtLat(lat)}, ${fmtLon(lon)} · USGS Gazetteer</span>`) }));
+function refreshNames() {
+  namesLayer.clearLayers();
+  const z = map.getZoom(), minD = z < 2.5 ? 1500 : z < 3.5 ? 700 : z < 4.5 ? 300 : z < 6.5 ? 150 : 0;
+  const b = map.getBounds().pad(0.2);
+  nameMarks.forEach(o => { if (o.d >= minD && b.contains(o.m.getLatLng())) o.m.addTo(namesLayer); });
+  requestAnimationFrame(declutter);
+}
+/* Hide any label that would overlap another label or a panel on the map (bigger places win) */
+function declutter() {
+  const boxes = ['topstrip', 'clock', 'readout'].map(id => document.getElementById(id)).filter(Boolean).map(e => e.getBoundingClientRect());
+  document.querySelectorAll('.leaflet-control-container .leaflet-control').forEach(e => boxes.push(e.getBoundingClientRect()));
+  document.querySelectorAll('.crew-fabs').forEach(e => boxes.push(e.getBoundingClientRect()));
+  const hit = (r, p) => !(r.right + 4 < p.left || r.left - 4 > p.right || r.bottom + 2 < p.top || r.top - 2 > p.bottom);
+  nameMarks.filter(o => namesLayer.hasLayer(o.m)).sort((a, b) => b.d - a.d).forEach(o => {
+    const el = o.m.getTooltip() && o.m.getTooltip().getElement(); if (!el) return;
+    el.style.visibility = 'visible'; const r = el.getBoundingClientRect();
+    if (boxes.some(p => hit(r, p))) el.style.visibility = 'hidden'; else boxes.push(r);
+  });
+}
+map.on('zoomend moveend', refreshNames);
+
+/* Rover paths: live from NASA when available, built-in copy otherwise */
+const pathLayer = L.layerGroup();
+let MSL = MSL_PATH.map(p => ({ lat: p[1], lon: p[0], el: p[2], sol: p[3], odo: null })), M20 = M20_PATH.map(p => ({ lat: p[1], lon: p[0], el: p[2], sol: p[3], odo: null }));
+let liveNote = 'built-in copy of NASA waypoints';
+function drawPaths() {
+  pathLayer.clearLayers();
+  L.polyline(MSL.map(p => [p.lat, p.lon]), { color: '#ff7a3d', weight: 3 }).bindTooltip(`Curiosity's drive path, sols ${MSL[0].sol} to ${MSL[MSL.length - 1].sol} (${liveNote})`, { sticky: true }).addTo(pathLayer);
+  L.polyline(M20.map(p => [p.lat, p.lon]), { color: '#6fd1ff', weight: 3 }).bindTooltip(`Perseverance's drive path, sols ${M20[0].sol} to ${M20[M20.length - 1].sol} (${liveNote})`, { sticky: true }).addTo(pathLayer);
+  const a = MSL[MSL.length - 1], b = M20[M20.length - 1];
+  L.circleMarker([a.lat, a.lon], { radius: 6, color: '#fff', weight: 2, fillColor: '#ff7a3d', fillOpacity: 1 }).bindTooltip(`Curiosity, latest position (sol ${a.sol})`, { className: 'lbl', direction: 'right', offset: [8, 0] }).addTo(pathLayer);
+  L.circleMarker([b.lat, b.lon], { radius: 6, color: '#fff', weight: 2, fillColor: '#6fd1ff', fillOpacity: 1 }).bindTooltip(`Perseverance, latest position (sol ${b.sol})`, { className: 'lbl', direction: 'right', offset: [8, 0] }).addTo(pathLayer);
+}
+async function loadLive() {
+  try {
+    const get = u => fetch(u).then(r => { if (!r.ok) throw 0; return r.json(); });
+    const [w, p] = await Promise.all([get('https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json'), get('https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json')]);
+    const conv = fc => fc.features.map(f => ({ lon: +f.geometry.coordinates[0], lat: +f.geometry.coordinates[1], el: +f.geometry.coordinates[2], sol: +f.properties.sol, odo: null }));
+    const a = conv(w), b = conv(p), ok = arr => arr.length > 50 && arr.every(q => isFinite(q.lat) && isFinite(q.lon) && isFinite(q.el) && isFinite(q.sol));
+    if (!ok(a) || !ok(b)) throw 0;
+    MSL = a; M20 = b; liveNote = 'live NASA waypoints'; drawPaths();
+  } catch (e) { /* keep the built-in copy */ }
+}
+
+/* Exploration Zone circle: NASA assumes about 100 km radius around a human landing site */
+const ezLayer = L.layerGroup();
+function drawEZ(center) {
+  ezLayer.clearLayers();
+  const ring = []; for (let b = 0; b <= 360; b += 4) ring.push(dest(center, b, 100));
+  L.polygon(ring, { color: '#e3a857', weight: 2, dashArray: '6 6', fill: false }).bindTooltip('Exploration Zone: about 100 km radius (NASA human landing site studies)', { sticky: true }).addTo(ezLayer);
+}
+
+/* Crew photos and videos (from the field camera) */
+const photoLayer = L.layerGroup(), photoMarks = {};
+const CAM_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></svg>';
+function addPhoto(rec) {
+  if (photoMarks[rec.id]) return;
+  const u = window.CREW ? window.CREW.urlFor(rec) : '', isV = rec.type.startsWith('video');
+  const esc = t => String(t || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  photoMarks[rec.id] = L.marker([rec.lat, rec.lon], { icon: L.divIcon({ className: '', html: '<div class="photo-pin">' + CAM_SVG + '</div>', iconSize: [30, 30], iconAnchor: [15, 15] }) })
+    .bindPopup(`<b>${esc(rec.caption) || (isV ? 'Field video' : 'Field photo')}</b>${isV ? `<video class="ph" src="${u}" controls playsinline></video>` : `<img class="ph" src="${u}" alt="${esc(rec.caption) || 'Field photo'}">`}<span class="muted">${esc(rec.name)} · ${esc(rec.team)} · ${new Date(rec.t).toLocaleString()}<br>${fmtLat(rec.lat)}, ${fmtLon(rec.lon)}</span>`, { maxWidth: 240 })
+    .addTo(photoLayer);
+}
+
+/* Overlay registry */
+const OV = {
+  zones: { name: 'Temperature zones (our model, follows the clock)', layer: zoneLayer, on: false },
+  ice: { name: 'Buried water ice (SWIM)', layer: iceLayer, on: false },
+  paths: { name: 'Rover drive paths (NASA waypoints)', layer: pathLayer, on: true },
+  pois: { name: 'Mission sites, shelters, solar farms', layer: poiLayer, on: true },
+  landers: { name: 'All landing sites (1976 to 2021)', layer: landerLayer, on: false },
+  names: { name: 'Place names (USGS Gazetteer)', layer: namesLayer, on: true },
+  photos: { name: 'Crew photos and videos', layer: photoLayer, on: true },
+  ez: { name: 'Exploration Zone (100 km)', layer: ezLayer, on: false },
+  ...tileOv
+};
+const ovList = document.getElementById('ovList');
+Object.entries(OV).forEach(([k, o]) => {
+  const row = document.createElement('label'); row.className = 'row';
+  row.innerHTML = `<input type="checkbox" ${o.on ? 'checked' : ''} data-k="${k}"> ${o.name}`;
+  ovList.appendChild(row);
+  if (o.on) o.layer.addTo(map);
+});
+ovList.addEventListener('change', e => { const o = OV[e.target.dataset.k]; e.target.checked ? o.layer.addTo(map) : map.removeLayer(o.layer); });
+function setOv(k, on) { const o = OV[k]; const cb = ovList.querySelector(`[data-k="${k}"]`); cb.checked = on; on ? o.layer.addTo(map) : map.removeLayer(o.layer); }
+L.control.layers(base, null, { position: 'topright', collapsed: true }).addTo(map);
+L.control.scale({ metric: true, imperial: false, maxWidth: 160 }).addTo(map);
+function fitChrome() {
+  const small = matchMedia('(max-width:900px)').matches;
+  document.documentElement.style.setProperty('--hdr', document.querySelector('header').offsetHeight + 'px');
+  document.querySelector('.leaflet-top.leaflet-right').style.marginTop = small ? '10px' : '150px';
+  setTimeout(() => map.invalidateSize(), 50);
+}
+addEventListener('resize', fitChrome); fitChrome();
+
+/* Clock */
+const clockR = document.getElementById('clockR'), clockT = document.getElementById('clockT'), clockZ = document.getElementById('clockZ');
+let selected = P.bradbury.ll.slice();
+function updClock() {
+  const h = +clockR.value, z = zone(selected[0], h);
+  clockT.textContent = hhmm(h);
+  clockZ.innerHTML = `<span class="pill ${z.z}">${z.label}</span> &nbsp;air ≈ ${Math.round(z.t)} °C at ${fmtLat(selected[0])} <span class="muted">(model)</span>`;
+  if (map.hasLayer(zoneLayer)) drawZones();
+}
+clockR.addEventListener('input', updClock);
+
+/* Readout + click info */
+const ro = document.getElementById('readout');
+map.on('mousemove', e => { ro.textContent = `${fmtLat(e.latlng.lat)}  ${fmtLon(e.latlng.lng)}   zoom ${map.getZoom()}`; });
+function nearest(ll, n = 3) {
+  return GAZ.map(g => ({ g, d: dist(ll, [g[1], g[2]]) })).sort((a, b) => a.d - b.d).slice(0, n);
+}
+function showInfo(ll) {
+  selected = ll; updClock();
+  const h = +clockR.value, z = zone(ll[0], h), nb = nearest(ll), base = P.bradbury.ll, dB = dist(base, ll);
+  const inside = GAZ.filter(g => g[4] === 'AA' && g[3] >= 1 && dist(ll, [g[1], g[2]]) <= g[3] / 2).sort((a, b) => a[3] - b[3])[0];
+  document.getElementById('infoOut').innerHTML = `
+    <div class="card"><dl class="kv">
+      <dt>Latitude</dt><dd>${fmtLat(ll[0])}</dd><dt>Longitude</dt><dd>${fmtLon(ll[1])}</dd>
+      <dt>You are in</dt><dd>${inside ? inside[0] + ' crater' : 'unnamed terrain'}</dd>
+      <dt>Zone at ${hhmm(h)}</dt><dd><span class="pill ${z.z}">${z.label}</span> air ≈ ${Math.round(z.t)} °C <span class="muted">(model)</span></dd>
+      <dt>From base</dt><dd>${fmtKm(dB)} ${compass(bearing(base, ll))} of Bradbury Landing ${dB <= 100 ? '<span class="pill GO">inside 100 km zone</span>' : ''}</dd>
+    </dl></div>
+    <h3>Nearest named places</h3>
+    ${nb.map(o => `<div>${o.g[0]} <span class="muted">${FEATURE_TYPES[o.g[4]] || ''}</span><br><b>${fmtKm(o.d)}</b> to the ${compass(bearing(ll, [o.g[1], o.g[2]]))}</div>`).join('<hr style="border-color:#4a2f26">')}
+    <p class="muted">Tip: switch the base map to “Ground heat at night”. Bright ground holds heat (rock, firm footing); dark ground is dust or sand.</p>
+    <button class="btn ghost" id="asDest">Use as route destination</button>`;
+  document.getElementById('asDest').onclick = () => { addCustom(ll); showTab('route'); };
+}
+map.on('click', e => { showInfo([e.latlng.lat, e.latlng.lng]); showTab('info'); });
+
+/* Tabs */
+function showTab(p) { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p)); document.querySelectorAll('.pane').forEach(x => x.classList.toggle('on', x.id === 'p-' + p)); }
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.p));
+document.getElementById('menuBtn').onclick = () => {
+  const side = document.getElementById('side'), btn = document.getElementById('menuBtn');
+  const small = matchMedia('(max-width:900px)').matches;
+  const shown = small ? side.classList.toggle('open') : !side.classList.toggle('hide');
+  btn.textContent = shown ? 'Hide panel' : 'Show panel';
+  setTimeout(() => map.invalidateSize(), 60);
+};
+document.getElementById('menuBtn').textContent = matchMedia('(max-width:900px)').matches ? 'Show panel' : 'Hide panel';
+
+/* ---------- Objectives ---------- */
+const OBJ = [
+  { id: 'base', t: 'Land safely and set up base', s: 'Gale Crater floor, near Bradbury Landing', view: [[-4.75, 137.35], 7], baseL: 'Height map (MOLA laser altimeter)', ov: { ez: 1, pois: 1, paths: 1, gale: 1 }, ez: P.bradbury.ll,
+    why: 'Low ground means more air above you to slow a heavy lander, and being close to the equator means warmer days.',
+    list: ['Low elevation: the Gale floor is about 4,500 m below Mars datum (rover data).', 'Close to the equator (4.6°S): the most GO hours on our temperature layer.', 'Flat landing ground, away from Mount Sharp’s steep slopes.', 'Science and resources within the 100 km Exploration Zone NASA plans around a human landing site.'] },
+  { id: 'water', t: 'Find water ice', s: 'Arcadia Planitia and Deuteronilus Mensae', view: [[46, -158], 4], baseL: 'Height map (MOLA laser altimeter)', ov: { ice: 1, pois: 1, ti: 1 },
+    why: 'Water means drinking water, oxygen and rocket fuel for the trip home, so the first bases want ice close by.',
+    list: ['Strongest buried-ice signals: about 40° to 52°N (SWIM).', 'Ice within 3 m of the surface is stable above about 50° latitude, but those places are colder with long winter nights.', 'Trade-off: choose the warmest spot that is still near ice.', 'Look for low thermal inertia (TES layer) and smooth icy mantles in close-up images.'] },
+  { id: 'life', t: 'Search for signs of ancient life', s: 'Mount Sharp layers and Jezero delta', view: [[-4.7, 137.4], 11], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, jezero: 1 },
+    why: 'Old lakes and rivers are the best places to look for traces of past life.',
+    list: ['Yellowknife Bay: first rock drilled on Mars, from an ancient lake.', 'Pahrump Hills: mudstone at the base of Mount Sharp.', 'Boxwork ridges: minerals left by groundwater.', 'Jezero Crater: river delta studied and sampled by Perseverance (use “Jump to Jezero”).'] },
+  { id: 'power', t: 'Power the base', s: 'Solar farm sites, by Advika Bisaria', view: [[20, 20], 1.5], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, dust: 1 },
+    why: 'Sunlight on Mars is less than half of Earth’s, and dust storms can block it for weeks.',
+    list: ['Option 1: three farms on the equator (Meridiani, Tharsis, Elysium). Their biggest gap is about 158° of longitude, less than half a turn, so one farm is always in daylight.', 'Option 2: one farm on Planum Boreum, sunlit non-stop through northern spring and summer, then dark for months.', 'Keep panels clean: check the TES dust layer.', 'Keep a backup that does not depend on sunshine.'] },
+  { id: 'safe', t: 'Stay safe: radiation and dust', s: 'Shelters and storm rules, by Kshama', view: [[-4.72, 137.38], 12], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, zones: 0 },
+    why: 'Mars has thin air and no global magnetic field, so radiation is about 0.64 mSv a day at Gale (Curiosity RAD).',
+    list: ['Murray Buttes: parked by the cliff, Curiosity measured 4% less radiation.', 'Cliffs, overhangs and caves are shelter spots during a solar storm.', 'Dusty days are CAUTION days: in 2018 UV sunlight at Gale dropped by 90% and you could see only about 2.7 km.', 'Helmet alert: arrow to the nearest shelter, radiation and dust levels, time left outside.'] },
+  { id: 'walk', t: 'Daily Marswalk', s: 'Route card: Bradbury Landing to Yellowknife Bay', view: [[-4.59, 137.445], 15], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1 }, route: ['bradbury', 'yellowknife'],
+    why: 'A short first walk on ground Curiosity has already driven.',
+    list: ['Leave 10:30 in the GO zone; turn back by 14:30; inside by 15:30.', 'Walk in pairs; carry spare oxygen for the walk back.', 'Check the dust layer and solar storm alerts before leaving.', 'Use two ways to know where you are: map grid and landmarks (Mount Sharp rises to the south-east).'] }
+];
+const objList = document.getElementById('objList'), objCard = document.getElementById('objCard');
+OBJ.forEach(o => { const b = document.createElement('button'); b.className = 'obj'; b.dataset.id = o.id; b.innerHTML = `<b>${o.t}</b><small>${o.s}</small>`; b.onclick = () => runObj(o); objList.appendChild(b); });
+function runObj(o, startView) {
+  objList.querySelectorAll('.obj').forEach(b => b.classList.toggle('on', b.dataset.id === o.id));
+  Object.values(base).forEach(l => map.removeLayer(l)); base[o.baseL].addTo(map);
+  Object.keys(OV).forEach(k => { if (k !== 'names') setOv(k, !!o.ov[k]); });
+  if (o.ez) drawEZ(o.ez);
+  if (startView) map.setView(startView[0], startView[1], { animate: false });
+  else STILL ? map.setView(o.view[0], o.view[1], { animate: false }) : map.flyTo(o.view[0], o.view[1], { duration: 1.2 });
+  objCard.innerHTML = `<div class="card"><b>Why it matters</b><br>${o.why}<h3>Checklist</h3><ul class="check">${o.list.map(x => '<li>' + x + '</li>').join('')}</ul>
+    ${o.id === 'life' ? '<button class="btn ghost" id="jz">Jump to Jezero</button>' : ''}${o.route ? '<button class="btn" id="go">Show this route</button> <button class="btn" id="goNav">Start navigation</button>' : ''}</div>`;
+  if (o.id === 'life') document.getElementById('jz').onclick = () => map.flyTo([18.44, 77.42], 11);
+  if (o.route) document.getElementById('go').onclick = () => { rStart.value = o.route[0]; rEnd.value = o.route[1]; planRoute(); showTab('route'); };
+  if (o.route) document.getElementById('goNav').onclick = () => { rStart.value = o.route[0]; rEnd.value = o.route[1]; planRoute(); startNav(); };
+}
+
+/* ---------- Route planner ---------- */
+const rStart = document.getElementById('rStart'), rEnd = document.getElementById('rEnd'), rOut = document.getElementById('rOut');
+const routeLayer = L.layerGroup().addTo(map);
+function fillSel() {
+  const opts = Object.entries(P).map(([k, p]) => `<option value="${k}">${p.n}</option>`).join('');
+  rStart.innerHTML = opts; rEnd.innerHTML = opts; rStart.value = 'bradbury'; rEnd.value = 'yellowknife';
+}
+function addCustom(ll) {
+  P.custom = { n: `Map point ${fmtLat(ll[0])}, ${fmtLon(ll[1])}`, ll, k: 'sci', note: 'Point picked on the map' };
+  fillSel(); rEnd.value = 'custom';
+}
+function nearIdx(path, ll) { let bi = 0, bd = 1e9; path.forEach((p, i) => { const d = dist(ll, [p.lat, p.lon]); if (d < bd) { bd = d; bi = i; } }); return { i: bi, d: bd }; }
+let LASTROUTE = null;
+function planRoute() {
+  routeLayer.clearLayers();
+  const A = P[rStart.value], B = P[rEnd.value]; if (!A || !B || A === B) { rOut.innerHTML = '<p class="muted">Pick two different places.</p>'; return; }
+  const mode = document.getElementById('rMode').value, v = Math.max(0.5, +document.getElementById('rSpeed').value || 2), stop = Math.max(0, +document.getElementById('rStop').value || 0), fly = mode === 'nav';
+  const ia = nearIdx(MSL, A.ll), ib = nearIdx(MSL, B.ll);
+  let pts, km, gain = null, loss = null, onPath = !fly && ia.d < 0.3 && ib.d < 0.3, odo = null;
+  if (onPath) {
+    const s = Math.min(ia.i, ib.i), e = Math.max(ia.i, ib.i); let seg = MSL.slice(s, e + 1); if (ia.i > ib.i) seg = seg.slice().reverse();
+    pts = seg.map(p => [p.lat, p.lon]); km = 0; gain = 0; loss = 0;
+    for (let i = 1; i < seg.length; i++) { km += dist([seg[i - 1].lat, seg[i - 1].lon], [seg[i].lat, seg[i].lon]); const de = seg[i].el - seg[i - 1].el; de > 0 ? gain += de : loss -= de; }
+    if (seg[0].odo != null && seg[seg.length - 1].odo != null) odo = Math.abs(seg[seg.length - 1].odo - seg[0].odo) / 1000;
+    drawProfile(seg);
+  } else {
+    km = dist(A.ll, B.ll); const n = Math.max(2, Math.ceil(km / 20)); pts = [];
+    const brg = bearing(A.ll, B.ll); for (let i = 0; i <= n; i++) pts.push(dest(A.ll, brg, km * i / n));
+    document.getElementById('profile').innerHTML = '';
+  }
+  const useKm = odo || km;
+  LASTROUTE = { pts, dest: B.n, v, mode };
+  L.polyline(pts, { color: '#ffd34d', weight: 6, opacity: .9 }).addTo(routeLayer);
+  L.polyline(pts, { color: '#1c1110', weight: 2, dashArray: '6 8' }).addTo(routeLayer);
+  map.fitBounds(L.latLngBounds(pts).pad(0.3));
+  const oneWayH = useKm / v + (fly ? 0.25 : 0), roundH = 2 * oneWayH + stop / 60, leave = 10.5, back = leave + roundH;
+  let verdict, cls;
+  if (fly) { verdict = `Fly at about 1.5 km altitude. ${fmtKm(useKm)} takes ${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} including take-off and landing. Land only on a checked, flat landing zone, in daylight.${back > 17.5 ? ' A same-sol round trip would land after dark, so plan to stay overnight at the destination.' : ''}`; cls = back <= 17.5 ? 'GO' : 'CAUTION'; }
+  else if (mode === 'walk' && useKm > 15) { verdict = 'Too far to walk and come back in one sol. Use the pressurised rover or plan a multi-sol traverse.'; cls = 'NOGO'; }
+  else if (back <= 15.5) { verdict = `Out and back by ${hhmm(back)}: fits inside the GO window.`; cls = 'GO'; }
+  else if (back <= 17) { verdict = `Back by ${hhmm(back)}: past the 15:30 limit. Shorten the stop or start earlier.`; cls = 'CAUTION'; }
+  else { verdict = `Back by ${hhmm(back)}, after dark. Split into a multi-sol traverse with an overnight shelter.`; cls = 'NOGO'; }
+  const zA = zone(A.ll[0], 10.5), zB = zone(B.ll[0], 13.5);
+  rOut.innerHTML = `<div class="card"><dl class="kv">
+    <dt>Route</dt><dd>${fly ? 'Straight line through the air (Navigator)' : onPath ? 'Along Curiosity’s real drive path' : 'Shortest path over the surface'}</dd>
+    <dt>Distance</dt><dd><b>${fmtKm(useKm)}</b> one way${odo ? ' <span class="muted">(Curiosity odometer)</span>' : (onPath ? ' <span class="muted">(between NASA waypoints)</span>' : '')}</dd>
+    ${gain != null ? `<dt>Climb</dt><dd>+${Math.round(gain)} m / −${Math.round(loss)} m</dd>` : ''}
+    <dt>Heading</dt><dd>${compass(bearing(A.ll, B.ll))} (${Math.round(bearing(A.ll, B.ll))}°)</dd>
+    <dt>Time</dt><dd>${oneWayH < 1 ? Math.round(oneWayH * 60) + ' min' : oneWayH.toFixed(1) + ' h'} each way at ${v} km/h${fly ? ' (incl. 15 min take-off and landing)' : ''}, plus ${stop} min at the stop</dd>
+    <dt>Leave 10:30</dt><dd><span class="pill ${zA.z}">${zA.label}</span> at start</dd>
+    <dt>Verdict</dt><dd><span class="pill ${cls}">${cls === 'NOGO' ? 'NO-GO' : cls}</span> ${verdict}</dd>
+  </dl><button class="btn" id="navStart" style="margin-top:10px">Start navigation</button></div>`;
+  document.getElementById('navStart').onclick = startNav;
+}
+function drawProfile(seg) {
+  const W = 340, H = 110, els = seg.map(p => p.el), mn = Math.min(...els), mx = Math.max(...els), sp = Math.max(10, mx - mn);
+  let acc = 0; const xs = [0]; for (let i = 1; i < seg.length; i++) { acc += dist([seg[i - 1].lat, seg[i - 1].lon], [seg[i].lat, seg[i].lon]); xs.push(acc); }
+  const tot = acc || 1, pts = seg.map((p, i) => `${(xs[i] / tot * (W - 50) + 40).toFixed(1)},${(H - 15 - (p.el - mn) / sp * (H - 30)).toFixed(1)}`).join(' ');
+  document.getElementById('profile').innerHTML = `<h3>Height along the route</h3><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Elevation profile from ${Math.round(seg[0].el)} to ${Math.round(seg[seg.length - 1].el)} metres">
+    <polyline points="${pts}" fill="none" stroke="#e3a857" stroke-width="2.5"/>
+    <text x="4" y="16" fill="#d9c2a3" font-size="11">${Math.round(mx)} m</text><text x="4" y="${H - 6}" fill="#d9c2a3" font-size="11">${Math.round(mn)} m</text>
+    <text x="${W - 4}" y="${H - 2}" fill="#d9c2a3" font-size="11" text-anchor="end">${fmtKm(tot)}</text></svg>
+    <p class="muted">Heights from NASA rover waypoints (metres relative to Mars datum).</p>`;
+}
+document.getElementById('rGo').onclick = planRoute;
+document.getElementById('rMode').onchange = e => { document.getElementById('rSpeed').value = { walk: 2, rover: 10, nav: 350 }[e.target.value]; };
+document.getElementById('rClear').onclick = () => { stopNav(); routeLayer.clearLayers(); rOut.innerHTML = ''; document.getElementById('profile').innerHTML = ''; };
+
+/* ---------- Turn-by-turn navigation ---------- */
+const DIRWORD = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
+const ARROW_SVG = '<svg class="me-arrow" viewBox="0 0 32 32"><polygon points="16,2 28,29 16,22 4,29" fill="#4fa3ff" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+const ICONS = {
+  straight: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M24 38V12M15 20l9-9 9 9" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  left: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M30 38V24a6 6 0 0 0-6-6H13M19 11l-7 7 7 7" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  right: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M18 38V24a6 6 0 0 1 6-6h11M29 11l7 7-7 7" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  arrive: '<circle cx="24" cy="24" r="23" fill="#2f6b45"/><path d="M24 40s-11-12-11-20a11 11 0 0 1 22 0c0 8-11 20-11 20z" fill="#fff"/><circle cx="24" cy="20" r="4" fill="#2f6b45"/>'
+};
+let NAV = null;
+const fmtDur = m => m < 1 ? 'under 1 min' : m < 60 ? Math.round(m) + ' min' : Math.floor(m / 60) + ' h ' + Math.round(m % 60) + ' min';
+function startNav() {
+  if (!LASTROUTE) { planRoute(); if (!LASTROUTE) return; }
+  stopNav();
+  const pts = LASTROUTE.pts, cum = [0];
+  for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + dist(pts[i - 1], pts[i]));
+  NAV = { pts, cum, total: cum[cum.length - 1], dest: LASTROUTE.dest, v: LASTROUTE.v, s: 0, sim: false, clock0: +clockR.value, follow: true, k: LASTROUTE.mode === 'nav' ? 600 : 60 };
+  NAV.marker = L.marker(pts[0], { icon: L.divIcon({ className: '', html: '<div class="me-wrap"><div class="me-pulse"></div>' + ARROW_SVG + '</div>', iconSize: [46, 46], iconAnchor: [23, 23] }), interactive: false, zIndexOffset: 2000 }).addTo(map);
+  NAV.done = L.polyline([pts[0]], { color: '#4fa3ff', weight: 6, opacity: .9 }).addTo(routeLayer);
+  document.getElementById('navBanner').hidden = false;
+  document.getElementById('heading').style.display = ''; document.getElementById('needle').style.opacity = '.35';
+  map.setView(pts[0], Math.max(map.getZoom(), 16), { animate: !STILL });
+  updateNav(); setTimeout(declutter, 60);
+}
+function stopNav() {
+  if (!NAV) return; NAV.sim = false; map.removeLayer(NAV.marker); if (NAV.done) routeLayer.removeLayer(NAV.done); NAV = null;
+  document.getElementById('navBanner').hidden = true; document.getElementById('heading').style.display = 'none'; document.getElementById('needle').style.opacity = '1';
+  document.getElementById('cmpTxt').textContent = 'North is up'; document.getElementById('navSim').textContent = 'Simulate walk'; setTimeout(declutter, 60);
+}
+function navPos(s) {
+  const c = NAV.cum; let i = 0; while (i < c.length - 2 && c[i + 1] < s) i++;
+  const segL = c[i + 1] - c[i] || 1e-9, f = Math.min(1, Math.max(0, (s - c[i]) / segL)), a = NAV.pts[i], b = NAV.pts[i + 1];
+  return { ll: [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f], i, brg: bearing(a, b) };
+}
+function nextTurn(i, s) {
+  for (let j = i + 1; j < NAV.pts.length - 1; j++) {
+    const b1 = bearing(NAV.pts[j - 1], NAV.pts[j]), b2 = bearing(NAV.pts[j], NAV.pts[j + 1]);
+    const d = ((b2 - b1 + 540) % 360) - 180;
+    if (Math.abs(d) >= 35 && NAV.cum[j + 1] - NAV.cum[j] > 0.008) return { at: NAV.cum[j] - s, dir: d > 0 ? 'right' : 'left', sharp: Math.abs(d) >= 100 };
+  }
+  return null;
+}
+function updateNav() {
+  const p = navPos(NAV.s), rem = Math.max(0, NAV.total - NAV.s), mins = rem / NAV.v * 60, clockNow = +clockR.value;
+  NAV.marker.setLatLng(p.ll); NAV.marker.getElement().querySelector('.me-arrow').style.transform = `rotate(${p.brg}deg)`;
+  NAV.done.setLatLngs(NAV.pts.slice(0, p.i + 1).concat([p.ll]));
+  selected = p.ll; updClock();
+  let instr, icon;
+  if (rem < 0.005) { instr = 'You have arrived'; icon = 'arrive'; NAV.sim = false; document.getElementById('navSim').textContent = 'Simulate walk'; }
+  else { const t = nextTurn(p.i, NAV.s);
+    if (t && t.at < rem - 0.005) { instr = `In ${fmtKm(Math.max(0.001, t.at))}, ${t.sharp ? 'turn' : 'bear'} ${t.dir}`; icon = t.at < 0.03 ? t.dir : 'straight'; }
+    else { instr = `Head ${DIRWORD[Math.round(p.brg / 45) % 8]} for ${fmtKm(rem)}`; icon = 'straight'; } }
+  document.getElementById('navInstr').textContent = instr;
+  document.getElementById('navToward').textContent = (rem < 0.005 ? 'at ' : 'toward ') + NAV.dest;
+  document.getElementById('navIco').innerHTML = ICONS[icon];
+  const arrive = clockNow + mins / 60, late = arrive > 15.5;
+  document.getElementById('navStats').innerHTML = rem < 0.005 ? `<span>Arrived</span> · ${fmtKm(NAV.total)} walked` :
+    `<span>${fmtDur(mins)}</span> · ${fmtKm(rem)} · arrive ${hhmm(arrive)}${late ? ' <b style="color:#ffd27a">(after the 15:30 limit)</b>' : ''}`;
+  document.getElementById('heading').setAttribute('transform', `rotate(${p.brg.toFixed(1)} 50 50)`);
+  document.getElementById('cmpTxt').textContent = `Heading ${compass(p.brg)} ${Math.round(p.brg)}°`;
+  if (NAV.follow && !map.getBounds().pad(-0.25).contains(p.ll)) map.panTo(p.ll, { animate: !STILL });
+}
+const SIM = 60;   // simulation speed: 1 real second = 1 minute on Mars
+let simLast = 0;
+function simStep(ts) {
+  if (!NAV || !NAV.sim) return;
+  const dt = simLast ? Math.min(0.25, (ts - simLast) / 1000) : 0; simLast = ts;
+  NAV.s = Math.min(NAV.total, NAV.s + NAV.v * dt * NAV.k / 3600);
+  clockR.value = Math.min(24, +clockR.value + dt * NAV.k / 3600);
+  updateNav();
+  if (NAV && NAV.sim) requestAnimationFrame(simStep);
+}
+document.getElementById('navSim').onclick = () => {
+  if (!NAV) return;
+  if (NAV.total - NAV.s < 0.005) { NAV.s = 0; clockR.value = NAV.clock0; }
+  NAV.sim = !NAV.sim; document.getElementById('navSim').textContent = NAV.sim ? 'Pause' : 'Simulate walk';
+  if (NAV.sim) { simLast = 0; requestAnimationFrame(simStep); }
+};
+document.getElementById('navStop').onclick = stopNav;
+map.on('dragstart', () => { if (NAV) NAV.follow = false; });
+
+/* Start */
+fillSel(); drawPaths(); refreshNames(); updClock(); loadLive();
+runObj(OBJ[0], OBJ[0].view);   // home: Land safely and set up base, zoomed out over Gale Crater
+</script>
+<script>
+window.CREW_CFG = {
+  panel: 'right:14px;bottom:110px;height:min(540px,calc(100vh - 380px))',
+  loc: () => NAV ? { lat: navPos(NAV.s).ll[0], lon: navPos(NAV.s).ll[1], label: 'on the way to ' + NAV.dest } : { lat: selected[0], lon: selected[1], label: 'selected spot on the map' },
+  onMedia: rec => addPhoto(rec),
+  showOnMap: rec => { map.setView([rec.lat, rec.lon], Math.max(map.getZoom(), 14)); setTimeout(() => photoMarks[rec.id] && photoMarks[rec.id].openPopup(), 300); },
+  onDelete: id => { if (photoMarks[id]) { photoLayer.removeLayer(photoMarks[id]); delete photoMarks[id]; } }
+};
+</script>
+<script src="crew.js"></script>
+</body>
+</html>
