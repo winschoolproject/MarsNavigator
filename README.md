@@ -78,6 +78,8 @@ Full credits, with links, are on the [Field Guide page](https://winschoolproject
 - Mission cards have small icons so each mission is easy to spot.
 - The planned route is coloured by zone (GO, CAUTION, NO-GO) at the time you reach each part, and follows the time slider.
 - Google-Maps-style tools: a place search box and a "Where am I?" button; the Field Guide explains how a crew knows where it is.
+- Every planned route shows the Suit and Sun panels for the start point before navigation begins.
+- A blue "You are here" pin is always on the map: at base, or following the walker during navigation.
 - Next step: draw routes only through GO zones, and suggest a stop-over at a shelter when there is no continuous GO path.
 
 ## Future data source: the UAE's Hope probe

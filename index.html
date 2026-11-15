@@ -130,6 +130,12 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 .sdot{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font:700 11px/18px 'Segoe UI',Arial;text-align:center}
 #pickHint{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:900;background:rgba(20,12,11,.92);border:1px solid #e3a857;border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;max-width:min(92%,560px);color:#f2e3cc;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.5)}#pickHint .btn{margin:0}
 @media (max-width:900px){#wrap.picking #clock{display:none}#pickHint{bottom:28px;font-size:13px}}
+.tripbox .tbh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:1.05em}
+.meter{margin:4px 0}.meter .lab{display:flex;justify-content:space-between;font-size:.9em}.meter .bar{height:6px;background:#3a241d;border-radius:4px;overflow:hidden;margin-top:2px}.meter .bar i{display:block;height:100%;border-radius:4px}
+.mehere{position:relative;width:26px;height:26px}.mehere i{position:absolute;inset:0;border-radius:50%;background:rgba(66,133,244,.28);animation:mepulse 2s ease-out infinite}
+.mehere b{position:absolute;left:6px;top:6px;width:14px;height:14px;border-radius:50%;background:#4285f4;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+@keyframes mepulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.8);opacity:0}}
+.me-tip{background:#1c1110;color:#f2e3cc;border:1px solid #4285f4}#map.picking .mehere{opacity:.85}
 </style>
 </head>
 <body>
@@ -475,6 +481,14 @@ function fitChrome() {
 addEventListener('resize', fitChrome); fitChrome();
 
 
+
+/* Always-visible "You are here" pin (crew position: base, or the walker during navigation) */
+const ME_ICON = L.divIcon({ className: '', html: '<div class="mehere"><i></i><b></b></div>', iconSize: [26, 26], iconAnchor: [13, 13] });
+const meMark = L.marker(P.bradbury.ll, { icon: ME_ICON, zIndexOffset: 2500, keyboard: false, title: 'You are here' }).addTo(map)
+  .bindTooltip('You are here', { direction: 'top', offset: [0, -12], className: 'me-tip' });
+meMark.on('click', () => document.getElementById('meBtn').click());
+function meAt() { return NAV ? navPos(NAV.s).ll : P.bradbury.ll; }
+
 /* Google-Maps-style tools: search for a place, and "where am I?" */
 const SRCH = Object.values(P).map(p => ({ n: p.n, ll: p.ll, k: 'Route stop', z: 12 }))
   .concat(GAZ.map(g => ({ n: g[0], ll: [g[1], g[2]], k: FEATURE_TYPES[g[4]] || 'Place', z: g[3] > 400 ? 4 : g[3] > 120 ? 6 : g[3] > 30 ? 8 : 10 })));
@@ -497,7 +511,7 @@ new MapTools().addTo(map);
   inp.onkeydown = e => { if (e.key === 'ArrowDown') { on = Math.min(hits.length - 1, on + 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { on = Math.max(0, on - 1); draw(); e.preventDefault(); } else if (e.key === 'Enter' && hits[on]) go(hits[on]); else if (e.key === 'Escape') { wrap.classList.remove('open'); list.style.display = 'none'; } };
   list.onclick = e => { const d = e.target.closest('[data-i]'); if (d) go(hits[+d.dataset.i]); };
   document.getElementById('meBtn').onclick = () => {
-    const ll = NAV ? navPos(NAV.s).ll : P.bradbury.ll, base = P.bradbury.ll, d = dist(base, ll);
+    const ll = meAt(), base = P.bradbury.ll, d = dist(base, ll);
     STILL ? map.setView(ll, Math.max(map.getZoom(), 14), { animate: false }) : map.flyTo(ll, Math.max(map.getZoom(), 14), { duration: 1 });
     L.popup({ className: 'me-pop' }).setLatLng(ll).setContent(`<b>You are here</b><br>${fmtLat(ll[0])}, ${Math.abs(ll[1]).toFixed(3)}°${ll[1] >= 0 ? 'E' : 'W'}<br>${d < 0.05 ? 'At base (Bradbury Landing)' : fmtKm(d) + ' ' + compass(bearing(base, ll)) + ' of base'}<br><span class="muted">${NAV ? 'On the route (simulated walk).' : 'Demo: the crew starts at base.'}</span><br><a href="guide.html#whereami" target="_blank" rel="noopener">How do we know where we are?</a>`).openOn(map);
   };
@@ -670,6 +684,60 @@ function nearIdx(path, ll) { let bi = 0, bd = 1e9; path.forEach((p, i) => { cons
 const SOL_H = 24.66;
 const tripDur = h => h < 1 ? Math.round(h * 60) + ' min' : h < 24 ? h.toFixed(1) + ' h' : (h / SOL_H).toFixed(1) + ' sols (' + Math.round(h).toLocaleString('en-US') + ' h of travel)';
 const arriveTxt = a => a < 24 ? 'about ' + hhmm(a) : 'after about ' + Math.ceil((a - 10.5) / SOL_H) + ' sols, travelling without stopping';
+/* ---------- Suit and Sun panels for a planned trip (same method as the 3D globe page) ---------- */
+function marsClock(date) {
+  const jdTT = date.getTime() / 86400000 + 2440587.5 + 69.184 / 86400, dt = jdTT - 2451545.0, r = Math.PI / 180;
+  const M = 19.3871 + 0.52402073 * dt, aFMS = 270.3871 + 0.524038496 * dt;
+  const P = [[0.0071, 2.2353, 49.409], [0.0057, 2.7543, 168.173], [0.0039, 1.1177, 191.837], [0.0037, 15.7866, 21.736], [0.0021, 2.1354, 15.704], [0.0020, 2.4694, 95.528], [0.0018, 32.8493, 49.095]];
+  let pbs = 0; for (const [A, t, p] of P) pbs += A * Math.cos(r * (0.985626 * dt / t + p));
+  const vM = (10.691 + 3.0e-7 * dt) * Math.sin(r * M) + 0.623 * Math.sin(2 * r * M) + 0.050 * Math.sin(3 * r * M) + 0.005 * Math.sin(4 * r * M) + 0.0005 * Math.sin(5 * r * M) + pbs;
+  const Ls = ((aFMS + vM) % 360 + 360) % 360;
+  const eot = 2.861 * Math.sin(2 * r * Ls) - 0.071 * Math.sin(4 * r * Ls) + 0.002 * Math.sin(6 * r * Ls) - vM;   // degrees
+  const msd = (jdTT - 2451549.5) / 1.0274912517 + 44796.0 - 0.0009626, mst = ((24 * msd) % 24 + 24) % 24;
+  const dec = toD(Math.asin(0.42565 * Math.sin(r * Ls))) + 0.25 * Math.sin(r * Ls);
+  const rAU = 1.5236 * (1.00436 - 0.09309 * Math.cos(r * M) - 0.004336 * Math.cos(2 * r * M) - 0.00031 * Math.cos(3 * r * M) - 0.00003 * Math.cos(4 * r * M));
+  return { Ls, eot, mst, dec, rAU };
+}
+const ltstAt2 = (mc, lonE) => ((mc.mst + lonE / 15 + mc.eot / 15) % 24 + 24) % 24;   // local true solar time at an east longitude
+function season(Ls) { const n = ['spring', 'summer', 'autumn', 'winter'][Math.floor(Ls / 90) % 4], s = ['autumn', 'winter', 'spring', 'summer'][Math.floor(Ls / 90) % 4]; return `northern ${n}, southern ${s}`; }
+
+
+const DIRW = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
+const f1 = (v, p, n) => Math.abs(v).toFixed(1) + '°' + (v >= 0 ? p : n);
+function meter(lab, txt, frac, col) { return `<div class="meter"><div class="lab"><span>${lab}</span><b>${txt}</b></div><div class="bar"><i style="width:${Math.max(3, Math.min(100, frac * 100)).toFixed(0)}%;background:${col}"></i></div></div>`; }
+function tripPanels(ll, h, hoursOut) {
+  const mc = marsClock(new Date()), dec = mc.dec, H = (h - 12) * 15, p = toR(ll[0]), d = toR(dec), Hr = toR(H);
+  const sinEl = Math.sin(p) * Math.sin(d) + Math.cos(p) * Math.cos(d) * Math.cos(Hr), el = toD(Math.asin(sinEl)), sunUp = el > 0;
+  const az = (toD(Math.atan2(-Math.sin(Hr) * Math.cos(d), Math.sin(d) * Math.cos(p) - Math.cos(d) * Math.sin(p) * Math.cos(Hr))) + 360) % 360;
+  const cosH0 = -Math.tan(p) * Math.tan(d);
+  const riseSet = cosH0 <= -1 ? 'Sun up all sol (polar day)' : cosH0 >= 1 ? 'Sun down all sol (polar night)' : (() => { const H0 = toD(Math.acos(cosH0)) / 15; return `${hhmm(12 - H0)} rise · ${hhmm(12 + H0)} set`; })();
+  const flux = 1361 / (mc.rAU * mc.rAU), ground = Math.max(0, flux * sinEl), subLon = ((ll[1] - H + 540) % 360) - 180;
+  const z = zone(ll[0], h), t = z.t, zc = sunUp ? z.z : 'NOGO', zl = sunUp ? z.label : 'NO-GO';
+  const out = Math.min(hoursOut, 8);   // suit values at the end of the outside time (up to 8 h)
+  const o2 = Math.max(5, 100 - out * 12), suitT = 21 + (t + 40) * 0.02, hum = 42 + out * 2, hr = 92 + Math.round(out * 2);
+  const tc = zc === 'GO' ? '#34a853' : zc === 'CAUTION' ? '#ea4335' : '#8a6a55', left = Math.max(0, 15.5 - h);
+  return `<div class="card tripbox"><div class="tbh"><b>Suit and surroundings</b><span class="pill ${zc}">${zl}</span></div>
+    <div class="muted" style="margin-bottom:4px">At the start, leaving at ${hhmm(h)}. Oxygen, humidity and heart rate are for the end of the trip${hoursOut > 8 ? ' (first 8 h outside)' : ''}.</div>
+    ${meter('Outside air (model)', Math.round(t) + ' °C', (t + 125) / 145, tc)}
+    ${meter('Inside suit', suitT.toFixed(1) + ' °C', (suitT - 10) / 20, '#7fa37a')}
+    ${meter('Oxygen tank at arrival', Math.round(o2) + ' %', o2 / 100, o2 > 40 ? '#7fa37a' : o2 > 20 ? '#e3a857' : '#d8582a')}
+    ${meter('Suit pressure', '29.6 kPa', 0.74, '#7fa37a')}
+    ${meter('Humidity in suit', Math.round(hum) + ' %', hum / 100, hum < 60 ? '#7fa37a' : '#e3a857')}
+    ${meter('Heart rate', hr + ' bpm', (hr - 40) / 140, hr < 120 ? '#7fa37a' : '#e3a857')}
+    ${meter('Radiation (Gale average)', '0.64 mSv/day', 0.64 / 1.84, '#e3a857')}
+    ${meter('Time left outside', left > 0 ? left.toFixed(1) + ' h to 15:30' : 'past 15:30', left / 5, left > 0 ? '#7fa37a' : '#d8582a')}
+    <div class="muted" style="margin-top:3px">Outside air: our two-station model (Curiosity REMS, Perseverance MEDA). Radiation: Curiosity RAD average at Gale. Suit readings are simulated demo values.</div></div>
+  <div class="card tripbox"><div class="tbh"><b>Sun and light</b><span class="muted">${hhmm(h)} at the start</span></div>
+    <dl class="kv">
+    <dt>Mars season</dt><dd>${season(mc.Ls)} (Ls ${mc.Ls.toFixed(0)}°)</dd>
+    <dt>Sun at the start</dt><dd>${sunUp ? el.toFixed(0) + '° up, to the ' + DIRW[Math.round(az / 45) % 8] : 'below the horizon (night)'}</dd>
+    <dt>Sunrise / sunset</dt><dd>${riseSet}</dd>
+    <dt>Sun overhead at</dt><dd>${f1(dec, 'N', 'S')}, ${f1(subLon, 'E', 'W')}</dd>
+    <dt>Mars to Sun</dt><dd>${mc.rAU.toFixed(3)} AU (${Math.round(mc.rAU * 149.598)} million km)</dd>
+    <dt>Sunlight reaching Mars</dt><dd>${Math.round(flux)} W/m² (${Math.round(flux / 1361 * 100)}% of Earth's)</dd>
+    <dt>On flat ground here</dt><dd>${sunUp ? 'about ' + Math.round(ground) + ' W/m²' : '0 W/m² (night)'}</dd></dl>
+    <div class="muted" style="margin-top:4px">Season and Sun position: NASA Mars24 method (Allison and McEwen, 2000), for today's real Mars date. Light is at the top of the air; dust and clouds lower it.</div></div>`;
+}
 var LASTROUTE = null;
 function planRoute(keepView) {
   routeLayer.clearLayers();
@@ -713,7 +781,7 @@ function planRoute(keepView) {
     <dt>Leave ${hhmm(leave)}</dt><dd><span class="pill ${zA.z}">${zA.label}</span> at start <span class="muted">(move the time slider to change)</span></dd>
     <dt>Route colour</dt><dd><span class="pill GO">GO</span> <span class="pill CAUTION">CAUTION</span> <span class="pill NOGO">NO-GO</span> <span class="muted">the zone when you reach each part of the route</span></dd>
     <dt>Verdict</dt><dd><span class="pill ${cls}">${cls === 'NOGO' ? 'NO-GO' : cls}</span> ${verdict}</dd>
-  </dl><button class="btn" id="navStart" style="margin-top:10px">Start navigation</button></div>`;
+  </dl></div>${tripPanels(A.ll, leave, oneWayH)}<div class="card"><button class="btn" id="navStart">Start navigation</button></div>`;
   document.getElementById('navStart').onclick = startNav;
 }
 /* Colour each part of the route by the zone at the time you reach it */
@@ -768,7 +836,7 @@ function startNav() {
   updateNav(); setTimeout(declutter, 60);
 }
 function stopNav() {
-  if (!NAV) return; NAV.sim = false; map.removeLayer(NAV.marker); if (NAV.done) routeLayer.removeLayer(NAV.done); NAV = null;
+  if (!NAV) return; meMark.setLatLng(P.bradbury.ll); NAV.sim = false; map.removeLayer(NAV.marker); if (NAV.done) routeLayer.removeLayer(NAV.done); NAV = null;
   document.getElementById('navBanner').hidden = true; document.getElementById('heading').style.display = 'none'; document.getElementById('needle').style.opacity = '1';
   document.getElementById('cmpTxt').textContent = 'North is up'; document.getElementById('navSim').textContent = 'Simulate walk'; setTimeout(declutter, 60);
 }
@@ -787,7 +855,7 @@ function nextTurn(i, s) {
 }
 function updateNav() {
   const p = navPos(NAV.s), rem = Math.max(0, NAV.total - NAV.s), mins = rem / NAV.v * 60, clockNow = +clockR.value;
-  NAV.marker.setLatLng(p.ll); NAV.marker.getElement().querySelector('.me-arrow').style.transform = `rotate(${p.brg}deg)`;
+  NAV.marker.setLatLng(p.ll); meMark.setLatLng(p.ll); NAV.marker.getElement().querySelector('.me-arrow').style.transform = `rotate(${p.brg}deg)`;
   NAV.done.setLatLngs(NAV.pts.slice(0, p.i + 1).concat([p.ll]));
   selected = p.ll; updClock();
   let instr, icon;
