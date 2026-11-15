@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mars Navigator | Interplanetary Survival Guide: Martian Map</title>
 <meta name="description" content="A layered Mars map that plans a safe Marswalk by mission objective, built on NASA Mars Trek imagery, rover data and the USGS gazetteer. NASA Space Apps Challenge 2026.">
-<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<meta name="author" content="Mars Navigator team, Year 5, Winchester School, Jebel Ali, Dubai">
 <meta name="generator" content="Hand-written HTML, CSS and JavaScript with Leaflet. Code drafted with help from an SI assistant (Claude) and reviewed by the team.">
 <link rel="stylesheet" href="lib/leaflet/leaflet.css">
 <style>
@@ -187,7 +187,7 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
     <p class="muted">Click anywhere on Mars to see what is there.</p>
     <div id="infoOut"></div>
   </div>
-  <div class="credit" style="padding:0 16px 12px">Team lead <b>Pravya Sharma</b>, with <b>Advika Bisaria</b> and <b>Kshama</b>, Winchester School, Jebel Ali, Dubai. Imagery: NASA/JPL Mars Trek. <a href="guide.html#team">All credits</a></div>
+  <div class="credit" style="padding:0 16px 12px">Made by a team of Year 5 students from Winchester School, Jebel Ali, Dubai. Imagery: NASA/JPL Mars Trek. <a href="guide.html#team">All credits</a></div>
 </aside>
 
 <div id="map"></div>
@@ -337,10 +337,10 @@ const P = {
   jezero: { n: 'Jezero Crater (ancient lake and delta)', ll: [18.41, 77.69], k: 'sci', note: '48 km crater that once held a lake. Perseverance is collecting samples here.' },
   arcadia: { n: 'Arcadia Planitia (buried ice)', ll: [49.02, -171.85], k: 'ice', note: 'Broad plains that match the most ice signals in the SWIM study (Morgan et al., 2021).' },
   deuteronilus: { n: 'Deuteronilus Mensae (ice-rich glaciers)', ll: [45.11, 23.92], k: 'ice', note: 'Extensive buried glacial networks, one of the most promising ice regions in the SWIM study.' },
-  meridiani: { n: 'Meridiani Planum (solar farm 1)', ll: [-0.04, -3.14], k: 'power', note: 'Flat equatorial plains, easy to build on. Advika’s solar farm site 1.' },
-  tharsis: { n: 'Tharsis Montes (solar farm 2)', ll: [1.57, -112.58], k: 'power', note: 'High volcanic region: less dusty air above the panels. Advika’s solar farm site 2.' },
-  elysium: { n: 'Elysium Planitia (solar farm 3)', ll: [2.98, 154.74], k: 'power', note: 'Wide, open, flat land with few shadows. Advika’s solar farm site 3.' },
-  boreum: { n: 'Planum Boreum (polar solar farm)', ll: [87.32, 54.96], k: 'power', note: 'The north polar cap. Months of non-stop summer sunshine, then a long polar night. Advika’s option 2.' }
+  meridiani: { n: 'Meridiani Planum (solar farm 1)', ll: [-0.04, -3.14], k: 'power', note: 'Flat equatorial plains, easy to build on. Solar farm site 1.' },
+  tharsis: { n: 'Tharsis Montes (solar farm 2)', ll: [1.57, -112.58], k: 'power', note: 'High volcanic region: less dusty air above the panels. Solar farm site 2.' },
+  elysium: { n: 'Elysium Planitia (solar farm 3)', ll: [2.98, 154.74], k: 'power', note: 'Wide, open, flat land with few shadows. Solar farm site 3.' },
+  boreum: { n: 'Planum Boreum (polar solar farm)', ll: [87.32, 54.96], k: 'power', note: 'The north polar cap. Months of non-stop summer sunshine, then a long polar night. Solar power option 2.' }
 };
 const LANDERS = [
   ['Viking 1 (1976)', [22.27, -47.95]], ['Viking 2 (1976)', [47.67, 134.30]], ['Mars Pathfinder (1997)', [19.13, -33.22]],
@@ -515,10 +515,10 @@ const OBJ = [
   { id: 'life', t: 'Search for signs of ancient life', s: 'Mount Sharp layers and Jezero delta', view: [[-4.7, 137.4], 11], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, jezero: 1 },
     why: 'Old lakes and rivers are the best places to look for traces of past life.',
     list: ['Yellowknife Bay: first rock drilled on Mars, from an ancient lake.', 'Pahrump Hills: mudstone at the base of Mount Sharp.', 'Boxwork ridges: minerals left by groundwater.', 'Jezero Crater: river delta studied and sampled by Perseverance (use “Jump to Jezero”).'] },
-  { id: 'power', t: 'Power the base', s: 'Solar farm sites, by Advika Bisaria', view: [[20, 20], 1.5], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, dust: 1 },
+  { id: 'power', t: 'Power the base', s: 'Solar farm sites', view: [[20, 20], 1.5], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, dust: 1 },
     why: 'Sunlight on Mars is less than half of Earth’s, and dust storms can block it for weeks.',
     list: ['Option 1: three farms on the equator (Meridiani, Tharsis, Elysium). Their biggest gap is about 158° of longitude, less than half a turn, so one farm is always in daylight.', 'Option 2: one farm on Planum Boreum, sunlit non-stop through northern spring and summer, then dark for months.', 'Keep panels clean: check the TES dust layer.', 'Keep a backup that does not depend on sunshine.'] },
-  { id: 'safe', t: 'Stay safe: radiation and dust', s: 'Shelters and storm rules, by Kshama', view: [[-4.72, 137.38], 12], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, zones: 0 },
+  { id: 'safe', t: 'Stay safe: radiation and dust', s: 'Shelters and storm rules', view: [[-4.72, 137.38], 12], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1, zones: 0 },
     why: 'Mars has thin air and no global magnetic field, so radiation is about 0.64 mSv a day at Gale (Curiosity RAD).',
     list: ['Murray Buttes: parked by the cliff, Curiosity measured 4% less radiation.', 'Cliffs, overhangs and caves are shelter spots during a solar storm.', 'Dusty days are CAUTION days: in 2018 UV sunlight at Gale dropped by 90% and you could see only about 2.7 km.', 'Helmet alert: arrow to the nearest shelter, radiation and dust levels, time left outside.'] },
   { id: 'walk', t: 'Daily Marswalk', s: 'Route card: Bradbury Landing to Yellowknife Bay', view: [[-4.59, 137.445], 15], baseL: 'Colour photo map (Viking Orbiters)', ov: { pois: 1, paths: 1, hirise: 1, gale: 1 }, route: ['bradbury', 'yellowknife'],

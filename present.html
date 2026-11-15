@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mars Navigator | Team presentation</title>
-<meta name="author" content="Pravya Sharma (team lead), Advika Bisaria, Kshama · Winchester School, Jebel Ali, Dubai">
+<meta name="author" content="Mars Navigator team, Year 5, Winchester School, Jebel Ali, Dubai">
 <meta name="generator" content="Hand-written HTML, CSS and JavaScript. Illustrated presenters drawn in SVG. Code drafted with help from an SI assistant (Claude) and reviewed by the team.">
 <style>
 :root{--basalt:#1c1110;--panel:#2b1a16;--rust:#c1440e;--ember:#d8582a;--dust:#e3a857;--sand:#f2e3cc;--clay:#d9c2a3;--frost:#8db9cc;--sage:#7fa37a;--line:#4a2f26}
@@ -82,6 +82,7 @@ body.rec #rotate,body.rec #bar,body.rec #hint,body.rec #start,body.rec .crew-fab
 body.rec #prog{top:0}
 #sitelink{position:absolute;right:16px;bottom:5px;z-index:12;font:700 13px "Segoe UI",Arial;color:#ffd08a;text-decoration:none;background:rgba(193,68,14,.35);border:1px solid #e3a857;border-radius:5px;padding:2px 9px}#sitelink:hover{background:rgba(193,68,14,.6)}
 a.site{display:inline-block;font:700 21px "Segoe UI",Arial;color:#ffd08a;text-decoration:none;border:2px solid #e3a857;background:rgba(193,68,14,.3);border-radius:8px;padding:8px 16px}a.site:hover{background:rgba(193,68,14,.55)}
+body.linktop #sitelink{top:14px;bottom:auto;right:18px;font-size:16px;padding:5px 14px}
 </style>
 </head>
 <body>
@@ -100,11 +101,11 @@ a.site{display:inline-block;font:700 21px "Segoe UI",Arial;color:#ffd08a;text-de
   <div id="vis"></div>
   <div id="who"></div>
   <div id="capbar"><div id="name"></div><div id="line"></div></div>
-  <a id="sitelink" href="https://pravyasharma.github.io/NASAMARSDEC26/" target="_blank" rel="noopener">Try it: pravyasharma.github.io/NASAMARSDEC26</a>
-  <div id="credit">Pravya Sharma (team lead) · Advika Bisaria · Kshama · Winchester School, Jebel Ali, Dubai · NASA Space Apps Challenge 2026</div>
+  <a id="sitelink" href="https://winschoolproject.github.io/MarsNavigator/" target="_blank" rel="noopener">Try it: winschoolproject.github.io/MarsNavigator</a>
+  <div id="credit">Mars Navigator · Year 5 students, Winchester School, Jebel Ali, Dubai · NASA Space Apps Challenge 2026</div>
   <div id="start">
     <h1>Mars Navigator</h1>
-    <p>Pravya, Kshama and Advika explain the project. Pick a length:</p>
+    <p>Three illustrated guides explain the project. Pick a length:</p>
     <div class="row"><button data-go="30">30 seconds</button><button data-go="60">1 minute</button><button data-go="120">2 minutes</button></div>
     <div class="row"><button class="g" id="startVoice">Sound: on</button></div>
     <p style="font-size:12px">Keys: space = play or pause, arrows = previous or next slide. The presenters are illustrations and the voices are computer-generated.</p>
@@ -124,9 +125,9 @@ if (REC) document.body.classList.add('rec');
 
 /* ---------- presenters (original illustrations) ---------- */
 const PEOPLE = {
-  P: { name: 'Pravya Sharma', first: 'Pravya', role: 'team lead', skin: '#c48a63', light: '#dcaa84', shade: '#a26c4b', hair: '#1b1210', hairHi: '#47302a', brow: '#24160f', eye: '#4a2a17', eye2: '#8a5a33', lip: '#a95550', lip2: '#bf6b63', style: 'pony', accent: '#e3a857', earring: true, jacket: '#c1440e', jacket2: '#93330a', patch: 'P' },
-  K: { name: 'Kshama', first: 'Kshama', role: 'safety layer', skin: '#b37853', light: '#cd9670', shade: '#8f5c3d', hair: '#140d0b', hairHi: '#3b2721', brow: '#1d120d', eye: '#3a2214', eye2: '#77502f', lip: '#9c4d49', lip2: '#b4605a', style: 'bob', accent: '#7fb7d0', earring: false, jacket: '#3d6f8f', jacket2: '#2a5068', patch: 'K' },
-  A: { name: 'Advika Bisaria', first: 'Advika', role: 'solar power', skin: '#cf9b74', light: '#e6b993', shade: '#ac7752', hair: '#24170f', hairHi: '#5a3a28', brow: '#2c1b12', eye: '#55311b', eye2: '#9a6a3b', lip: '#b35e57', lip2: '#c9766c', style: 'braid', accent: '#ffd34d', earring: true, jacket: '#d9a13a', jacket2: '#a97a22', patch: 'A' }
+  P: { name: 'Mars Navigator', first: 'CREW', role: 'navigation', skin: '#c48a63', light: '#dcaa84', shade: '#a26c4b', hair: '#1b1210', hairHi: '#47302a', brow: '#24160f', eye: '#4a2a17', eye2: '#8a5a33', lip: '#a95550', lip2: '#bf6b63', style: 'pony', accent: '#e3a857', earring: true, jacket: '#c1440e', jacket2: '#93330a', patch: 'P' },
+  K: { name: 'Mars Navigator', first: 'CREW', role: 'safety layer', skin: '#b37853', light: '#cd9670', shade: '#8f5c3d', hair: '#140d0b', hairHi: '#3b2721', brow: '#1d120d', eye: '#3a2214', eye2: '#77502f', lip: '#9c4d49', lip2: '#b4605a', style: 'bob', accent: '#7fb7d0', earring: false, jacket: '#3d6f8f', jacket2: '#2a5068', patch: 'K' },
+  A: { name: 'Mars Navigator', first: 'CREW', role: 'solar power', skin: '#cf9b74', light: '#e6b993', shade: '#ac7752', hair: '#24170f', hairHi: '#5a3a28', brow: '#2c1b12', eye: '#55311b', eye2: '#9a6a3b', lip: '#b35e57', lip2: '#c9766c', style: 'braid', accent: '#ffd34d', earring: true, jacket: '#d9a13a', jacket2: '#a97a22', patch: 'A' }
 };
 function girlSVG(p) {
   /* Original semi-realistic portrait: head and shoulders, natural proportions, soft shading.
@@ -160,7 +161,7 @@ function girlSVG(p) {
     <path d="M${cx + dir * 14} 170.5 l${dir * 4} -3.5" stroke="#1d110c" stroke-width="1.8" stroke-linecap="round"/>
     <path d="M${cx - 12} 177.5 C${cx - 6} 180 ${cx + 6} 180 ${cx + 12} 177.5" stroke="${SH}" stroke-width="1.2" fill="none" opacity=".8"/>
     <path d="M${cx - 13} 163 C${cx - 6} 158.5 ${cx + 6} 158.5 ${cx + 13} 163" stroke="${SH}" stroke-width="1.3" fill="none" opacity=".6"/>`;
-  return `<svg viewBox="0 0 300 400" role="img" aria-label="Illustrated presenter ${p.name}">
+  return `<svg viewBox="0 0 300 400" role="img" aria-label="Illustrated guide (invented character)">
   <defs>
     <radialGradient id="fc${id}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="${LT}"/><stop offset=".55" stop-color="${SK}"/><stop offset="1" stop-color="${SH}"/></radialGradient>
     <linearGradient id="hr${id}" x1="0" x2=".3" y1="0" y2="1"><stop offset="0" stop-color="${HI}"/><stop offset=".45" stop-color="${H}"/><stop offset="1" stop-color="${H}"/></linearGradient>
@@ -226,7 +227,7 @@ const V = {
   title: () => `${head('NASA SPACE APPS CHALLENGE 2026', 'Mars Navigator')}
     <div style="font:20px/1.4 'Segoe UI';color:var(--clay);max-width:520px" class="pop">A layered Mars map that tells the first crews <b style="color:#fff">where</b> to walk, <b style="color:#fff">when</b> to walk, and how to stay <b style="color:#fff">safe</b>.</div>
     ${img('app-globe.jpg', 470, 120, 418, 236, '', .3)}
-    <div class="chips pop" style="position:absolute;left:0;top:300px;animation-delay:.6s"><span class="chip">Pravya Sharma · lead</span><span class="chip">Advika Bisaria</span><span class="chip">Kshama</span></div>
+    <div class="chips pop" style="position:absolute;left:0;top:300px;animation-delay:.6s"><span class="chip">Year 5 students</span><span class="chip">Winchester School</span></div>
     <div class="cap" style="left:0;top:350px">Winchester School, Jebel Ali, Dubai</div>`,
   problem: () => `${head('THE PROBLEM', 'No GPS. No compass. No quick help.')}
     ${stat('0', 'GPS satellites at Mars, and no magnetic field for a compass', 0, 110, .2)}
@@ -245,32 +246,32 @@ const V = {
     ${stat('14:30', 'turn back, no exceptions', 670, 230, .8)}
     ${stat('15:30', 'everyone inside', 670, 350, 1.1)}
     <div class="src">HiRISE via NASA Mars Trek · path: NASA Curiosity waypoints</div>`,
-  radiation: () => `${head('SAFETY LAYER · KSHAMA', 'Radiation: know your shelter')}
+  radiation: () => `${head('SAFETY LAYER', 'Radiation: know your shelter')}
     ${img('rad-radiation-types.jpg', 0, 100, 470, 312, 'contain', .1)}
     ${stat('≈ 6', 'chest X-rays of radiation every day (Curiosity RAD)', 510, 110, .4)}
     ${stat('≈ 100×', 'a normal day on Earth', 510, 250, .7)}
     <div class="src">Hassler et al., Science 2014 · image NASA/JPL-Caltech/SwRI (PIA16938)</div>`,
-  shelter: () => `${head('SAFETY LAYER · KSHAMA', 'Cliffs are natural shields')}
+  shelter: () => `${head('SAFETY LAYER', 'Cliffs are natural shields')}
     ${img('murray-buttes-selfie.jpg', 0, 96, 600, 358, '', .1)}
     ${stat('4%', 'less radiation beside the Murray Buttes cliff, 2016', 630, 110, .5)}
     <div class="chips" style="position:absolute;left:630px;top:270px;flex-direction:column"><span class="chip pop" style="animation-delay:.8s">Cliffs</span><span class="chip pop" style="animation-delay:1s">Overhangs</span><span class="chip pop" style="animation-delay:1.2s">Caves</span></div>
     <div class="src">NASA JPL 2021 · photo NASA/JPL-Caltech/MSSS (PIA20844)</div>`,
-  dust: () => `${head('SAFETY LAYER · KSHAMA', 'Dusty days are CAUTION days')}
+  dust: () => `${head('SAFETY LAYER', 'Dusty days are CAUTION days')}
     ${img('dust-storm-2018.jpg', 0, 96, 430, 242, '', .1)}
-    ${img('kshama-helmet-alert.png', 458, 96, 430, 268, '', .4)}
+    ${img('safety-helmet-alert.png', 458, 96, 430, 268, '', .4)}
     ${stat('90%', 'less UV sunlight at Gale, 2018 storm', 0, 360, .7)}
     ${stat('2.7 km', 'how far you could see', 260, 360, .9)}
     <div class="src">REMS studies 2019 · NASA/JPL-Caltech/MSSS (PIA22487) · helmet: team idea, SI-assisted image</div>`,
-  power1: () => `${head('POWER THE BASE · ADVIKA', 'Three farms on the equator')}
-    ${img('advika-sun-belt.png', 0, 96, 420, 336, '', .1)}
-    ${img('advika-three-farms.png', 448, 96, 420, 336, '', .4)}
+  power1: () => `${head('POWER THE BASE', 'Three farms on the equator')}
+    ${img('solar-sun-belt.png', 0, 96, 420, 336, '', .1)}
+    ${img('solar-three-farms.png', 448, 96, 420, 336, '', .4)}
     <div class="chips" style="position:absolute;left:0;top:448px"><span class="chip pop" style="animation-delay:.7s">Meridiani</span><span class="chip pop" style="animation-delay:.85s">Tharsis</span><span class="chip pop" style="animation-delay:1s">Elysium</span><span class="chip hl pop" style="animation-delay:1.2s">one is always in daylight</span></div>
-    <div class="src">USGS/IAU Gazetteer · diagrams: Advika’s ideas, SI-assisted images</div>`,
-  power2: () => `${head('POWER THE BASE · ADVIKA', 'Or one farm at the north pole')}
-    ${img('advika-polar-sun.png', 0, 96, 420, 336, '', .1)}
-    ${img('advika-sunflower-panels.png', 448, 96, 420, 336, '', .4)}
+    <div class="src">USGS/IAU Gazetteer · diagrams: team ideas, SI-assisted images</div>`,
+  power2: () => `${head('POWER THE BASE', 'Or one farm at the north pole')}
+    ${img('solar-polar-sun.png', 0, 96, 420, 336, '', .1)}
+    ${img('solar-sunflower-panels.png', 448, 96, 420, 336, '', .4)}
     <div class="chips" style="position:absolute;left:0;top:448px"><span class="chip pop" style="animation-delay:.7s">sunflower panels follow the Sun</span><span class="chip pop" style="animation-delay:.9s">about 372 sols of sunshine</span><span class="chip pop" style="animation-delay:1.1s">then ~10 months of night</span></div>
-    <div class="src">diagrams: Advika’s ideas, SI-assisted images</div>`,
+    <div class="src">diagrams: team ideas, SI-assisted images</div>`,
   navigator: () => `${head('THREE WAYS TO TRAVEL', 'Walk, drive, or fly the Navigator')}
     ${[['On foot', '2 km/h', 'short walks near base'], ['Pressurised rover', '10 km/h', 'day trips with a cabin to shelter in'], ['Nuclear-Powered Navigator', '≈ 350 km/h', 'flies 1.5 km up; anywhere on Mars in hours']].map((r, i) => `<div class="pop" style="position:absolute;left:${i * 296}px;top:110px;width:276px;height:250px;background:#2b1a16;border:1px solid ${i === 2 ? 'var(--dust)' : 'var(--line)'};border-radius:14px;padding:16px;animation-delay:${.2 + i * .3}s">
       <svg viewBox="0 0 120 60" style="width:120px;height:60px">${i === 0 ? '<circle cx="60" cy="12" r="9" fill="#e3a857"/><path d="M60 22 L60 42 M60 42 L48 58 M60 42 L72 58 M44 30 L76 30" stroke="#e3a857" stroke-width="5" stroke-linecap="round"/>' : i === 1 ? '<rect x="18" y="16" width="84" height="28" rx="8" fill="#e3a857"/><rect x="62" y="21" width="30" height="12" rx="3" fill="#2b1a16"/><circle cx="34" cy="48" r="9" fill="#f2e3cc"/><circle cx="86" cy="48" r="9" fill="#f2e3cc"/>' : '<path d="M8 34 L70 28 L96 14 L104 16 L90 30 L114 32 L114 36 L90 38 L104 52 L96 54 L70 40 L8 38Z" fill="#e3a857"/><circle cx="40" cy="36" r="4" fill="#2b1a16"/>'}</svg>
@@ -296,9 +297,9 @@ const V = {
     <div class="src">demo mode: data stays in the browser</div>`,
   end: () => `${head('NASA SPACE APPS CHALLENGE 2026', 'Know where you are.<br>Know when to turn back.')}
     <div class="chips pop" style="animation-delay:.3s;margin-top:10px"><span class="chip">NASA Mars Trek</span><span class="chip">Curiosity + Perseverance</span><span class="chip">RAD · REMS · MEDA · MOXIE</span><span class="chip">Mars24</span><span class="chip">USGS/IAU</span><span class="chip">ESA/DLR/FU Berlin</span><span class="chip">SWIM (PSI)</span></div>
-    <div class="pop" style="animation-delay:.6s;margin-top:28px;font:22px Georgia,serif"><b>Pravya Sharma</b> <span style="color:var(--clay);font-size:16px">team lead</span> · <b>Advika Bisaria</b> · <b>Kshama</b></div>
+    <div class="pop" style="animation-delay:.6s;margin-top:28px;font:22px Georgia,serif"><b>A team of Year 5 students</b></div>
     <div class="pop" style="animation-delay:.8s;margin-top:6px;color:var(--clay)">Winchester School, Jebel Ali, Dubai</div>
-    <div class="pop" style="animation-delay:1s;margin-top:18px"><a class="site" href="https://pravyasharma.github.io/NASAMARSDEC26/" target="_blank" rel="noopener">https://pravyasharma.github.io/NASAMARSDEC26/</a></div>`
+    <div class="pop" style="animation-delay:1s;margin-top:18px"><a class="site" href="https://winschoolproject.github.io/MarsNavigator/" target="_blank" rel="noopener">https://winschoolproject.github.io/MarsNavigator/</a></div>`
 };
 
 /* ---------- scripts and recorded narration (audio/narration.js) ---------- */
@@ -312,7 +313,7 @@ const vis = document.getElementById('vis'), prog = document.getElementById('prog
 const total = () => S.reduce((a, b) => a + b.dur, 0);
 const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
 function setMode(m) {
-  mode = m; S = timed(m); idx = 0; t = 0; spoke = false;
+  mode = m; document.body.classList.toggle('linktop', m === 30); S = timed(m); idx = 0; t = 0; spoke = false;
   document.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('on', +b.dataset.mode === m));
   prog.innerHTML = S.map(() => '<i><b></b></i>').join('');
   show(0);

@@ -3,26 +3,26 @@
 **Interplanetary Survival Guide: Martian Map**
 NASA Space Apps Challenge 2026
 
-**Live site:** https://pravyasharma.github.io/NASAMARSDEC26/
+**Live site:** https://winschoolproject.github.io/MarsNavigator/
 
 A layered Mars map that tells the first human crews where to walk, when to walk, and how to stay safe.
 
 ## Team
 
-Winchester School, Jebel Ali, Dubai
+A team of Year 5 students from Winchester School, Jebel Ali, Dubai. Parts of the project:
 
-- **Pravya Sharma** (team lead): field guide, temperature zones, navigation and the Marswalk route plan
-- **Advika Bisaria**: solar power plan (equator belt and polar farm)
-- **Kshama**: safety layer (radiation, natural shelters, dust storms, helmet alert)
+- Navigation: field guide, temperature zones, navigation and the Marswalk route plan
+- Solar power plan: equator belt and polar farm
+- Safety layer: radiation, natural shelters, dust storms, helmet alert
 
 ## Pages
 
 | Page | What it does |
 |---|---|
-| [Map, home page](https://pravyasharma.github.io/NASAMARSDEC26/) (`index.html`) | NASA Mars Trek layers, six mission objectives, route planner on Curiosity's real path, turn-by-turn navigation, temperature zone clock |
-| [3D Globe](https://pravyasharma.github.io/NASAMARSDEC26/globe.html) (`globe.html`) | Slide-sized globe with a fixed pin, what lies in each direction, suit meter, live Sun position and sunlight, Earth distance |
-| [Presentation](https://pravyasharma.github.io/NASAMARSDEC26/present.html) (`present.html`) | Pravya, Kshama and Advika (cute illustrated presenters) explain the project in 30 seconds, 1 minute or 2 minutes, with narration and captions |
-| [Field Guide](https://pravyasharma.github.io/NASAMARSDEC26/guide.html) (`guide.html`) | The team's field guide, safety layer, solar power plan, and all credits and sources |
+| [Map, home page](https://winschoolproject.github.io/MarsNavigator/) (`index.html`) | NASA Mars Trek layers, six mission objectives, route planner on Curiosity's real path, turn-by-turn navigation, temperature zone clock |
+| [3D Globe](https://winschoolproject.github.io/MarsNavigator/globe.html) (`globe.html`) | Slide-sized globe with a fixed pin, what lies in each direction, suit meter, live Sun position and sunlight, Earth distance |
+| [Presentation](https://winschoolproject.github.io/MarsNavigator/present.html) (`present.html`) | Three illustrated guides (invented characters) explain the project in 30 seconds, 1 minute or 2 minutes, with narration and captions |
+| [Field Guide](https://winschoolproject.github.io/MarsNavigator/guide.html) (`guide.html`) | The team's field guide, safety layer, solar power plan, and all credits and sources |
 
 Every page also has a **crew chat** and a **field camera**.
 
@@ -67,7 +67,13 @@ Every page also has a **crew chat** and a **field camera**.
 - NASA Mars Relay Network (https://science.nasa.gov/mars/mars-relay-network/)
 - MANGLE nuclear Mars aircraft study, AIAA 2014-3820; ARES Mars airplane, NASA Langley; Ingenuity records, NASA JPL
 
-Full credits, with links, are on the [Field Guide page](https://pravyasharma.github.io/NASAMARSDEC26/guide.html#team).
+Full credits, with links, are on the [Field Guide page](https://winschoolproject.github.io/MarsNavigator/guide.html#team).
+
+## Future data source: the UAE's Hope probe
+
+We built Mars Navigator in the UAE, which has its own Mars mission. Hope measures the atmosphere across the whole planet, through the day and the seasons, so it is the data we would like to add next to make our temperature clock more accurate. We have not used Hope data in this version.
+
+- Emirates Mars Mission (Hope probe), MBRSC and UAE Space Agency: https://www.emiratesmarsmission.ae/ ; Science Data Centre: https://sdc.emiratesmarsmission.ae
 
 ## Honest notes
 
