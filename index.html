@@ -136,6 +136,11 @@ nav a.on,nav a.cur{outline:2px solid #fff;outline-offset:2px}
 .mehere b{position:absolute;left:6px;top:6px;width:14px;height:14px;border-radius:50%;background:#4285f4;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.6)}
 @keyframes mepulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.8);opacity:0}}
 .me-tip{background:#1c1110;color:#f2e3cc;border:1px solid #4285f4}#map.picking .mehere{opacity:.85}
+#brief{position:absolute;top:12px;right:12px;z-index:1000;width:400px;max-width:calc(100% - 24px);max-height:calc(100% - 112px);overflow:auto;background:rgba(24,14,12,.97);border:1px solid #e3a857;border-radius:12px;padding:12px 14px;color:#f2e3cc;box-shadow:0 8px 28px rgba(0,0,0,.6);font-size:14px}
+#brief .bh{display:flex;justify-content:space-between;align-items:center;font-size:1.15em;margin-bottom:6px}#brief .bx{background:none;border:0;color:#f2e3cc;font-size:24px;line-height:1;cursor:pointer}
+#brief .bsec{margin:8px 0;padding:8px 10px;background:#2a1914;border-radius:8px;line-height:1.45}#brief h5{margin:0 0 3px;font-size:.95em;color:#e3a857}
+#brief .card{margin:8px 0}#brief .bbtn{position:sticky;bottom:-12px;background:rgba(24,14,12,.97);padding:8px 0 2px}
+@media (max-width:900px){#brief{top:8px;right:8px;left:8px;width:auto;max-height:calc(100% - 96px)}}
 </style>
 </head>
 <body>
@@ -632,6 +637,7 @@ function startPick() {
   pickTxt();
 }
 function stopPick(keepCursor) {
+  { const b = document.getElementById('brief'); if (b) b.hidden = true; }
   if (!PICK) return; [PICK.ma, PICK.mb].forEach(m => m && map.removeLayer(m)); PICK = null;
   if (!keepCursor) { document.getElementById('map').classList.remove('picking'); document.getElementById('wrap').classList.remove('picking'); const h = document.getElementById('pickHint'); if (h) h.hidden = true; }
 }
@@ -665,8 +671,41 @@ function lockPick(keepView) {
   P.pickA = { n: 'Your start: ' + placeName(PICK.a), ll: PICK.a, k: 'sci', note: 'Start point picked on the map' };
   P.pickB = { n: 'Your end: ' + placeName(PICK.b), ll: PICK.b, k: 'sci', note: 'End point picked on the map' };
   fillSel('pickA', 'pickB');
+  if (keepView !== true) {   // choose a sensible travel mode for the distance (can be changed in the Route tab)
+    const km = dist(PICK.a, PICK.b), m = km <= 5 ? 'walk' : km <= 60 ? 'rover' : 'nav';
+    document.getElementById('rMode').value = m; document.getElementById('rSpeed').value = { walk: 2, rover: 10, nav: 350 }[m];
+  }
   planRoute(keepView === true); pickTxt();
   showTab('route');
+  if (matchMedia('(max-width:900px)').matches) { document.getElementById('side').classList.remove('open'); document.getElementById('menuBtn').textContent = 'Show panel'; }
+  showBrief();
+}
+/* Trip briefing card on the map: getting to the start, the trip, suit and sun, then Start navigation */
+const hrsTxt = h => h < 1 ? Math.round(h * 60) + ' min' : h < 24 ? h.toFixed(1) + ' h' : Math.round(h) + ' h (about ' + (h / SOL_H).toFixed(1) + ' sols)';
+const MODE_TXT = { walk: 'on foot', rover: 'by pressurised rover', nav: 'by the nuclear-powered Navigator aircraft' };
+function legPlan(km) {   // how to get somewhere from where the crew is now
+  if (km < 0.5) return { m: null, h: 0, txt: 'You are already at the start.' };
+  const m = km <= 5 ? 'walk' : km <= 60 ? 'rover' : 'nav', v = { walk: 2, rover: 10, nav: 350 }[m], h = km / v + (m === 'nav' ? 0.25 : 0);
+  const legs = Math.ceil(h / 5);
+  return { m, h, txt: m === 'nav' ? `It is too far to walk or drive. <b>Take the nuclear-powered Navigator</b>: about <b>${hrsTxt(h)}</b> of flying at about 350 km/h, including take-off and landing.${legs > 1 ? ` Fly only in daylight, about 5 hours a sol (10:30 to 15:30), landing at a safe site each night, so the flight takes about <b>${legs} sols</b>.` : ''}`
+    : `Go ${MODE_TXT[m]}: about <b>${tripDur(h)}</b> at ${v} km/h.` };
+}
+function showBrief() {
+  const R = LASTROUTE && LASTROUTE.sum; if (!R) return;
+  let el = document.getElementById('brief');
+  if (!el) { el = document.createElement('div'); el.id = 'brief'; document.getElementById('map').appendChild(el); L.DomEvent.disableClickPropagation(el); L.DomEvent.disableScrollPropagation(el); }
+  const here = meAt(), dS = dist(here, R.A.ll), g = legPlan(dS), total = g.h + R.oneWayH;
+  el.innerHTML = `<div class="bh"><b>Trip briefing</b><button class="bx" id="briefX" aria-label="Close">×</button></div>
+    <div class="bsec"><h5>1. Getting to your start</h5>You are at <b>${dist(here, P.bradbury.ll) < 0.05 ? 'base (Bradbury Landing)' : fmtLat(here[0]) + ', ' + fmtLon(here[1])}</b>. The start pin is <b>${fmtKm(dS)}</b> away, to the ${compass(bearing(here, R.A.ll))}.<br>${g.txt}</div>
+    <div class="bsec"><h5>2. The trip</h5><b>${fmtKm(R.useKm)}</b> ${MODE_TXT[R.mode]}, about <b>${hrsTxt(R.oneWayH)}</b>. Leave ${hhmm(R.leave)}, arrive ${arriveTxt(R.arrive)}.<br><span class="pill ${R.cls}">${R.cls === 'NOGO' ? 'NO-GO' : R.cls}</span> ${R.verdict}</div>
+    <div class="bsec"><h5>3. Total from base</h5>About <b>${hrsTxt(total)}</b> of travel${g.m === 'nav' || R.mode === 'nav' ? ', mostly flying' : ''}.</div>
+    ${tripPanels(R.A.ll, R.leave, R.oneWayH)}
+    <div class="bbtn"><button class="btn" id="briefNav">Start navigation</button> <button class="btn ghost" id="briefMore">Route details</button></div>`;
+  el.hidden = false; { const h = document.getElementById('pickHint'); if (h) h.style.display = 'none'; }
+  const unhint = () => { const h = document.getElementById('pickHint'); if (h) h.style.display = ''; };
+  document.getElementById('briefX').onclick = () => { el.hidden = true; unhint(); };
+  document.getElementById('briefNav').onclick = () => { el.hidden = true; unhint(); startNav(); };
+  document.getElementById('briefMore').onclick = () => { el.hidden = true; unhint(); document.getElementById('side').classList.add('open'); document.getElementById('side').classList.remove('hide'); document.getElementById('menuBtn').textContent = 'Hide panel'; showTab('route'); setTimeout(() => map.invalidateSize(), 60); };
 }
 
 /* ---------- Route planner ---------- */
@@ -783,6 +822,8 @@ function planRoute(keepView) {
     <dt>Verdict</dt><dd><span class="pill ${cls}">${cls === 'NOGO' ? 'NO-GO' : cls}</span> ${verdict}</dd>
   </dl></div>${tripPanels(A.ll, leave, oneWayH)}<div class="card"><button class="btn" id="navStart">Start navigation</button></div>`;
   document.getElementById('navStart').onclick = startNav;
+  LASTROUTE.sum = { A, B, useKm, oneWayH, arrive, leave, verdict, cls, mode, v };
+  { const b = document.getElementById('brief'); if (b && !b.hidden) showBrief(); }
 }
 /* Colour each part of the route by the zone at the time you reach it */
 function drawRouteZones() {
@@ -791,7 +832,7 @@ function drawRouteZones() {
   let run = [R.pts[0]], cur = null, km = 0;
   const flush = () => { if (run.length > 1) L.polyline(run, { color: col[cur], weight: 8, opacity: .95, interactive: false }).addTo(R.zl); };
   for (let i = 1; i < R.pts.length; i++) {
-    const segKm = dist(R.pts[i - 1], R.pts[i]), t = leave + (km + segKm / 2) / R.v + (R.mode === 'nav' ? 0.125 : 0), zm = zone(R.pts[i - 1][0], t).z, zr = t <= 15.5 ? 'GO' : t <= 17 ? 'CAUTION' : 'NOGO', rank = { GO: 0, CAUTION: 1, NOGO: 2 }, z = rank[zm] >= rank[zr] ? zm : zr; km += segKm;
+    const segKm = dist(R.pts[i - 1], R.pts[i]), t = leave + (km + segKm / 2) / R.v + (R.mode === 'nav' ? 0.125 : 0), zm = zone(R.pts[i - 1][0], t).z, zr = t <= 15.5 ? 'GO' : t <= 17 ? 'CAUTION' : 'NOGO', rank = { GO: 0, CAUTION: 1, NOGO: 2 }, z = R.mode === 'nav' ? zr : (rank[zm] >= rank[zr] ? zm : zr); km += segKm;
     if (z !== cur && cur) { flush(); run = [R.pts[i - 1]]; }
     cur = z; run.push(R.pts[i]);
   }
